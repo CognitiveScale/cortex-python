@@ -1,0 +1,51 @@
+{#
+    Master layout template for Sphinx themes.
+#}
+{%- block doctype -%}{%- if html5_doctype %}
+{%- else %}
+{%- endif %}{%- endblock %}
+{%- set reldelim1 = reldelim1 is not defined and ' &#187;' or reldelim1 %}
+{%- set reldelim2 = reldelim2 is not defined and ' |' or reldelim2 %}
+{%- set render_sidebar = (not embedded) and (not theme_nosidebar|tobool) and
+                         (sidebars != []) %}
+{%- set url_root = pathto('', 1) %}
+{# XXX necessary? #}
+{%- if url_root == '#' %}{% set url_root = '' %}{% endif %}
+{%- if not embedded and docstitle %}
+  {%- set titlesuffix = " &#8212; "|safe + docstitle|e %}
+{%- else %}
+  {%- set titlesuffix = "" %}
+{%- endif %}
+
+{%- macro relbar() %}
+{%- endmacro %}
+
+{%- macro sidebar() %}
+{%- endmacro %}
+
+{%- macro script() %}
+{%- endmacro %}
+
+{%- macro css() %}
+{%- endmacro %}
+
+{%- block header %}{% endblock %}
+
+{%- block relbar1 %}{{ relbar() }}{% endblock %}
+
+{%- block content %}
+  {%- block sidebar1 %} {# possible location for sidebar #} {% endblock %}
+
+  {%- block document %}
+  <div class="python-doc">
+            {% block body %} {% endblock %}
+  </div>
+  {%- endblock %}
+
+  {%- block sidebar2 %}{{ sidebar() }}{% endblock %}
+{%- endblock %}
+
+{%- block relbar2 %}{{ relbar() }}{% endblock %}
+
+{%- block footer %}
+{%- endblock %}
