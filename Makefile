@@ -3,7 +3,7 @@
 clean:
 	rm -rf ./build
 	rm -rf ./dist
-	rm -rf ./cortex_client.egg-info
+	rm -rf ./cortex_python.egg-info
 
 dev.install:
 	pip install -r requirements-dev.txt

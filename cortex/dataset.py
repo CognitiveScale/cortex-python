@@ -233,14 +233,14 @@ class Dataset(AbstractDataset, CamelResource):
         except ImportError:
             raise ConfigurationException('The cortex-python-builders library is required to save Datasets')
 
-    def to_camel(self):
+    def to_camel(self, camel='1.0.0'):
         ds = {
-            'camel': self._camel,
+            'camel': camel,
             'name': self._name,
             'title': self._title,
             'description': self._description,
             'parameters': self._parameters,
-            'pipelines': {key: pipeline.to_camel() for key, pipeline in self._pipelines.items()}
+            'pipelines': {key: pipeline.to_camel(camel) for key, pipeline in self._pipelines.items()}
         }
 
         if self._schema_name:

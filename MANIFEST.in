@@ -1,0 +1,6 @@
+include LICENSE
+include README.md
+include CHANGELOG.md
+global-exclude .gitignore
+global-exclude __pycache__
+global-exclude *.py[co]

@@ -125,7 +125,7 @@ class ManagedContentClient:
         """
         r = tenacity.Retrying(
             stop = tenacity.stop_after_attempt(retries + 1),
-            retry = tenacity.retry_if_exception(ConnectionClient._http_request_retry_predicate)
+            retry = tenacity.retry_if_exception(ManagedContentClient._http_request_retry_predicate)
             )
         return r.wraps(self._download)(key)
 
