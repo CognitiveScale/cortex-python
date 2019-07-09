@@ -236,21 +236,18 @@ class Dataset(AbstractDataset, CamelResource):
     def to_camel(self, camel='1.0.0'):
         ds = {
             'camel': camel,
-            'name': self._name,
-            'title': self._title,
-            'description': self._description,
-            'parameters': self._parameters,
-            'pipelines': {key: pipeline.to_camel(camel) for key, pipeline in self._pipelines.items()}
+            'name': self.name,
+            'title': self.title,
+            'description': self.description,
+            'parameters': self.parameters,
+            'pipelines': {key: pipeline.to_camel(camel) for key, pipeline in self.pipelines.items()}
         }
 
-        if self._schema_name:
-            ds['parameters'] = {'$ref': self._schema_name}
-
-        if self._camel == '1.0.0':
-            ds['connectionName'] = self._connections.get('default', {}).get('name')
-            ds['connectionQuery'] = self._connections.get('default', {}).get('query')
+        if camel == '1.0.0':
+            ds['connectionName'] = self.connectionName
+            ds['connectionQuery'] = self.connectionQuery
         else:
-            ds['connections'] = self._connections
+            ds['connections'] = self.connections
 
         return ds
 
