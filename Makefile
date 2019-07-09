@@ -1,3 +1,5 @@
+.PHONY: clean dev.install build dev.test test docs dev.alpha dev.push
+
 clean:
 	rm -rf ./build
 	rm -rf ./dist

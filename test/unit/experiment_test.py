@@ -24,7 +24,6 @@ from mocket.mockhttp import Entry
 from mocket import mocketize
 from .fixtures import john_doe_token, build_mock_url, mock_api_endpoint
 import dill
-from sklearn.linear_model import LinearRegression
 
 
 class TestExperiment(unittest.TestCase):
@@ -99,13 +98,12 @@ class TestExperiment(unittest.TestCase):
         exp.reset()
         exp.set_meta('style', 'supervised')
         exp.set_meta('function', 'regression')
-        test_artifact = LinearRegression()
+        test_artifact = {'model': {}}
         with exp.start_run() as run:
             run.log_artifact('test', test_artifact)
 
         self.assertTrue(len(exp.runs()) == 1)
         self.assertEqual(run.get_artifact('test'), test_artifact)
-
 
     def make_run(self, exp):
         run = exp.start_run()

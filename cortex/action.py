@@ -203,6 +203,37 @@ class ActionClient(_Client):
         return self._post_json(uri, message)
 
 
+class BuilderClient(_Client):
+    """
+    A client for the Cortex Docker builder service REST API.
+    """
+
+    URIs = {'action': 'builder/action'}
+
+    def post_job(self, build_dir, image_tag):
+        """
+        Submit a build job request
+        """
+        body = {
+            'imageTag' : image_tag,
+            'buildContext': build_dir
+        }
+        return self._post_json(self.URIs['action'], body)
+
+    def get_job(self, jobid):
+        """
+        Gets targets for the agent.
+        """
+        return self._get_json(self.URIs['action'] + '/{}'.format(jobid))
+
+    def get_job_logs(self, jobid):
+        """
+        Gets job logs.
+        """
+        url = '/'.join([self.URIs['action'], jobid, 'logs'])
+        return self._get(url, stream=True)
+
+
 class Action(CamelResource):
     """
     A Cortex Action. Actions are the computional part of a skill.

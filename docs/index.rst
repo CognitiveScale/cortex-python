@@ -14,7 +14,7 @@ Cortex
     :members:
 
 CortexEnv
-------
+---------
 
 .. autoclass:: cortex.env.CortexEnv
     :members:

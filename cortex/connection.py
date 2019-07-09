@@ -17,6 +17,10 @@ limitations under the License.
 
 import json
 from .serviceconnector import ServiceConnector
+from .camel import CamelResource
+from .utils import get_logger
+
+log = get_logger(__name__)
 
 
 class ConnectionClient:
@@ -46,3 +50,30 @@ class ConnectionClient:
         r = self._serviceconnector.request('GET', uri)
         r.raise_for_status()
         return r.json()
+
+
+class Connection(CamelResource):
+
+    """
+    Defines the connection for a dataset.
+    """
+
+    def __init__(self, connection, connector: ServiceConnector):
+        super().__init__(connection, True)
+        self._connector = connector
+
+    @staticmethod
+    def get_connection(name, client: ConnectionClient):
+        """
+        Fetches a Connection to work with.
+
+        :param client: The client instance to use.
+        :param name: The name of the connection to retrieve.
+        :return: A Connection object.
+        """
+        uri = 'connections/{name}'.format(name=name)
+        log.debug('Getting connection using URI: %s' % uri)
+        r = client._serviceconnector.request('GET', uri)
+        r.raise_for_status()
+
+        return Connection(r.json(), client._serviceconnector)

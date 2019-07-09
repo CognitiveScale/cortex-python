@@ -20,7 +20,6 @@ import json
 import dill
 from mocket.mockhttp import Entry
 from mocket import mocketize
-from sklearn.linear_model import LinearRegression
 
 from cortex import Cortex
 from cortex.experiment import ExperimentClient

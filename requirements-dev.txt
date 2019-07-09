@@ -7,6 +7,4 @@ pipdeptree
 pylint>=2.3.0,<3
 pytest-cov==2.5.1
 pytest>=3.2.5,<4
-scikit-learn>=0.20.0,<1
 mock>=2,<3
-pandas>=0.24
