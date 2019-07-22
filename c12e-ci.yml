@@ -4,4 +4,5 @@ builder:
     && apt-get install -y libmagic-dev gcc make
     && make dev.install
     && make test
+    && make build
     && make docs'
