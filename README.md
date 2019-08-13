@@ -69,13 +69,16 @@ Suppose you want to release new functionality so it can be installed without rel
 - get credentials to the `cortex-python` pypi CognitiveScale account (via lastpass)
 - run `make dev.push TAG=<alpha release number>`. Example: `make dev.push TAG=1`
 
+NOTE: setup.py is using setuptools-scm to determine the distribution from SCM tags.  Additionally, it contains a special `get_version()` implementation which determines the PEP440 compatible pre-release suffix based on branch name (e.g. staging branch generates a release candidate).  The CI/CD pipelines in GoCD will automatically build and publish as appropriate the correct versions.  As a developer, you should not need to manually push an alpha build.
+
 ### Contribution 
 
 After contributing to the library, and before you submit changes as a PR, please do the following
 
-1. Run unit tests via `make test`
-2. Manually verification (i.e. try the new changes out in Cortex) to make sure everything is going well. Not required, but highly encouraged.
-3. Bump up `setup.py` version and update the `CHANGELOG.md` 
+1. Update the `CHANGELOG.md`
+2. Run unit tests via `make test`
+3. Manually verify (i.e. try the new changes out in Cortex) to make sure everything is going well. Not required, but highly encouraged.
+4. Bump up the distribution version by running `python setup.py --version` to see the current value, then create an annotated tag with the desired next version, for example: `git tag -a v1.2.3 -m "v1.2.3"`.  Be sure to push the new tag to the remove with `git push --follow-tags` or similar.
 
 ### Documentation
 
@@ -96,15 +99,17 @@ Setup your environment, if you have not done so:
 > make dev.install 
 ```
 
-### Pre-release to staging
+### Develop to staging (pre-release)
 
-1. Create and push an alpha release:
-    ```
-    > make dev.push TAG=1
-    ```
-    Where `TAG` is the alpha version number. This will build an alpha-tagged package.
-2. Merge `develop` to `staging` branch:
+1.  Verify the distribution version is what you want via `python setup.py --version`.
+2.  Merge `develop` to `staging` branch (can also be done via PR):
     ```
     > make stage
     ```
-3. In GitHub, create a pull request from `staging` to `master`.
+3. Wait for the CI pipeline to build and publish a pre-release version to PyPi.
+
+### Staging (pre-release) to master (release)
+
+1. In GitHub, create a pull request from `staging` to `master`.
+2. Create a Change Management (CM) ticket in JIRA for the release, assigning it to the SOC-compliant release staff member.
+3. The release staff will approve and merge the PR and the CI pipeline will build and publish the release distribution to PyPi.
