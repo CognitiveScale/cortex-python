@@ -1,4 +1,7 @@
-.PHONY: clean dev.install build dev.test test docs dev.alpha dev.push
+DISTRIBUTION_NAME = $(shell python setup.py --name)
+DISTRIBUTION_VERSION = $(shell python setup.py --version)
+
+.PHONY: clean dev.install build build.alpha build.release dev.test test stage docs dev.push
 
 clean:
 	rm -rf ./build
@@ -10,7 +13,27 @@ dev.install:
 	pip install -r docs/requirements-docs.txt
 	pip install -e .
 
-build: clean
+ifdef ALPHA_BUILD
+build: build.alpha
+else
+build: build.release
+endif
+
+build.alpha: clean
+	python setup.py egg_info --tag-build a$(shell \
+		curl https://pypi.org/pypi/${DISTRIBUTION_NAME}/json | \
+		jq '[ \
+				.releases | \
+				to_entries[] | \
+				.key | \
+				select(. | contains("${DISTRIBUTION_VERSION}a")) | \
+				ltrimstr("${DISTRIBUTION_VERSION}a") \
+			] | \
+			last // "0" | \
+			tonumber + 1' \
+	) sdist bdist_wheel
+
+build.release: clean
 	python setup.py sdist bdist_wheel
 
 dev.test:
@@ -33,9 +56,5 @@ docs:
 	cd docs && make html && cd -
 	# The resulting reference docs file is in docs/_build/html/index.html
 
-TAG ?= 1
-dev.alpha: clean
-	python setup.py egg_info --tag-build a${TAG} sdist bdist_wheel
-
-dev.push: dev.alpha
+dev.push: build.alpha
 	twine upload --repository-url https://upload.pypi.org/legacy/ dist/*

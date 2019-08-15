@@ -19,3 +19,4 @@ notebooks/local-mode/datasets/
 notebooks/local-mode/experiments/
 notebooks/**/*.md
 **/.ipynb_checkpoints/
+*BranchRevision.json
