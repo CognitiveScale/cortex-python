@@ -67,7 +67,7 @@ Suppose you want to release new functionality so it can be installed without rel
 
 - we need to create and publish an alpha release:
 - get credentials to the `cortex-python` pypi CognitiveScale account (via lastpass)
-- run `make dev.push TAG=<alpha release number>`. Example: `make dev.push TAG=1`
+- run `make dev.push`. The alpha pre-release number (the N in X.Y.ZaN) with be determined automatically.
 
 ### Contribution 
 
@@ -100,9 +100,9 @@ Setup your environment, if you have not done so:
 
 1. Create and push an alpha release:
     ```
-    > make dev.push TAG=1
+    > make dev.push
     ```
-    Where `TAG` is the alpha version number. This will build an alpha-tagged package.
+    This will build an alpha-tagged package.
 2. Merge `develop` to `staging` branch:
     ```
     > make stage
