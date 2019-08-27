@@ -16,8 +16,6 @@ limitations under the License.
 
 from typing import Dict
 
-import deprecation
-
 from .camel import Document
 from .env import CortexEnv
 
@@ -114,18 +112,6 @@ class Message(Document):
             return client.dataset(ds_ref)
 
         raise AttributeError('Message payload does not contain a dataset reference')
-
-    @staticmethod
-    @deprecation.deprecated(deprecated_in='cortex-client-5.5.4', details='Use Client.message() instead.')
-    def with_payload(payload, **kwargs):
-        """
-        Creates a message with the given payload.
-
-        :param payload: The payload for the message.
-        """
-        m = Message.from_env(**kwargs)
-        m.payload = payload
-        return m
 
     @staticmethod
     def from_env(**kwargs):

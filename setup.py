@@ -38,7 +38,6 @@ setup(name='cortex-python',
           'pyjwt>=1.6.1,<2',
           'pyyaml>=3.13,<4',
           'cuid>=0.3,<1',
-          'deprecation>=2.0.6',
           'tenacity>=5.0.2',
           'dill>=0.2.8.2'
       ],
