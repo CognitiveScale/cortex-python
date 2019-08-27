@@ -38,16 +38,21 @@ To import ConnectionClient :
 ```
 ## Usage of Cortex magics
 
-Usage of cortex magics (Can be used only when optional dependecy of builders is installed) :
+Usage of cortex magics (Can be used only when optional dependency of builders is installed) :
 
 ```
 > %reload_ext cortex_builders
 ```
 ## Deprecations
 
-InputMessage and OutputMessage classes have been deprecated. Instead use Message. 
+1. InputMessage and OutputMessage classes have been deprecated.Instead use `Message`. 
 
 ```
 > from cortex import Message
 ```
 
+2. ModelClient, ModelProcess and ModelRouter have been deprecated. Instead use the `experiment` API in client
+class to run experiments, save and retrieve your models. 
+
+3. JobsClient has been deprecated. Instead use  `action` API in client class to save or retrieve actions. 
+Also, you can use the `action` in builder class inside client class to build your actions.  (Can be used only when optional dependency of builders is installed)
