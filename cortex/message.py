@@ -16,8 +16,11 @@ limitations under the License.
 
 from typing import Dict
 
+from .utils import get_logger
 from .camel import Document
 from .env import CortexEnv
+
+log = get_logger(__name__)
 
 
 class Message(Document):
@@ -95,7 +98,7 @@ class Message(Document):
             import pandas as pd
             return pd.DataFrame(values, columns=columns)
         except ImportError:
-            # TODO warn
+            log.warn('Pandas is not installed, please run `pip install pandas` or equivalent in your environment')
             return {'columns': columns, 'values': values}
 
     def get_dataset(self):
