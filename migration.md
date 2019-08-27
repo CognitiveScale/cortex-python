@@ -43,7 +43,7 @@ Usage of cortex magics (Can be used only when optional dependency of builders is
 ```
 > %reload_ext cortex_builders
 ```
-## Deprecations
+## Deprecations from cortex-client
 
 1. InputMessage and OutputMessage classes have been deprecated.Instead use `Message`. 
 
