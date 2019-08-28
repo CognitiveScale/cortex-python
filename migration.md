@@ -36,6 +36,17 @@ To import ConnectionClient :
 ```
 > from cortex.connection import ConnectionClient
 ```
+
+## Upload to Managed Content
+
+Use `ManagedContentClient` to upload or download to your account's Managed. In cortex-client library ConnectionClient was used for these functionalities. The methods to upload ad download remain the same
+
+To import ManagedContentClient :
+```
+> from cortex.content import ManagedContentClient
+```
+ConnectionClient can still be used to save and get the connections. 
+
 ## Usage of Cortex magics
 
 Usage of cortex magics (Can be used only when optional dependency of builders is installed) :
@@ -70,4 +81,4 @@ Instead use the `Client.message()` method.
 ```
 
 6. `LocalExperiment.set_pipeline()` has been removed. This method was previously deprecated in `cortex-client` v5.5.0.
-There is no replacment method for this functionality.
+There is no replacement method for this functionality.
