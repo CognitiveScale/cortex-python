@@ -1,11 +1,13 @@
 # Migration steps from cortex-client to cortex-python
 
-## To use the new library, uninstall the old library
+## Uninstalling the old library
+
+To use this new library you must uninstall the old `cortex-client` library. Both `cortex-client` and `cortex-python`
+**cannot** be installed simultaneously in your python environment.
 
 ```
   > pip uninstall cortex-client
 ```
-
 
 ## Installation
 
@@ -36,48 +38,50 @@ To import ConnectionClient :
 ```
 > from cortex.connection import ConnectionClient
 ```
-
 ## Upload to Managed Content
 
-Use `ManagedContentClient` to upload or download to your account's Managed. In cortex-client library ConnectionClient was used for these functionalities. The methods to upload ad download remain the same
+Use `ManagedContentClient` to upload and download to your account'smanaged content. In cortex-client, ConnectionClient was used for these functionalities. The methods to upload and download remain the same.
 
-To import ManagedContentClient :
+To import ManagedContentClient:
+
 ```
-> from cortex.content import ManagedContentClient
-```
-ConnectionClient can still be used to save and get the connections. 
+from cortex.content import ManagedContentClient
+
+``` 
+ConnectionClient can be used to save and retrieve connections. 
 
 ## Usage of Cortex magics
 
-Usage of cortex magics (Can be used only when optional dependency of builders is installed) :
+Cortex magics can be used only when the optional `builders` dependency is installed:
 
 ```
 > %reload_ext cortex_builders
 ```
-## Deprecations from cortex-client
+## Deprecations and Removals from cortex-client
 
-1. InputMessage and OutputMessage classes have been deprecated. Instead use `Message`.
+1. The `InputMessage` and `OutputMessage` classes have been deprecated. Instead use the `Message` class:
 
 ```
-> from cortex import Message
+from cortex import Message
 ```
 
-2. ModelClient, ModelProcess and ModelRouter have been deprecated. Instead use the `experiment` API in client
+2. `ModelClient`, `ModelProcess` and `ModelRouter` have been deprecated. Instead use the `experiment` API in the `Client`
 class to run experiments, save and retrieve your models.
 
-3. JobsClient has been deprecated. Instead use `action` API in client class to save or retrieve actions.
-Also, you can use the `action` in builder class inside client class to build your actions. (Can be used only when optional dependency of builders is installed)
+3. `JobsClient` has been deprecated. Instead use the `action` API in `Client` class to save or retrieve actions.
+Also, you can use the `action` in the builder class inside client class to build your actions. (Can be used only when optional dependency of builders is installed)
 
-4. SecretsClient has been deprecated. There is no equivalent replacement functionality in the python library, but
+4. `SecretsClient` has been deprecated. There is no equivalent replacement functionality in the python library, but
 you can manage secrets through the Cortex Vault in the Cortex Console.
 
 5. `Message.with_payload()` has been removed. This method was previously deprecated in `cortex-client` v5.5.4.
-Instead use the `Client.message()` method.
+Instead use the `Client.message()` method:
 
 ```
-> from cortex import Cortex
-> cortex = Cortex.client()
-> message = cortex.message(payload={'value': 'hello world'})
+from cortex import Cortex
+
+cortex = Cortex.client()
+message = cortex.message(payload={'value': 'hello world'})
 ```
 
 6. `LocalExperiment.set_pipeline()` has been removed. This method was previously deprecated in `cortex-client` v5.5.0.
