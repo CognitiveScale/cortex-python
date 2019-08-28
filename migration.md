@@ -46,7 +46,6 @@ To import ManagedContentClient:
 
 ```
 from cortex.content import ManagedContentClient
-
 ``` 
 ConnectionClient can be used to save and retrieve connections. 
 
