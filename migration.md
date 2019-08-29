@@ -1,15 +1,16 @@
-# Migration steps from cortex-client to cortex-python
+# Migration steps from `cortex-client` to `cortex-python`
 
-## Uninstalling the old library
+The `cortex-python` library and its optional add-ons are replacing the cortex-client library. The new libraries are more lightweight and use-case focussed. `Cortex-python` may be used for development with or without the add-ons.
 
-To use this new library you must uninstall the old `cortex-client` library. Both `cortex-client` and `cortex-python`
-**cannot** be installed simultaneously in your python environment.
+## Uninstall the previous library (`cortex-client`)
+
+To use the new Cortex libraries, `cortex-python` and `cortex-python-builders` you must uninstall the `cortex-client` library; `cortex-client` and `cortex-python`**cannot** be installed simultaneously in your python environment.
 
 ```
   > pip uninstall cortex-client
 ```
 
-## Installation
+## Install `cortex-python`
 
 To install:
 ```
@@ -23,10 +24,9 @@ To install the optional components:
   > pip install cortex-python[builders]
 ```
 
-## Client Functionality Import
-We have updated the way Client functionalities can be imported
+## Import Client functionalities
 
-Examples of importing some functionalities
+The way Client functionalities can be imported has changed.
 
 To import cortex :
 
@@ -49,7 +49,7 @@ To import ManagedContentClient:
 ``` 
 ConnectionClient can be used to save and retrieve connections. 
 
-## Usage of Cortex magics
+## Use Cortex magics
 
 Cortex magics can be used only when the optional `builders` dependency is installed:
 
@@ -71,7 +71,7 @@ class to run experiments, save and retrieve your models.
 Also, you can use the `action` in the builder class inside client class to build your actions. (Can be used only when optional dependency of builders is installed)
 
 4. `SecretsClient` has been deprecated. There is no equivalent replacement functionality in the python library, but
-you can manage secrets through the Cortex Vault in the Cortex Console.
+you can manage secrets through the Cortex Vault in the Cortex Console or via the CLI `cortex variables [command] [options]`.
 
 5. `Message.with_payload()` has been removed. This method was previously deprecated in `cortex-client` v5.5.4.
 Instead use the `Client.message()` method:
