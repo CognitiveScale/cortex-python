@@ -45,7 +45,7 @@ Use `ManagedContentClient` to upload and download to your account's managed cont
 To import ManagedContentClient:
 
 ```
-from cortex.content import ManagedContentClient
+> from cortex.content import ManagedContentClient
 ``` 
 ConnectionClient can be used to save and retrieve connections. 
 
@@ -61,7 +61,7 @@ Cortex magics can be used only when the optional `builders` dependency is instal
 1. The `InputMessage` and `OutputMessage` classes have been deprecated. Instead use the `Message` class:
 
 ```
-from cortex import Message
+> from cortex import Message
 ```
 
 2. `ModelClient`, `ModelProcess` and `ModelRouter` have been deprecated. Instead use the `experiment` API in the `Client`
@@ -77,10 +77,10 @@ you can manage secrets through the Cortex Vault in the Cortex Console.
 Instead use the `Client.message()` method:
 
 ```
-from cortex import Cortex
+> from cortex import Cortex
 
-cortex = Cortex.client()
-message = cortex.message(payload={'value': 'hello world'})
+> cortex = Cortex.client()
+> message = cortex.message(payload={'value': 'hello world'})
 ```
 
 6. `LocalExperiment.set_pipeline()` has been removed. This method was previously deprecated in `cortex-client` v5.5.0.
