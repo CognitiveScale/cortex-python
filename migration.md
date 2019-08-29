@@ -40,7 +40,7 @@ To import ConnectionClient :
 ```
 ## Upload to Managed Content
 
-Use `ManagedContentClient` to upload and download to your account'smanaged content. In cortex-client, ConnectionClient was used for these functionalities. The methods to upload and download remain the same.
+Use `ManagedContentClient` to upload and download to your account's managed content. In cortex-client, ConnectionClient was used for these functionalities. The methods to upload and download remain the same.
 
 To import ManagedContentClient:
 
