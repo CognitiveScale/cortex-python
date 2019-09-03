@@ -16,10 +16,11 @@ limitations under the License.
 
 from typing import Dict
 
-import deprecation
-
+from .utils import get_logger
 from .camel import Document
 from .env import CortexEnv
+
+log = get_logger(__name__)
 
 
 class Message(Document):
@@ -97,7 +98,7 @@ class Message(Document):
             import pandas as pd
             return pd.DataFrame(values, columns=columns)
         except ImportError:
-            # TODO warn
+            log.warn('Pandas is not installed, please run `pip install pandas` or equivalent in your environment')
             return {'columns': columns, 'values': values}
 
     def get_dataset(self):
@@ -114,18 +115,6 @@ class Message(Document):
             return client.dataset(ds_ref)
 
         raise AttributeError('Message payload does not contain a dataset reference')
-
-    @staticmethod
-    @deprecation.deprecated(deprecated_in='cortex-client-5.5.4', details='Use Client.message() instead.')
-    def with_payload(payload, **kwargs):
-        """
-        Creates a message with the given payload.
-
-        :param payload: The payload for the message.
-        """
-        m = Message.from_env(**kwargs)
-        m.payload = payload
-        return m
 
     @staticmethod
     def from_env(**kwargs):
