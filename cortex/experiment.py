@@ -25,7 +25,6 @@ from contextlib import closing
 from datetime import datetime
 from .camel import CamelResource
 from typing import Dict, List
-import deprecation
 from requests.exceptions import HTTPError
 from .exceptions import APIException, ConfigurationException
 from .serviceconnector import _Client
@@ -500,16 +499,6 @@ class LocalExperiment:
         for f in os.listdir(dir_to_clean):
              if os.path.isfile(os.path.join(dir_to_clean, f)):
                  os.remove(os.path.join(dir_to_clean, f))
-
-    @deprecation.deprecated(deprecated_in='5.5.0', removed_in='6.0.0', details='No replacement')
-    def set_pipeline(self, pipeline):
-        """
-        Attaches a pipeline to the experiment.
-
-        :param pipeline: Pipeline to attach to the experiment.
-        """
-        self._config.set('pipeline', {'dataset': pipeline._ds.name, 'name': pipeline.name})
-        self._save_config()
 
     def set_meta(self, prop, value):
         """

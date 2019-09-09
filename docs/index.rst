@@ -71,11 +71,6 @@ ActionClient
 .. autoclass:: cortex.action.ActionClient
     :members:
 
-AgentClient
--------------
-.. autoclass:: cortex.agent.AgentClient
-    :members:
-
 AuthenticationClient
 --------------------
 .. autoclass:: cortex.auth.AuthenticationClient
@@ -87,7 +82,7 @@ ConnectionClient
     :members:
 
 ManagedContentClient
-----------------
+--------------------
 .. autoclass:: cortex.content.ManagedContentClient
     :members:
 

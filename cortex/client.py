@@ -135,14 +135,17 @@ class Client(object):
         exp_client = ExperimentClient(self._url, version, self._token.token)
         return Experiment.get_experiment(name, exp_client)
 
-    def message(self, payload: dict) -> Message:
-        """Constructs a Message from payload.
+    def message(self, payload: dict, properties: dict = None) -> Message:
+        """Constructs a Message from payload and properties if given.
 
         :param payload: The payload to include in the Message.
+        :param properties: The properties to include in the Message.
         :return: A Message object.
         """
         params = {}
         params['payload'] = payload
+        if properties:
+            params['properties'] = properties
         params['apiEndpoint'] = self._url
         params['token'] = self._token.token
         return Message(params)
