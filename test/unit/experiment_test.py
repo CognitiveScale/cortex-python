@@ -16,6 +16,7 @@ limitations under the License.
 
 import unittest
 import json
+import os
 
 from cortex import Cortex
 from cortex.experiment import ExperimentClient
@@ -35,6 +36,7 @@ class TestExperiment(unittest.TestCase):
 
     def setUp(self):
         self.local = Cortex.local()
+        self.local_tmp = Cortex.local('/tmp/cortex')
         self.cortex = Cortex.client(api_endpoint=mock_api_endpoint(), api_version=3, token=john_doe_token())
 
         # register mock for getting an expeiment from the client
@@ -51,6 +53,10 @@ class TestExperiment(unittest.TestCase):
         exp = self.local.experiment(self.EXP_NAME)
         self.assertNotEqual(exp, None)
 
+    def test_make_local_experiment_custom_basedir(self):
+        exp = self.local_tmp.experiment(self.EXP_NAME)
+        self.assertNotEqual(exp, None)
+        self.assertTrue(os.path.isdir(f'/tmp/cortex/local/experiments/{self.EXP_NAME}'))
 
     @mocketize
     def test_remote_load_artifact(self):
@@ -112,4 +118,5 @@ class TestExperiment(unittest.TestCase):
         run.start()
         run.stop()
         run.log_metric(name='metric_1',metric=85)
+        exp.save_run(run)
         return run
