@@ -428,10 +428,15 @@ class LocalExperiment:
     dir_experiments = 'experiments'
     runs_key = 'runs'
 
-    def __init__(self, name):
+    def __init__(self, name, basedir=None):
         self._name = name
 
-        self._work_dir = Path.home() / self.dir_cortex / self.dir_local / self.dir_experiments / self.name
+        if basedir:
+            self._basedir = Path(basedir)
+        else:
+            self._basedir = Path.home() / self.dir_cortex
+
+        self._work_dir = self._basedir / self.dir_local / self.dir_experiments / self.name
         self._work_dir.mkdir(parents=True, exist_ok=True)
         Path(self._work_dir / self.dir_artifacts).mkdir(parents=True, exist_ok=True)
 

@@ -160,11 +160,14 @@ class Local:
     Provides local, on-disk implementations of Cortex APIs.
     """
 
+    def __init__(self, basedir=None):
+        self._basedir = basedir
+
     def experiment(self, name: str) -> LocalExperiment:
-        return LocalExperiment(name)
+        return LocalExperiment(name, self._basedir)
 
     def dataset(self, name: str):
-        return LocalDataset(name)
+        return LocalDataset(name, self._basedir)
 
     def action(self, name: str):
         raise NotImplementedError('Local actions are not implemented yet.')
@@ -172,7 +175,7 @@ class Local:
     def builder(self):
         try:
             from cortex_builders import LocalBuilder
-            return LocalBuilder()
+            return LocalBuilder(self._basedir)
         except ImportError:
             raise ConfigurationException('Please install the cortex-python-builders library to use this function')
 
@@ -233,8 +236,8 @@ class Cortex(object):
         return Cortex.client(api_endpoint=msg.apiEndpoint, token=msg.token)
 
     @staticmethod
-    def local():
-        return Local()
+    def local(basedir=None):
+        return Local(basedir)
 
     @staticmethod
     def login():

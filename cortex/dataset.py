@@ -292,8 +292,13 @@ class LocalDataset(AbstractDataset):
     camel = '1.0.0'
     environment_id = 'cortex/local'
 
-    def __init__(self, name):
-        self._work_dir = Path.home() / self.dir_cortex / self.dir_local / self.dir_datasets / name
+    def __init__(self, name, basedir=None):
+        if basedir:
+            self._basedir = Path(basedir)
+        else:
+            self._basedir = Path.home() / self.dir_cortex
+
+        self._work_dir = self._basedir / self.dir_local / self.dir_datasets / name
         self._work_dir.mkdir(parents=True, exist_ok=True)
         self._data_dir = Path(self._work_dir / self.dir_data)
         self._data_dir.mkdir(parents=True, exist_ok=True)

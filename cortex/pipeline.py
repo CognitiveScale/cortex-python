@@ -263,7 +263,7 @@ class Pipeline:
         """
         new_steps = []
         for step in self._steps:
-            if step.get('name') != name:
+            if step.name != name:
                 new_steps.append(step)
 
         self._steps = new_steps
