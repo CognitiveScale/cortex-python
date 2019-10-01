@@ -17,8 +17,8 @@ limitations under the License.
 import json
 from mocket.mockhttp import Entry
 from mocket import mocketize
+import pkg_resources
 import requests
-
 
 from cortex.serviceconnector import ServiceConnector
 
@@ -46,6 +46,7 @@ def test_request():
     path = 'models/events'
     url = sc._construct_url(path)
     body={"handle": 123}
+    userAgentFragment = f'cortex-python/{pkg_resources.get_distribution("cortex-python").version}'
     Entry.single_register(
         Entry.POST,
         url,
@@ -57,3 +58,4 @@ def test_request():
     assert isinstance(r, requests.Response)
     assert r.status_code == 200
     assert r.json() == body
+    assert userAgentFragment in r.request.headers['user-agent']
