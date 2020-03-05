@@ -28,6 +28,7 @@ from typing import Dict, List
 from requests.exceptions import HTTPError
 from .exceptions import APIException, ConfigurationException
 from .serviceconnector import _Client
+from .utils import raise_for_status_with_detail
 
 
 class ExperimentClient(_Client):
@@ -220,7 +221,7 @@ class ExperimentClient(_Client):
     def update_artifact(self, experiment_name, run_id, artifact, stream):
         uri = self.URIs['artifact'].format(experiment_name=experiment_name, run_id=run_id, artifact=artifact)
         r = self._serviceconnector.request(method='PUT', uri=uri, body=stream)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         rs = r.json()
 
         success = rs.get('success', False)
