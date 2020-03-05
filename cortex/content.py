@@ -24,6 +24,7 @@ import tenacity
 import time
 
 from .serviceconnector import ServiceConnector
+from .utils import raise_for_status_with_detail
 
 
 class ManagedContentClient:
@@ -60,7 +61,7 @@ class ManagedContentClient:
         data = MultipartEncoder(fields=fields)
         headers = {'Content-Type': data.content_type}
         r = self._serviceconnector.request('POST', uri, data, headers)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         return r.json()
 
     @staticmethod
@@ -113,7 +114,7 @@ class ManagedContentClient:
         uri = self._make_content_uri(key)
         headers = {'Content-Type': content_type}
         r = self._serviceconnector.request('POST', uri, stream, headers)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         return r.json()
 
     def download(self, key: str, retries: int = 1):
@@ -132,7 +133,7 @@ class ManagedContentClient:
     def _download(self, key: str):
         uri = self._make_content_uri(key)
         r = self._serviceconnector.request('GET', uri, stream=True)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         return r.raw
 
     def exists(self, key: str) -> bool:

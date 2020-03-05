@@ -18,6 +18,7 @@ import json
 
 from .serviceconnector import ServiceConnector
 from .utils import get_logger
+from .utils import raise_for_status_with_detail
 
 log = get_logger(__name__)
 
@@ -50,7 +51,7 @@ class AuthenticationClient:
         body_s = json.dumps(body)
         headers = {'Content-Type': 'application/json'}
         res = self._serviceconnector.request('POST', uri, body_s, headers)
-        res.raise_for_status()
+        raise_for_status_with_detail(res)
         return res.json()['jwt']
 
     def register(self, tenant_info, invitation_code):
@@ -65,5 +66,5 @@ class AuthenticationClient:
         headers = {'Content-Type': 'application/json'}
         params = {'invitationCode': invitation_code}
         res = self._serviceconnector.request('POST', uri, body_s, headers, params=params)
-        res.raise_for_status()
+        raise_for_status_with_detail(res)
         return res.json()

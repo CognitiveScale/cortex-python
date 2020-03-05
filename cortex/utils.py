@@ -19,6 +19,7 @@ import jwt
 import base64
 import hashlib
 import logging
+from requests.exceptions import HTTPError
 from pathlib import Path
 from datetime import datetime
 from collections import namedtuple
@@ -174,3 +175,22 @@ def base64decode_jsonstring(base64encoded_jsonstring:str):
     :return:
     """
     return json.loads(base64.urlsafe_b64decode(base64encoded_jsonstring).decode('utf-8'))
+
+
+def raise_for_status_with_detail(resp):
+    """
+    wrap raise_for_status and attempt give detailed reason for api failure
+    re-raise HTTPError for normal flow
+    :param resp: python request resp
+    :return:
+    """
+    try:
+        resp.raise_for_status()
+    except HTTPError as http_exception:
+        try:
+            log_message(msg=resp.json(), log=get_logger('http_status'), level=logging.ERROR)
+        except Exception as e:
+            pass # resp.json() failed
+        finally:
+            raise http_exception
+
