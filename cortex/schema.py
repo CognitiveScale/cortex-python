@@ -18,6 +18,7 @@ from cortex.catalog import CatalogClient
 from cortex.serviceconnector import ServiceConnector
 from cortex.utils import get_logger
 from .camel import CamelResource
+from .utils import raise_for_status_with_detail
 
 log = get_logger(__name__)
 
@@ -42,6 +43,6 @@ class Schema(CamelResource):
         uri = 'catalog/types/{name}'.format(name=name)
         log.debug('Getting schema using URI: %s' % uri)
         r = client._serviceconnector.request('GET', uri)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
 
         return Schema(r.json(), client._serviceconnector)

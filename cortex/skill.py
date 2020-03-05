@@ -19,6 +19,7 @@ from .utils import get_logger
 from .action import ActionClient
 from .serviceconnector import ServiceConnector
 from .camel import CamelResource
+from .utils import raise_for_status_with_detail
 
 log = get_logger(__name__)
 
@@ -86,6 +87,6 @@ class Skill(CamelResource):
         uri = 'catalog/skills/{name}'.format(name=name)
         log.debug('Getting skill using URI: %s' % uri)
         r = connector.request('GET', uri)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
 
         return Skill(r.json(), connector)

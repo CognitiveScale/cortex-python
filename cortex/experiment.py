@@ -50,7 +50,7 @@ class ExperimentClient(_Client):
 
     def list_experiments(self):
         r = self._serviceconnector.request(method='GET', uri=self.URIs['experiments'])
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         rs = r.json()
 
         return rs.get('experiments', [])
@@ -65,13 +65,13 @@ class ExperimentClient(_Client):
         headers = {'Content-Type': 'application/json'}
         uri = self.URIs['experiments']
         r = self._serviceconnector.request(method='POST', uri=uri, body=body, headers=headers)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         return r.json()
 
     def delete_experiment(self, experiment_name):
         uri = self.URIs['experiment'].format(experiment_name=experiment_name)
         r = self._serviceconnector.request(method='DELETE', uri=uri)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         rs = r.json()
 
         return rs.get('success', False)
@@ -79,14 +79,14 @@ class ExperimentClient(_Client):
     def get_experiment(self, experiment_name):
         uri = self.URIs['experiment'].format(experiment_name=experiment_name)
         r = self._serviceconnector.request(method='GET', uri=uri)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
 
         return r.json()
 
     def list_runs(self, experiment_name):
         uri = self.URIs['runs'].format(experiment_name=experiment_name)
         r = self._serviceconnector.request(method='GET', uri=uri)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         rs = r.json()
 
         return rs.get('runs', [])
@@ -105,7 +105,7 @@ class ExperimentClient(_Client):
             params['sort'] = json.dumps(sort)
 
         r = self._serviceconnector.request(method='GET', uri=uri, params=params)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         rs = r.json()
 
         return rs.get('runs', [])
@@ -128,7 +128,7 @@ class ExperimentClient(_Client):
             params['limit'] = limit
 
         r = self._serviceconnector.request(method='DELETE', uri=uri, params=params)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         rs = r.json()
 
         return rs.get('message')
@@ -143,13 +143,13 @@ class ExperimentClient(_Client):
         headers = {'Content-Type': 'application/json'}
         uri = self.URIs['runs'].format(experiment_name=experiment_name)
         r = self._serviceconnector.request(method='POST', uri=uri, body=body, headers=headers)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         return r.json()
 
     def get_run(self, experiment_name, run_id):
         uri = self.URIs['run'].format(experiment_name=experiment_name, run_id=run_id)
         r = self._serviceconnector.request(method='GET', uri=uri)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
 
         return r.json()
 
@@ -163,7 +163,7 @@ class ExperimentClient(_Client):
         headers = {'Content-Type': 'application/json'}
         uri = self.URIs['run'].format(experiment_name=experiment_name, run_id=run_id)
         r = self._serviceconnector.request(method='PUT', uri=uri, body=body, headers=headers)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         rs = r.json()
 
         success = rs.get('success', False)
@@ -174,7 +174,7 @@ class ExperimentClient(_Client):
     def delete_run(self, experiment_name, run_id):
         uri = self.URIs['run'].format(experiment_name=experiment_name, run_id=run_id)
         r = self._serviceconnector.request(method='DELETE', uri=uri)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         rs = r.json()
 
         success = rs.get('success', False)
@@ -186,7 +186,7 @@ class ExperimentClient(_Client):
         uri = self.URIs['meta'].format(experiment_name=experiment_name, run_id=run_id, meta=meta)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=headers)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         rs = r.json()
 
         success = rs.get('success', False)
@@ -198,7 +198,7 @@ class ExperimentClient(_Client):
         uri = self.URIs['param'].format(experiment_name=experiment_name, run_id=run_id, param=param)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=headers)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         rs = r.json()
 
         success = rs.get('success', False)
@@ -210,7 +210,7 @@ class ExperimentClient(_Client):
         uri = self.URIs['metric'].format(experiment_name=experiment_name, run_id=run_id, metric=metric)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=headers)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         rs = r.json()
 
         success = rs.get('success', False)
@@ -232,7 +232,7 @@ class ExperimentClient(_Client):
     def get_artifact(self, experiment_name, run_id, artifact):
         uri = self.URIs['artifact'].format(experiment_name=experiment_name, run_id=run_id, artifact=artifact)
         r = self._serviceconnector.request(method='GET', uri=uri, stream=True)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
 
         return r.content
 
