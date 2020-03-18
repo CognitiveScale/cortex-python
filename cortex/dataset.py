@@ -19,6 +19,7 @@ import json
 from typing import Dict
 from pathlib import Path
 from datetime import datetime
+from abc import ABC, abstractmethod
 from .utils import get_logger
 from .exceptions import ConfigurationException
 from .camel import CamelResource
@@ -26,7 +27,7 @@ from .pipeline import Pipeline
 from .pipeline_loader import PipelineLoader
 from .properties import PropertyManager
 from .serviceconnector import ServiceConnector
-from abc import ABC, abstractmethod
+from .utils import raise_for_status_with_detail
 
 log = get_logger(__name__)
 
@@ -48,7 +49,7 @@ class DatasetsClient:
         # TODO: Use pagination?
         uri = self.URIs['datasets']
         r = self._serviceconnector.request('GET', uri)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         return r.json().get('datasets', [])
 
     def save_dataset(self, dataset: Dict[str, object]):
@@ -61,7 +62,7 @@ class DatasetsClient:
         body_s = json.dumps(dataset)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request('POST', uri, body_s, headers)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         return r.json()
 
     def get_dataframe(self, dataset_name: str):
@@ -73,7 +74,7 @@ class DatasetsClient:
         """
         uri = '/'.join([self.URIs['datasets'], dataset_name, 'dataframe'])
         r = self._serviceconnector.request('GET', uri)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         return r.json()
 
     def get_stream(self, stream_name: str):
@@ -82,7 +83,7 @@ class DatasetsClient:
         """
         uri = '/'.join([self.URIs['datasets'], stream_name, 'stream'])
         r = self._serviceconnector.request('GET', uri, stream=True)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         return r.raw
 
     def post_stream(self, stream_name, data):
@@ -90,13 +91,13 @@ class DatasetsClient:
         headers = {"Content-Type": "application/json-lines"}
         r = self._serviceconnector.request('POST', uri, data, headers)
         print(r.text)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         return r.json()
 
     def get_pipeline(self, dataset_name: str, pipeline_name: str):
         uri = '/'.join([self.URIs['datasets'], dataset_name, 'pipelines', pipeline_name])
         r = self._serviceconnector.request('GET', uri)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         return r.json()
 
 
@@ -194,7 +195,7 @@ class Dataset(AbstractDataset, CamelResource):
         uri = '/'.join(['datasets', name])
         log.debug('Getting dataset using URI: %s' % uri)
         r = client._serviceconnector.request('GET', uri)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
 
         return Dataset(r.json(), client)
 

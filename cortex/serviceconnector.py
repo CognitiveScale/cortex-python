@@ -14,16 +14,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import requests
 import json
+import pkg_resources
+import platform
+import requests
+import sys
 from typing import Dict, Any, List, Union, Optional, Type, TypeVar
 from .utils import get_logger, get_cortex_profile
+from .utils import raise_for_status_with_detail
 
 log = get_logger(__name__)
 
 JSONType = Union[str, int, float, bool, None, Dict[str, Any], List[Any]]
 T = TypeVar('T', bound="_Client")
 
+userAgent = f'cortex-python/{pkg_resources.get_distribution("cortex-python").version} ({sys.platform}; {platform.architecture()[0]}; {platform.release()})'
 
 class ServiceConnector:
     """
@@ -101,7 +106,7 @@ class ServiceConnector:
         return self.urljoin([self.base_url, uri])
 
     def _construct_headers(self, headers):
-        headersToSend = {}
+        headersToSend = { 'User-Agent': userAgent }
 
         if self.token:
             auth = 'Bearer {}'.format(self.token)
@@ -129,7 +134,7 @@ class _Client:
         r = self._serviceconnector.request('POST', uri, body_s, headers)
         if r.status_code not in [requests.codes.ok, requests.codes.created]:
             log.info("Status: {}, Message: {}".format(r.status_code, r.text))
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         return r.json()
 
     def _get(self, uri, debug=False, **kwargs):
@@ -144,12 +149,12 @@ class _Client:
         # If the resource is not found, return None ...
         if r.status_code == requests.codes.not_found:
             return None
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         return r.json()
 
     def _request_json(self, uri, method='GET'):
         r = self._serviceconnector.request(method, uri)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         return r.json()
 
     @classmethod
