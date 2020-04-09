@@ -20,7 +20,7 @@ from .message import Message
 from .utils import get_logger
 from .serviceconnector import ServiceConnector
 from .camel import Document, CamelResource
-
+from .utils import raise_for_status_with_detail
 
 log = get_logger(__name__)
 
@@ -78,7 +78,7 @@ class ServiceActivation(Document):
     def _fetch_activation(self):
         uri = self.URIS['activation'].format(activation_id=self._activation_id)
         r = self._connector.request('GET', uri)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
 
         rsp = r.json()
         return rsp.get('activation')
@@ -121,7 +121,7 @@ class Agent(CamelResource):
         """
         uri = self.URIS['invoke_service'].format(agent_name=self.name, service_name=service_name)
         r = self._connector.request(method='POST', uri=uri, body=json.dumps(message.to_params()), headers={'Content-Type': 'application/json'})
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
 
         return ServiceActivation(r.json(), self._connector)
 
@@ -137,6 +137,6 @@ class Agent(CamelResource):
         uri = Agent.URIS['get_agent'].format(name=name)
         log.debug('Getting agent using URI: %s' % uri)
         r = connector.request('GET', uri)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
 
         return Agent(r.json(), connector)

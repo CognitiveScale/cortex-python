@@ -19,6 +19,7 @@ import json
 from .serviceconnector import ServiceConnector
 from .camel import CamelResource
 from .utils import get_logger
+from .utils import raise_for_status_with_detail
 
 log = get_logger(__name__)
 
@@ -40,7 +41,7 @@ class ConnectionClient:
         data = json.dumps(connection)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request('POST', uri, data, headers)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         return r.json()
 
     ## Private ##
@@ -48,7 +49,7 @@ class ConnectionClient:
     def _bootstrap(self):
         uri  = self.URIs['connections'] + '/_/bootstrap'
         r = self._serviceconnector.request('GET', uri)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         return r.json()
 
 
@@ -74,6 +75,6 @@ class Connection(CamelResource):
         uri = 'connections/{name}'.format(name=name)
         log.debug('Getting connection using URI: %s' % uri)
         r = client._serviceconnector.request('GET', uri)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
 
         return Connection(r.json(), client._serviceconnector)

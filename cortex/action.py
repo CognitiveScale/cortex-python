@@ -20,6 +20,7 @@ from .serviceconnector import _Client, ServiceConnector
 from .message import Message
 from .utils import get_logger
 from .camel import CamelResource
+from .utils import raise_for_status_with_detail
 
 log = get_logger(__name__)
 
@@ -93,7 +94,7 @@ class ActionClient(_Client):
 
         m = MultipartEncoder(action)
         r = self._serviceconnector.request(method='POST', uri=uri, body=m, headers={'Content-type': m.content_type})
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         return r.json()
 
     def invoke_action(self, action_name, params: Dict[str, object]) -> Dict[str, object]:
@@ -106,7 +107,7 @@ class ActionClient(_Client):
         :return: The result of calling the action.
         """
         uri = self.URIs['invoke'].format(action_name=action_name)
-        return self._post_json(uri, params)
+        return self._post_json_with_retry(uri, params)
 
     def get_logs(self, action_name) -> Dict[str, object]:
         """
@@ -130,7 +131,7 @@ class ActionClient(_Client):
             uri = '{}?actionType={}'.format(uri, action_type)
 
         r = self._serviceconnector.request(method='DELETE', uri=uri)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
 
         return r.json()
 
@@ -144,7 +145,7 @@ class ActionClient(_Client):
         """
         uri = self.URIs['task_status'].format(action_name=action_name, task_id=task_id)
         r = self._serviceconnector.request(method='GET', uri=uri)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         return r.text
 
 
@@ -189,7 +190,7 @@ class ActionClient(_Client):
         """
         uri = self.URIs['task_delete'].format(action_name=action_name, task_id=task_id)
         r = self._serviceconnector.request(method='DELETE', uri=uri)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         return r.json()
 
     def send_message(self, message):
@@ -328,7 +329,7 @@ class Action(CamelResource):
         uri = 'actions/{name}'.format(name=name)
         log.debug('Getting action using URI: %s' % uri)
         r = connector.request('GET', uri)
-        r.raise_for_status()
+        raise_for_status_with_detail(r)
         j = r.json()
 
         return Action(j.get('function', {}), connector)
