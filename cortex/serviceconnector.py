@@ -19,6 +19,8 @@ import pkg_resources
 import platform
 import requests
 import sys
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from typing import Dict, Any, List, Union, Optional, Type, TypeVar
 from .utils import get_logger, get_cortex_profile
 from .utils import raise_for_status_with_detail
@@ -62,6 +64,33 @@ class ServiceConnector:
         return requests.post(url, files=files, data=data, headers=headersToSend,
                              verify=self.verify_ssl_cert)
 
+    def request_with_retry(self, method, uri, body=None, headers=None, debug=False, **kwargs):
+        """
+        Sends a request to the specified URI. Auto retry with backoff on 50x errors
+
+        :param method: HTTP method to send to the service.
+        :param uri: Path to extend service URL.
+        :param data: Data to send as the post body to the service.
+        :param headers: HTTP headers for this post.
+        :param kwargs: Additional key-value pairs to pass to the request method.
+        :return: :class:`Response <Response>` object
+        """
+        headersToSend = self._construct_headers(headers)
+        url = self._construct_url(uri)
+        if debug:
+            log.debug("START {} {}".format('GET', uri))
+        r = ServiceConnector.requests_retry_session().request(
+            method,
+            url,
+            data=body,
+            headers=headersToSend,
+            verify=self.verify_ssl_cert,
+            **kwargs
+        )
+        if debug:
+            log.debug("  END {} {}".format('GET', uri))
+        return r
+
     def request(self, method, uri, body=None, headers=None, debug=False, **kwargs):
         """
         Sends a request to the specified URI.
@@ -88,6 +117,26 @@ class ServiceConnector:
         if debug:
             log.debug("  END {} {}".format('GET', uri))
         return r
+
+    @staticmethod
+    def requests_retry_session(
+            retries=5,
+            backoff_factor=0.5,
+            status_forcelist=(500, 502, 503, 504),
+            session=None,
+    ):
+        session = session or requests.Session()
+        retry = Retry(
+            total=retries,
+            read=retries,
+            connect=retries,
+            backoff_factor=backoff_factor,
+            status_forcelist=status_forcelist,
+        )
+        adapter = HTTPAdapter(max_retries=retry)
+        session.mount('http://', adapter)
+        session.mount('https://', adapter)
+        return session
 
     @staticmethod
     def urljoin(pieces):
@@ -132,6 +181,15 @@ class _Client:
         body_s = json.dumps(obj)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request('POST', uri, body_s, headers)
+        if r.status_code not in [requests.codes.ok, requests.codes.created]:
+            log.info("Status: {}, Message: {}".format(r.status_code, r.text))
+        raise_for_status_with_detail(r)
+        return r.json()
+
+    def _post_json_with_retry(self, uri, obj: JSONType):
+        body_s = json.dumps(obj)
+        headers = {'Content-Type': 'application/json'}
+        r = self._serviceconnector.request_with_retry('POST', uri, body_s, headers)
         if r.status_code not in [requests.codes.ok, requests.codes.created]:
             log.info("Status: {}, Message: {}".format(r.status_code, r.text))
         raise_for_status_with_detail(r)

@@ -107,7 +107,7 @@ class ActionClient(_Client):
         :return: The result of calling the action.
         """
         uri = self.URIs['invoke'].format(action_name=action_name)
-        return self._post_json(uri, params)
+        return self._post_json_with_retry(uri, params)
 
     def get_logs(self, action_name) -> Dict[str, object]:
         """
