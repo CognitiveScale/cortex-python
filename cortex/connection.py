@@ -16,7 +16,7 @@ limitations under the License.
 """
 
 import json
-from .serviceconnector import ServiceConnector
+from .serviceconnector import _Client, ServiceConnector
 from .camel import CamelResource
 from .utils import get_logger
 from .utils import raise_for_status_with_detail
@@ -24,14 +24,16 @@ from .utils import raise_for_status_with_detail
 log = get_logger(__name__)
 
 
-class ConnectionClient:
+class ConnectionClient(_Client):
     """
     A client used to manage connections.
     """
     URIs = {'connections': 'connections'}
 
-    def __init__(self, url, version, token):
-        self._serviceconnector = ServiceConnector(url, version, token)
+    def __init__(self,  *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Content apis only have v2..
+        self._serviceconnector.version = 2
 
     def save_connection(self, connection: object):
         """
