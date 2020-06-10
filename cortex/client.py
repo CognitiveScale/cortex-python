@@ -153,6 +153,9 @@ class Client(object):
     def _mk_connector(self):
         return ServiceConnector(self._url, self._version, self._token.token, self._verify_ssl_cert)
 
+    # expose this to allow developer to pass client instance into Connectors
+    def to_connector(self):
+        return self._mk_connector()
 
 class Local:
 
@@ -221,7 +224,7 @@ class Cortex(object):
         if not password:
             password = env.password
 
-        auth = AuthenticationClient(api_endpoint, version=2)
+        auth = AuthenticationClient(api_endpoint, version=2, verify_ssl_cert=verify_ssl_cert)
         t = _Token(auth, token, account, username, password)
 
         return Client(url=api_endpoint, version=api_version, token=t, verify_ssl_cert=verify_ssl_cert)

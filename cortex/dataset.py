@@ -26,21 +26,18 @@ from .camel import CamelResource
 from .pipeline import Pipeline
 from .pipeline_loader import PipelineLoader
 from .properties import PropertyManager
-from .serviceconnector import ServiceConnector
+from .serviceconnector import _Client
 from .utils import raise_for_status_with_detail
 
 log = get_logger(__name__)
 
 
-class DatasetsClient:
+class DatasetsClient(_Client):
     """
     A client used to manage datasets.
     """
     URIs = {'datasets': 'datasets',
             'content':  'content'}
-
-    def __init__(self, url, version, token):
-        self._serviceconnector = ServiceConnector(url, version, token)
 
     def list_datasets(self):
         """

@@ -16,14 +16,14 @@ limitations under the License.
 
 import json
 
-from .serviceconnector import ServiceConnector
+from .serviceconnector import _Client
 from .utils import get_logger
 from .utils import raise_for_status_with_detail
 
 log = get_logger(__name__)
 
 
-class AuthenticationClient:
+class AuthenticationClient(_Client):
     """
     Client authentication.
     """
@@ -32,9 +32,6 @@ class AuthenticationClient:
             'register':     'admin/tenants/register',
             'upgrade':      'accounts/token/upgrade'
            }
-
-    def __init__(self, url, version):
-        self._serviceconnector = ServiceConnector(url, version, None)
 
     def fetch_auth_token(self, tenant_id, username, password):
         """
