@@ -190,7 +190,7 @@ class Cortex(object):
     """
 
     @staticmethod
-    def client(api_endpoint:str=None, api_version:int=_DEFAULT_API_VERSION, verify_ssl_cert:bool=False, token:str=None, account:str=None, username:str=None, password:str=None):
+    def client(api_endpoint:str=None, api_version:int=_DEFAULT_API_VERSION, verify_ssl_cert=None, token:str=None, account:str=None, username:str=None, password:str=None):
         """
         Gets a client with the provided parameters. All parameters are optional and default to environment variable values if not specified.
 
