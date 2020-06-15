@@ -153,6 +153,9 @@ class Client(object):
     def _mk_connector(self):
         return ServiceConnector(self._url, self._version, self._token.token, self._verify_ssl_cert)
 
+    # expose this to allow developer to pass client instance into Connectors
+    def to_connector(self):
+        return self._mk_connector()
 
 class Local:
 
@@ -187,7 +190,7 @@ class Cortex(object):
     """
 
     @staticmethod
-    def client(api_endpoint:str=None, api_version:int=_DEFAULT_API_VERSION, verify_ssl_cert:bool=False, token:str=None, account:str=None, username:str=None, password:str=None):
+    def client(api_endpoint:str=None, api_version:int=_DEFAULT_API_VERSION, verify_ssl_cert=None, token:str=None, account:str=None, username:str=None, password:str=None):
         """
         Gets a client with the provided parameters. All parameters are optional and default to environment variable values if not specified.
 
@@ -221,7 +224,7 @@ class Cortex(object):
         if not password:
             password = env.password
 
-        auth = AuthenticationClient(api_endpoint, version=2)
+        auth = AuthenticationClient(api_endpoint, version=2, verify_ssl_cert=verify_ssl_cert)
         t = _Token(auth, token, account, username, password)
 
         return Client(url=api_endpoint, version=api_version, token=t, verify_ssl_cert=verify_ssl_cert)

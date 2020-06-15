@@ -23,18 +23,20 @@ from requests.exceptions import HTTPError
 import tenacity
 import time
 
-from .serviceconnector import ServiceConnector
+from .serviceconnector import _Client
 from .utils import raise_for_status_with_detail
 
 
-class ManagedContentClient:
+class ManagedContentClient(_Client):
     """
     A client used to access the Cortex managed content service (blob store).
     """
     URIs = {'content':  'content'}
 
-    def __init__(self, url, version, token):
-        self._serviceconnector = ServiceConnector(url, version, token)
+    def __init__(self,  *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Content apis only have v2..
+        self._serviceconnector.version = 2
 
     def upload(self, key: str, stream_name: str, stream: object, content_type: str, retries: int = 1):
         """Store `stream` file in S3.
@@ -144,7 +146,7 @@ class ManagedContentClient:
         """
         uri = self._make_content_uri(key)
         r = self._serviceconnector.request('HEAD', uri)
-        return r.status_code is 200
+        return r.status_code == 200
 
     ## Private ##
 
