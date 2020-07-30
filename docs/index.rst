@@ -1,11 +1,12 @@
-.. CognitiveScale Cortex Python library documentation master file, created by
-   sphinx-quickstart.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+------
 
+**Home:** `Cortex Fabric Documentation <https://cognitivescale.github.io/cortex-fabric/>`_
 
 Cortex Python Reference
 =======================
+
+This reference guide describes the base API client library to integrate with Cortex Fabric. 
+Refer to the `Cortex Fabric documentation <https://cognitivescale.github.io/cortex-fabric/>`_ for more info about how to use the library.
 
 Cortex
 ------

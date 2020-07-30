@@ -49,7 +49,7 @@ sys.path.insert(0, os.path.abspath('..'))
 extensions = ['sphinx.ext.autodoc']
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+# templates_path = ['_templates']
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -61,16 +61,16 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'CORTEX Python SDK'
-copyright = u'2017, Cognitive Scale'
-author = u'Cognitive Scale'
+project = u'Cortex Python Library'
+copyright = u'2020, CognitiveScale'
+author = u'CognitiveScale'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
 # The short X.Y version.
-version = u'5.0.11'
+version = u''
 # The full version, including alpha/beta/rc tags.
 release = version 
 
@@ -98,7 +98,16 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'basic'
+html_theme = 'classic'
+
+# for classic theme options see https://www.sphinx-doc.org/en/master/usage/theming.html#builtin-themes
+html_theme_options = {
+    "rightsidebar": "false",
+    "stickysidebar": "true",
+    "relbarbgcolor": "black",
+    "externalrefs": "true",
+    "codebgcolor": "#f2f2f2"
+}
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -115,7 +124,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'CORTEXPythonSDKdoc'
+htmlhelp_basename = 'CORTEXPythonLibraryDoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -142,8 +151,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'CORTEXPythonSDK.tex', u'CORTEX Python SDK Documentation',
-     u'Cognitive Scale', 'manual'),
+    (master_doc, 'CORTEXPythonSDK.tex', u'Cortex Python Library Documentation',
+     u'CognitiveScale', 'manual'),
 ]
 
 
@@ -152,7 +161,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'cortexpythonclient', u'CORTEX Python SDK Documentation',
+    (master_doc, 'cortexpythonclient', u'Cortex Python Library Documentation',
      [author], 1)
 ]
 
@@ -163,8 +172,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'CORTEXPythonSDK', u'CORTEX Python SDK Documentation',
-     author, 'CORTEXPythonSDK', 'One line description of project.',
+    (master_doc, 'CORTEXPythonSDK', u'Cortex Python Library Documentation',
+     author, 'CORTEXPythonSDK', 'Cortex Python Library Documentation',
      'Miscellaneous'),
 ]
 
