@@ -6,7 +6,7 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-versioning
 SPHINXPROJ    = CORTEXPython
 SOURCEDIR     = docs
-BUILDDIR      = docs/_build/html
+BUILDDIR      = _build/html
 
 # Put it first so that "make" without argument is like "make help".
 help:
