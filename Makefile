@@ -53,7 +53,7 @@ stage:
 	git checkout develop
 
 docs:
-	cd docs && make html && cd -
+	cd docs && make build && cd -
 	# The resulting reference docs file is in docs/_build/html/index.html
 
 dev.push: build.alpha
