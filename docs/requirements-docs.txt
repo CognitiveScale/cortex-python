@@ -1,5 +1,5 @@
 Sphinx>=1.8.3,<2
-git+https://github.com/Lingnik/sphinxcontrib-versioning@Lingnik-patch-1
+sphinx-versions
 sphinx_rtd_theme
 sphinxcontrib-restbuilder==0.2
 nbconvert==5.4.0
