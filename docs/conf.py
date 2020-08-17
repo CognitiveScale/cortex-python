@@ -98,7 +98,7 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'basic'
+# html_theme = 'basic'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -172,7 +172,6 @@ texinfo_documents = [
 scv_overflow = ("-A", "html_theme=sphinx_rtd_theme")
 scv_priority = 'branches'
 scv_root_ref = 'sphinxVersion'
-html_static_path = ['_static']
 # TODO look into https://sphinx-versions.readthedocs.io/en/latest/settings.html#cmdoption-w
 
 # Copied from https://stackoverflow.com/questions/49331914/enable-versions-in-sidebar-in-sphinx-read-the-docs-theme
@@ -254,5 +253,4 @@ html_context['current_language'] = current_language
 #
 # html_context['downloads'].append( ('epub', '/' +REPO_NAME+ '/' +current_language+ '/' +current_version+ '/' +project+ '-docs_' +current_language+ '_' +current_version+ '.epub') )
 
-display_lower_left = True
 
