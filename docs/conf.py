@@ -254,5 +254,5 @@ html_context['current_language'] = current_language
 #
 # html_context['downloads'].append( ('epub', '/' +REPO_NAME+ '/' +current_language+ '/' +current_version+ '/' +project+ '-docs_' +current_language+ '_' +current_version+ '.epub') )
 
-
+display_lower_left = True
 
