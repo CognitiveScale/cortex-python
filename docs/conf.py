@@ -49,7 +49,6 @@ import sphinx_rtd_theme
 #extensions = ['sphinx.ext.autodoc', 'sphinxcontrib.restbuilder']
 extensions = ['sphinx.ext.autodoc',
               "sphinx_rtd_theme",
-              "sphinx-versions"
               ]
 
 # Add any paths that contain templates here, relative to this directory.
