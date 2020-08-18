@@ -183,10 +183,10 @@ texinfo_documents = [
 ]
 
 # https://sphinx-versions.readthedocs.io/en/latest/settings.html#cmdoption
-scv_overflow = ("-A", "html_theme=sphinx_rtd_theme")
 scv_priority = 'branches'
 # TODO look into https://sphinx-versions.readthedocs.io/en/latest/settings.html#cmdoption-w
 html_theme = 'sphinx_rtd_theme'
+scv_overflow = ("-A", "html_theme=sphinx_rtd_theme")
 
 # Copied from https://stackoverflow.com/questions/49331914/enable-versions-in-sidebar-in-sphinx-read-the-docs-theme
 ############################
@@ -244,9 +244,9 @@ html_context['version'] = current_version
 # POPULATE LINKS TO OTHER VERSIONS
 html_context['versions'] = list()
 
-versions = [branch.name for branch in repo.branches]
-for version in versions:
-    html_context['versions'].append( (version, '/' +REPO_NAME+ '/'  +current_language+ '/' +version+ '/') )
+# versions = [branch.name for branch in repo.branches]
+# for version in versions:
+#     html_context['versions'].append( (version, '/' +REPO_NAME+ '/' +version+ '/') )
 
 # # POPULATE LINKS TO OTHER FORMATS/DOWNLOADS
 #
