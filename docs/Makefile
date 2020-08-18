@@ -2,7 +2,7 @@
 #
 
 # You can set these variables from the command line.
-SPHINXOPTS    = ""
+SPHINXOPTS    =
 SPHINXBUILD   = sphinx-versioning
 SPHINXPROJ    = CORTEXPython
 SOURCEDIR     = ./docs
