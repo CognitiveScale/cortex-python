@@ -205,17 +205,17 @@ if 'REPO_NAME' in os.environ:
 else:
     REPO_NAME = ''
 
-# # SET CURRENT_LANGUAGE
-# if 'current_language' in os.environ:
-#     # get the current_language env var set by buildDocs.sh
-#     current_language = os.environ['current_language']
-# else:
-#     # the user is probably doing `make html`
-#     # set this build's current language to english
-#     current_language = 'en'
-#
-# # tell the theme which language to we're currently building
-# html_context['current_language'] = current_language
+# SET CURRENT_LANGUAGE
+if 'current_language' in os.environ:
+    # get the current_language env var set by buildDocs.sh
+    current_language = os.environ['current_language']
+else:
+    # the user is probably doing `make html`
+    # set this build's current language to english
+    current_language = 'en'
+
+# tell the theme which language to we're currently building
+html_context['current_language'] = current_language
 
 # # SET CURRENT_VERSION
 # from git import Repo
