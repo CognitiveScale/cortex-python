@@ -217,36 +217,36 @@ else:
 # tell the theme which language to we're currently building
 html_context['current_language'] = current_language
 
-# # SET CURRENT_VERSION
-# from git import Repo
-# repo = Repo( search_parent_directories=True )
-#
-# if 'current_version' in os.environ:
-#     # get the current_version env var set by buildDocs.sh
-#     current_version = os.environ['current_version']
-# else:
-#     # the user is probably doing `make html`
-#     # set this build's current version by looking at the branch
-#     current_version = repo.active_branch.name
-#
-# # tell the theme which version we're currently on ('current_version' affects
-# # the lower-left rtd menu and 'version' affects the logo-area version)
-# html_context['current_version'] = current_version
-# html_context['version'] = current_version
-#
-# # POPULATE LINKS TO OTHER LANGUAGES
-# html_context['languages'] = [ ('en', '/' +REPO_NAME+ '/en/' +current_version+ '/') ]
-#
-# # languages = [lang.name for lang in os.scandir('locales') if lang.is_dir()]
-# # for lang in languages:
-# #     html_context['languages'].append( (lang, '/' +REPO_NAME+ '/' +lang+ '/' +current_version+ '/') )
-#
-# # POPULATE LINKS TO OTHER VERSIONS
-# html_context['versions'] = list()
-#
-# versions = [branch.name for branch in repo.branches]
-# for version in versions:
-#     html_context['versions'].append( (version, '/' +REPO_NAME+ '/'  +current_language+ '/' +version+ '/') )
+# SET CURRENT_VERSION
+from git import Repo
+repo = Repo( search_parent_directories=True )
+
+if 'current_version' in os.environ:
+    # get the current_version env var set by buildDocs.sh
+    current_version = os.environ['current_version']
+else:
+    # the user is probably doing `make html`
+    # set this build's current version by looking at the branch
+    current_version = repo.active_branch.name
+
+# tell the theme which version we're currently on ('current_version' affects
+# the lower-left rtd menu and 'version' affects the logo-area version)
+html_context['current_version'] = current_version
+html_context['version'] = current_version
+
+# POPULATE LINKS TO OTHER LANGUAGES
+html_context['languages'] = [ ('en', '/' +REPO_NAME+ '/en/' +current_version+ '/') ]
+
+# languages = [lang.name for lang in os.scandir('locales') if lang.is_dir()]
+# for lang in languages:
+#     html_context['languages'].append( (lang, '/' +REPO_NAME+ '/' +lang+ '/' +current_version+ '/') )
+
+# POPULATE LINKS TO OTHER VERSIONS
+html_context['versions'] = list()
+
+versions = [branch.name for branch in repo.branches]
+for version in versions:
+    html_context['versions'].append( (version, '/' +REPO_NAME+ '/'  +current_language+ '/' +version+ '/') )
 
 # # POPULATE LINKS TO OTHER FORMATS/DOWNLOADS
 #
