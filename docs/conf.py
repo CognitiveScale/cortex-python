@@ -49,6 +49,7 @@ sys.path.insert(0, os.path.abspath('..'))
 #extensions = ['sphinx.ext.autodoc', 'sphinxcontrib.restbuilder']
 extensions = ['sphinx.ext.autodoc',
               "sphinx_rtd_theme",
+              "sphinx-versions"
               ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -174,7 +175,6 @@ texinfo_documents = [
 # https://sphinx-versions.readthedocs.io/en/latest/settings.html#cmdoption
 scv_overflow = ("-A", "html_theme=sphinx_rtd_theme")
 scv_priority = 'branches'
-scv_root_ref = 'sphinxVersion'
 # TODO look into https://sphinx-versions.readthedocs.io/en/latest/settings.html#cmdoption-w
 html_theme = 'sphinx_rtd_theme'
 

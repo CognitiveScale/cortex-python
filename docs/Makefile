@@ -5,8 +5,8 @@
 SPHINXOPTS    = ""
 SPHINXBUILD   = sphinx-versioning
 SPHINXPROJ    = CORTEXPython
-SOURCEDIR     = docs
-BUILDDIR      = _build/html
+SOURCEDIR     = ./docs
+BUILDDIR      = ./_build/html
 
 # Put it first so that "make" without argument is like "make help".
 help:
@@ -18,4 +18,4 @@ help:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 	# @$(SPHINXBUILD) $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
-	@$(SPHINXBUILD) $@ -r sphinxVersion "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+	@$(SPHINXBUILD) -vv $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
