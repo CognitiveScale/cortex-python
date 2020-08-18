@@ -33,6 +33,7 @@ limitations under the License.
 #
 import os
 import sys
+import sphinx_rtd_theme
 # sys.path.insert(0, os.path.abspath('..'))
 sys.path.append(os.path.abspath('..'))
 sys.path.append(os.path.abspath('../cortex'))
@@ -175,6 +176,7 @@ scv_overflow = ("-A", "html_theme=sphinx_rtd_theme")
 scv_priority = 'branches'
 scv_root_ref = 'sphinxVersion'
 # TODO look into https://sphinx-versions.readthedocs.io/en/latest/settings.html#cmdoption-w
+html_theme = 'sphinx_rtd_theme'
 
 # Copied from https://stackoverflow.com/questions/49331914/enable-versions-in-sidebar-in-sphinx-read-the-docs-theme
 ############################
