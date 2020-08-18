@@ -21,3 +21,4 @@ notebooks/**/*.md
 **/.ipynb_checkpoints/
 *BranchRevision.json
 venv/
+/env/
