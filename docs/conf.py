@@ -34,9 +34,7 @@ limitations under the License.
 import os
 import sys
 import sphinx_rtd_theme
-# sys.path.insert(0, os.path.abspath('..'))
-sys.path.append(os.path.abspath('..'))
-sys.path.append(os.path.abspath('../cortex'))
+sys.path.insert(0, os.path.abspath('..'))
 
 
 # -- General configuration ------------------------------------------------
@@ -49,7 +47,9 @@ sys.path.append(os.path.abspath('../cortex'))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 #extensions = ['sphinx.ext.autodoc', 'sphinxcontrib.restbuilder']
-extensions = ['sphinx.ext.autodoc', "sphinx_rtd_theme"]
+extensions = ['sphinx.ext.autodoc',
+              "sphinx_rtd_theme",
+              ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
