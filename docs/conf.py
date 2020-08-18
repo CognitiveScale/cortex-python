@@ -35,6 +35,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
 import sphinx_rtd_theme
+from git import Repo
 
 
 # -- General configuration ------------------------------------------------
@@ -218,7 +219,6 @@ else:
 html_context['current_language'] = current_language
 
 # SET CURRENT_VERSION
-from git import Repo
 repo = Repo( search_parent_directories=True )
 
 if 'current_version' in os.environ:
