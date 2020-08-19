@@ -34,7 +34,7 @@ limitations under the License.
 import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
-import sphinx_rtd_theme
+# import sphinx_rtd_theme
 from git import Repo
 
 
@@ -49,7 +49,7 @@ from git import Repo
 # ones.
 #extensions = ['sphinx.ext.autodoc', 'sphinxcontrib.restbuilder']
 extensions = ['sphinx.ext.autodoc',
-              "sphinx_rtd_theme",
+              # "sphinx_rtd_theme",
               'sphinx.ext.githubpages'
               ]
 
