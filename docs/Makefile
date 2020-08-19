@@ -18,4 +18,4 @@ help:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 #	@$(SPHINXBUILD) -g .. $@ -r sphinxVersion "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
-	@$(SPHINXBUILD) -g .. $@ -r sphinxVersion "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+	@$(SPHINXBUILD) $@ -r sphinxVersion "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)

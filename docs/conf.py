@@ -187,7 +187,7 @@ texinfo_documents = [
 ]
 
 # https://sphinx-versions.readthedocs.io/en/latest/settings.html#cmdoption
-scv_priority = 'tags'
+# scv_priority = 'branches'
 # TODO look into https://sphinx-versions.readthedocs.io/en/latest/settings.html#cmdoption-w
 html_theme = 'sphinx_rtd_theme'
 scv_overflow = ("-A", "html_theme=sphinx_rtd_theme")
