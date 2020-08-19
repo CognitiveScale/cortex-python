@@ -56,5 +56,11 @@ docs:
 	cd docs && make build && cd -
 	# The resulting reference docs file is in docs/_build/html/index.html
 
+docs.dev:
+	sphinx-build -M html docs docs/_build/
+
+docs.all:
+	sphinx-versioning -v build -r sphinxVersion -w sphinxVersion -p tags docs docs/_build
+
 dev.push: build.alpha
 	twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
