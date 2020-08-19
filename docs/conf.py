@@ -219,7 +219,7 @@ else:
 html_context['current_language'] = current_language
 
 # SET CURRENT_VERSION
-repo = Repo( search_parent_directories=True )
+repo = Repo()
 
 if 'current_version' in os.environ:
     # get the current_version env var set by buildDocs.sh
