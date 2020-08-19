@@ -54,6 +54,8 @@ extensions = ['sphinx.ext.autodoc',
               ]
 
 # TODO this seems to be breaking the build
+if 'CI' in os.environ and os.environ['CI'] == 'true':
+    extensions.append('sphinxcontrib.versioning.sphinx_')
 # extensions.append('sphinxcontrib.versioning.sphinx_')
 
 # Add any paths that contain templates here, relative to this directory.
