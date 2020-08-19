@@ -54,7 +54,7 @@ extensions = ['sphinx.ext.autodoc',
               ]
 
 # TODO this seems to be breaking the build
-extensions.append('sphinxcontrib.versioning.sphinx_')
+# extensions.append('sphinxcontrib.versioning.sphinx_')
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -234,7 +234,7 @@ html_context['current_version'] = current_version
 html_context['version'] = current_version
 
 # POPULATE LINKS TO OTHER LANGUAGES
-html_context['languages'] = [ ]
+html_context['languages'] = []
 
 # languages = [lang.name for lang in os.scandir('locales') if lang.is_dir()]
 # for lang in languages:
@@ -250,7 +250,7 @@ else:
 # # POPULATE LINKS TO OTHER VERSIONS
 # html_context['versions'] = list()
 #
-# versions = ['sphinxVersion']
+versions = ['sphinxVersion']
 # # versions = [branch.name for branch in repo.branches]
 # for version in versions:
 #     html_context['versions'].append( (version, '/' +REPO_NAME+ '/' +version+ '/') )
