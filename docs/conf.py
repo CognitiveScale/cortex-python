@@ -53,7 +53,8 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.githubpages'
               ]
 
-extensions.append('sphinxcontrib.versioning.sphinx_')
+# TODO this seems to be breaking the build
+# extensions.append('sphinxcontrib.versioning.sphinx_')
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
