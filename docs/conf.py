@@ -246,13 +246,14 @@ else:
     REPO_NAME = 'cortex-python'
     # REPO_NAME = repo.remotes.origin.url.split('.git')[0].split('/')[-1]
 
-# POPULATE LINKS TO OTHER VERSIONS
-html_context['versions'] = list()
-
-versions = ['sphinxVersion']
-# versions = [branch.name for branch in repo.branches]
-for version in versions:
-    html_context['versions'].append( (version, '/' +REPO_NAME+ '/' +version+ '/') )
+# TODO this block is what generates the version links for a single build
+# # POPULATE LINKS TO OTHER VERSIONS
+# html_context['versions'] = list()
+#
+# versions = ['sphinxVersion']
+# # versions = [branch.name for branch in repo.branches]
+# for version in versions:
+#     html_context['versions'].append( (version, '/' +REPO_NAME+ '/' +version+ '/') )
 
 # # POPULATE LINKS TO OTHER FORMATS/DOWNLOADS
 #
@@ -280,7 +281,6 @@ html_context['downloads'] = list()
 html_context['display_github'] = True
 html_context['github_user'] = 'cognitivescale'
 html_context['github_repo'] = REPO_NAME
-html_context['github_version'] = 'master/docs/'
 
 print('HTML_CONTEXT')
 print(html_context)
