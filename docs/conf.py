@@ -50,6 +50,7 @@ from git import Repo
 #extensions = ['sphinx.ext.autodoc', 'sphinxcontrib.restbuilder']
 extensions = ['sphinx.ext.autodoc',
               "sphinx_rtd_theme",
+              'sphinx.ext.githubpages'
               ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -184,7 +185,7 @@ texinfo_documents = [
 ]
 
 # https://sphinx-versions.readthedocs.io/en/latest/settings.html#cmdoption
-scv_priority = 'branches'
+scv_priority = 'tags'
 # TODO look into https://sphinx-versions.readthedocs.io/en/latest/settings.html#cmdoption-w
 html_theme = 'sphinx_rtd_theme'
 scv_overflow = ("-A", "html_theme=sphinx_rtd_theme")
@@ -219,7 +220,7 @@ else:
 html_context['current_language'] = current_language
 
 # SET CURRENT_VERSION
-repo = Repo()
+repo = Repo( search_parent_directories=True )
 
 if 'current_version' in os.environ:
     # get the current_version env var set by buildDocs.sh
@@ -227,7 +228,7 @@ if 'current_version' in os.environ:
 else:
     # the user is probably doing `make html`
     # set this build's current version by looking at the branch
-    current_version = "sphinxVersion"
+    current_version = repo.active_branch.name
 
 # tell the theme which version we're currently on ('current_version' affects
 # the lower-left rtd menu and 'version' affects the logo-area version)
@@ -235,7 +236,7 @@ html_context['current_version'] = current_version
 html_context['version'] = current_version
 
 # POPULATE LINKS TO OTHER LANGUAGES
-# html_context['languages'] = [ ('en', '/' +REPO_NAME+ '/en/' +current_version+ '/') ]
+html_context['languages'] = [ ]
 
 # languages = [lang.name for lang in os.scandir('locales') if lang.is_dir()]
 # for lang in languages:
@@ -244,9 +245,9 @@ html_context['version'] = current_version
 # POPULATE LINKS TO OTHER VERSIONS
 html_context['versions'] = list()
 
-# versions = [branch.name for branch in repo.branches]
-# for version in versions:
-#     html_context['versions'].append( (version, '/' +REPO_NAME+ '/' +version+ '/') )
+versions = [branch.name for branch in repo.branches]
+for version in versions:
+    html_context['versions'].append( (version, '/' +REPO_NAME+ '/' +version+ '/') )
 
 # # POPULATE LINKS TO OTHER FORMATS/DOWNLOADS
 #
@@ -262,7 +263,7 @@ html_context['versions'] = list()
 # # settings for EPUB
 # epub_basename = 'target'
 #
-# html_context['downloads'] = list()
+html_context['downloads'] = list()
 # html_context['downloads'].append( ('pdf', '/' +REPO_NAME+ '/' +current_language+ '/' +current_version+ '/' +project+ '-docs_' +current_language+ '_' +current_version+ '.pdf') )
 #
 # html_context['downloads'].append( ('epub', '/' +REPO_NAME+ '/' +current_language+ '/' +current_version+ '/' +project+ '-docs_' +current_language+ '_' +current_version+ '.epub') )
