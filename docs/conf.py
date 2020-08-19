@@ -268,4 +268,11 @@ html_context['downloads'] = list()
 #
 # html_context['downloads'].append( ('epub', '/' +REPO_NAME+ '/' +current_language+ '/' +current_version+ '/' +project+ '-docs_' +current_language+ '_' +current_version+ '.epub') )
 
+##########################
+# "EDIT ON GITHUB" LINKS #
+##########################
 
+html_context['display_github'] = True
+html_context['github_user'] = 'cognitivescale'
+html_context['github_repo'] = REPO_NAME
+html_context['github_version'] = 'master/docs/'
