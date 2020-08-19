@@ -227,7 +227,7 @@ if 'current_version' in os.environ:
 else:
     # the user is probably doing `make html`
     # set this build's current version by looking at the branch
-    current_version = repo.active_branch.name
+    current_version = "sphinxVersion"
 
 # tell the theme which version we're currently on ('current_version' affects
 # the lower-left rtd menu and 'version' affects the logo-area version)
