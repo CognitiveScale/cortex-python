@@ -202,10 +202,7 @@ html_context['display_lower_left'] = True
 
 templates_path = ['_templates']
 
-if 'REPO_NAME' in os.environ:
-    REPO_NAME = os.environ['REPO_NAME']
-else:
-    REPO_NAME = ''
+
 
 # SET CURRENT_LANGUAGE
 if 'current_language' in os.environ:
@@ -242,6 +239,11 @@ html_context['languages'] = [ ]
 # for lang in languages:
 #     html_context['languages'].append( (lang, '/' +REPO_NAME+ '/' +lang+ '/' +current_version+ '/') )
 
+if 'REPO_NAME' in os.environ:
+    REPO_NAME = os.environ['REPO_NAME']
+else:
+    REPO_NAME = repo.remotes.origin.url.split('.git')[0].split('/')[-1]
+
 # POPULATE LINKS TO OTHER VERSIONS
 html_context['versions'] = list()
 
@@ -276,3 +278,6 @@ html_context['display_github'] = True
 html_context['github_user'] = 'cognitivescale'
 html_context['github_repo'] = REPO_NAME
 html_context['github_version'] = 'master/docs/'
+
+print('HTML_CONTEXT')
+print(html_context)
