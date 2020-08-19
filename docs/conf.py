@@ -215,9 +215,6 @@ else:
     # set this build's current language to english
     current_language = 'en'
 
-# tell the theme which language to we're currently building
-html_context['current_language'] = current_language
-
 # SET CURRENT_VERSION
 repo = Repo( search_parent_directories=True )
 
