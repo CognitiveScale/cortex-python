@@ -248,7 +248,8 @@ else:
 # POPULATE LINKS TO OTHER VERSIONS
 html_context['versions'] = list()
 
-versions = [branch.name for branch in repo.branches]
+versions = []
+# versions = [branch.name for branch in repo.branches]
 for version in versions:
     html_context['versions'].append( (version, '/' +REPO_NAME+ '/' +version+ '/') )
 
