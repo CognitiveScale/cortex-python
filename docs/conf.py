@@ -216,7 +216,7 @@ else:
     current_language = 'en'
 
 # SET CURRENT_VERSION
-repo = Repo( search_parent_directories=True )
+# repo = Repo( search_parent_directories=True )
 
 if 'current_version' in os.environ:
     # get the current_version env var set by buildDocs.sh
