@@ -233,7 +233,7 @@ html_context['current_version'] = current_version
 html_context['version'] = current_version
 
 # POPULATE LINKS TO OTHER LANGUAGES
-html_context['languages'] = []
+# html_context['languages'] = []
 
 # languages = [lang.name for lang in os.scandir('locales') if lang.is_dir()]
 # for lang in languages:
@@ -255,7 +255,7 @@ versions = ['sphinxVersion']
 #     html_context['versions'].append( (version, '/' +REPO_NAME+ '/' +version+ '/') )
 
 #
-html_context['downloads'] = list()
+# html_context['downloads'] = list()
 # html_context['downloads'].append( ('pdf', '/' +REPO_NAME+ '/' +current_language+ '/' +current_version+ '/' +project+ '-docs_' +current_language+ '_' +current_version+ '.pdf') )
 #
 # html_context['downloads'].append( ('epub', '/' +REPO_NAME+ '/' +current_language+ '/' +current_version+ '/' +project+ '-docs_' +current_language+ '_' +current_version+ '.epub') )
