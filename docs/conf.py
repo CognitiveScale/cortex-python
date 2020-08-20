@@ -34,8 +34,6 @@ limitations under the License.
 import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
-# import sphinx_rtd_theme
-from git import Repo
 
 
 # -- General configuration ------------------------------------------------
@@ -217,6 +215,7 @@ templates_path = ['_templates']
 #     current_language = 'en'
 #
 # # SET CURRENT_VERSION
+# from git import Repo
 # # repo = Repo( search_parent_directories=True )
 #
 # if 'current_version' in os.environ:

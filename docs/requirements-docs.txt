@@ -1,6 +1,6 @@
 Sphinx>=1.8.3,<2
 sphinx-versions
 gitpython
-sphinx-rtd-theme
+sphinx-rtd-theme==0.4.3
 sphinxcontrib-restbuilder==0.2
 nbconvert==5.4.0
