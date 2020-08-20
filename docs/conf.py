@@ -49,7 +49,7 @@ from git import Repo
 # ones.
 #extensions = ['sphinx.ext.autodoc', 'sphinxcontrib.restbuilder']
 extensions = ['sphinx.ext.autodoc',
-              # "sphinx_rtd_theme",
+              "sphinx_rtd_theme",
               'sphinx.ext.githubpages'
               ]
 
@@ -107,23 +107,23 @@ todo_include_todos = False
 # a list of builtin themes.
 #
 # html_theme = 'basic'
+html_theme = "sphinx_rtd_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
 # html_theme_options = {}
-# html_theme_options = {
-#     'display_version': True,
-#     'prev_next_buttons_location': 'bottom',
-#     'style_nav_header_background': 'white',
-#     # Toc options
-#     'collapse_navigation': True,
-#     'sticky_navigation': True,
-#     'navigation_depth': 4,
-#     'includehidden': True,
-#     'titles_only': False
-# }
+html_theme_options = {
+    'display_version': True,
+    'prev_next_buttons_location': 'bottom',
+    # Toc options
+    'collapse_navigation': True,
+    'sticky_navigation': True,
+    'navigation_depth': 4,
+    'includehidden': True,
+    'titles_only': False
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -190,7 +190,6 @@ texinfo_documents = [
 # https://sphinx-versions.readthedocs.io/en/latest/settings.html#cmdoption
 # scv_priority = 'branches'
 # TODO look into https://sphinx-versions.readthedocs.io/en/latest/settings.html#cmdoption-w
-html_theme = 'sphinx_rtd_theme'
 # scv_overflow = ("-A", "html_theme=sphinx_rtd_theme")
 
 # Copied from https://stackoverflow.com/questions/49331914/enable-versions-in-sidebar-in-sphinx-read-the-docs-theme
@@ -255,19 +254,6 @@ versions = ['sphinxVersion']
 # for version in versions:
 #     html_context['versions'].append( (version, '/' +REPO_NAME+ '/' +version+ '/') )
 
-# # POPULATE LINKS TO OTHER FORMATS/DOWNLOADS
-#
-# # settings for creating PDF with rinoh
-# rinoh_documents = [(
-#     master_doc,
-#     'target',
-#     project+ ' Documentation',
-#     '© ' +copyright,
-# )]
-# today_fmt = "%B %d, %Y"
-#
-# # settings for EPUB
-# epub_basename = 'target'
 #
 html_context['downloads'] = list()
 # html_context['downloads'].append( ('pdf', '/' +REPO_NAME+ '/' +current_language+ '/' +current_version+ '/' +project+ '-docs_' +current_language+ '_' +current_version+ '.pdf') )
