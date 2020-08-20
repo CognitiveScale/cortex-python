@@ -203,70 +203,70 @@ except NameError:
 html_context['display_lower_left'] = True
 
 templates_path = ['_templates']
-
-
-
-# SET CURRENT_LANGUAGE
-if 'current_language' in os.environ:
-    # get the current_language env var set by buildDocs.sh
-    current_language = os.environ['current_language']
-else:
-    # the user is probably doing `make html`
-    # set this build's current language to english
-    current_language = 'en'
-
-# SET CURRENT_VERSION
-# repo = Repo( search_parent_directories=True )
-
-if 'current_version' in os.environ:
-    # get the current_version env var set by buildDocs.sh
-    current_version = os.environ['current_version']
-else:
-    # the user is probably doing `make html`
-    # set this build's current version by looking at the branch
-    # current_version = repo.active_branch.name
-    current_version = 'sphinxVersion'
-
-# tell the theme which version we're currently on ('current_version' affects
-# the lower-left rtd menu and 'version' affects the logo-area version)
-html_context['current_version'] = current_version
-html_context['version'] = current_version
-
-# POPULATE LINKS TO OTHER LANGUAGES
-# html_context['languages'] = []
-
-# languages = [lang.name for lang in os.scandir('locales') if lang.is_dir()]
-# for lang in languages:
-#     html_context['languages'].append( (lang, '/' +REPO_NAME+ '/' +lang+ '/' +current_version+ '/') )
-
-if 'REPO_NAME' in os.environ:
-    REPO_NAME = os.environ['REPO_NAME']
-else:
-    REPO_NAME = 'cortex-python'
-    # REPO_NAME = repo.remotes.origin.url.split('.git')[0].split('/')[-1]
-
-# TODO this block is what generates the version links for a single build
-# # POPULATE LINKS TO OTHER VERSIONS
-# html_context['versions'] = list()
 #
-versions = ['sphinxVersion']
-# # versions = [branch.name for branch in repo.branches]
-# for version in versions:
-#     html_context['versions'].append( (version, '/' +REPO_NAME+ '/' +version+ '/') )
-
 #
-# html_context['downloads'] = list()
-# html_context['downloads'].append( ('pdf', '/' +REPO_NAME+ '/' +current_language+ '/' +current_version+ '/' +project+ '-docs_' +current_language+ '_' +current_version+ '.pdf') )
 #
-# html_context['downloads'].append( ('epub', '/' +REPO_NAME+ '/' +current_language+ '/' +current_version+ '/' +project+ '-docs_' +current_language+ '_' +current_version+ '.epub') )
-
-##########################
-# "EDIT ON GITHUB" LINKS #
-##########################
-
-html_context['display_github'] = True
-html_context['github_user'] = 'cognitivescale'
-html_context['github_repo'] = REPO_NAME
+# # SET CURRENT_LANGUAGE
+# if 'current_language' in os.environ:
+#     # get the current_language env var set by buildDocs.sh
+#     current_language = os.environ['current_language']
+# else:
+#     # the user is probably doing `make html`
+#     # set this build's current language to english
+#     current_language = 'en'
+#
+# # SET CURRENT_VERSION
+# # repo = Repo( search_parent_directories=True )
+#
+# if 'current_version' in os.environ:
+#     # get the current_version env var set by buildDocs.sh
+#     current_version = os.environ['current_version']
+# else:
+#     # the user is probably doing `make html`
+#     # set this build's current version by looking at the branch
+#     # current_version = repo.active_branch.name
+#     current_version = 'sphinxVersion'
+#
+# # tell the theme which version we're currently on ('current_version' affects
+# # the lower-left rtd menu and 'version' affects the logo-area version)
+# html_context['current_version'] = current_version
+# html_context['version'] = current_version
+#
+# # POPULATE LINKS TO OTHER LANGUAGES
+# # html_context['languages'] = []
+#
+# # languages = [lang.name for lang in os.scandir('locales') if lang.is_dir()]
+# # for lang in languages:
+# #     html_context['languages'].append( (lang, '/' +REPO_NAME+ '/' +lang+ '/' +current_version+ '/') )
+#
+# if 'REPO_NAME' in os.environ:
+#     REPO_NAME = os.environ['REPO_NAME']
+# else:
+#     REPO_NAME = 'cortex-python'
+#     # REPO_NAME = repo.remotes.origin.url.split('.git')[0].split('/')[-1]
+#
+# # TODO this block is what generates the version links for a single build
+# # # POPULATE LINKS TO OTHER VERSIONS
+# # html_context['versions'] = list()
+# #
+# versions = ['sphinxVersion']
+# # # versions = [branch.name for branch in repo.branches]
+# # for version in versions:
+# #     html_context['versions'].append( (version, '/' +REPO_NAME+ '/' +version+ '/') )
+#
+# #
+# # html_context['downloads'] = list()
+# # html_context['downloads'].append( ('pdf', '/' +REPO_NAME+ '/' +current_language+ '/' +current_version+ '/' +project+ '-docs_' +current_language+ '_' +current_version+ '.pdf') )
+# #
+# # html_context['downloads'].append( ('epub', '/' +REPO_NAME+ '/' +current_language+ '/' +current_version+ '/' +project+ '-docs_' +current_language+ '_' +current_version+ '.epub') )
+#
+# ##########################
+# # "EDIT ON GITHUB" LINKS #
+# ##########################
+#
+# html_context['display_github'] = True
+# html_context['github_user'] = 'cognitivescale'
+# html_context['github_repo'] = REPO_NAME
 
 print('HTML_CONTEXT')
 print(html_context)
