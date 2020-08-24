@@ -1,6 +1,6 @@
 Sphinx>=2,<3
 sphinx-multiversion
 gitpython
-sphinx-rtd-theme==0.4.3
+sphinx-rtd-theme
 sphinxcontrib-restbuilder==0.2
 nbconvert==5.4.0
