@@ -1,0 +1,1338 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Cortex Python Reference &mdash; CORTEX Python SDK 5.0.11 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#" class="icon icon-home" alt="Documentation Home"> CORTEX Python SDK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                5.0.11
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Cortex Python Reference</a><ul>
+<li><a class="reference internal" href="#cortex">Cortex</a></li>
+<li><a class="reference internal" href="#cortexenv">CortexEnv</a></li>
+<li><a class="reference internal" href="#cortex-client">Cortex Client</a></li>
+<li><a class="reference internal" href="#cortex-action">Cortex Action</a></li>
+<li><a class="reference internal" href="#cortex-agent">Cortex Agent</a></li>
+<li><a class="reference internal" href="#cortex-dataset">Cortex Dataset</a></li>
+<li><a class="reference internal" href="#cortex-experiment">Cortex Experiment</a></li>
+<li><a class="reference internal" href="#cortex-pipeline">Cortex Pipeline</a></li>
+<li><a class="reference internal" href="#cortex-skill">Cortex Skill</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#rest-api-clients">REST API Clients</a><ul>
+<li><a class="reference internal" href="#actionclient">ActionClient</a></li>
+<li><a class="reference internal" href="#authenticationclient">AuthenticationClient</a></li>
+<li><a class="reference internal" href="#connectionclient">ConnectionClient</a></li>
+<li><a class="reference internal" href="#managedcontentclient">ManagedContentClient</a></li>
+<li><a class="reference internal" href="#datasetsclient">DatasetsClient</a></li>
+<li><a class="reference internal" href="#sessionclient">SessionClient</a></li>
+<li><a class="reference internal" href="#types">Types</a></li>
+<li><a class="reference internal" href="#exceptions">Exceptions</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">CORTEX Python SDK</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Cortex Python Reference</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="cortex-python-reference">
+<h1>Cortex Python Reference<a class="headerlink" href="#cortex-python-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="cortex">
+<h2>Cortex<a class="headerlink" href="#cortex" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cortex.client.Cortex">
+<em class="property">class </em><code class="sig-prename descclassname">cortex.client.</code><code class="sig-name descname">Cortex</code><a class="headerlink" href="#cortex.client.Cortex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entry point to the Cortex API.</p>
+<dl class="method">
+<dt id="cortex.client.Cortex.client">
+<em class="property">static </em><code class="sig-name descname">client</code><span class="sig-paren">(</span><em class="sig-param">api_endpoint: str = None</em>, <em class="sig-param">api_version: int = 3</em>, <em class="sig-param">verify_ssl_cert=None</em>, <em class="sig-param">token: str = None</em>, <em class="sig-param">account: str = None</em>, <em class="sig-param">username: str = None</em>, <em class="sig-param">password: str = None</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.client.Cortex.client" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a client with the provided parameters. All parameters are optional and default to environment variable values if not specified.</p>
+<p><strong>Example</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cortex</span> <span class="kn">import</span> <span class="n">Cortex</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cortex</span> <span class="o">=</span> <span class="n">Cortex</span><span class="o">.</span><span class="n">client</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_endpoint</strong> – The Cortex URL.</p></li>
+<li><p><strong>api_version</strong> – The version of the API to use with this client.</p></li>
+<li><p><strong>verify_ssl_cert</strong> – A boolean to indiciate if the SSL certificate needs to be validated.</p></li>
+<li><p><strong>token</strong> – An authentication token.</p></li>
+<li><p><strong>account</strong> – The Cortex account the client connects to.</p></li>
+<li><p><strong>username</strong> – The user name for the client.</p></li>
+<li><p><strong>password</strong> – The password for the client.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.client.Cortex.from_message">
+<em class="property">static </em><code class="sig-name descname">from_message</code><span class="sig-paren">(</span><em class="sig-param">msg</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.client.Cortex.from_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a Cortex client from a message that must incluide an API endpoint and a token.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>msg</strong> – A message for constructing a Cortex Client.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.client.Cortex.login">
+<em class="property">static </em><code class="sig-name descname">login</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cortex.client.Cortex.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Login to Cortex5. The function prompts the caller for Cortex URI, account, user name, and password, retrieves the user’s JWT token and sets the information as environment variables for use by the SDK.</p>
+<p><strong>Example</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Cortex</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+<span class="go">Cortex URI: [https://api.cortex.insights.ai]</span>
+<span class="go">Account: accountId</span>
+<span class="go">Username: userName</span>
+<span class="go">Password: ****</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="cortexenv">
+<h2>CortexEnv<a class="headerlink" href="#cortexenv" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cortex.env.CortexEnv">
+<em class="property">class </em><code class="sig-prename descclassname">cortex.env.</code><code class="sig-name descname">CortexEnv</code><span class="sig-paren">(</span><em class="sig-param">api_endpoint=None</em>, <em class="sig-param">token=None</em>, <em class="sig-param">account=None</em>, <em class="sig-param">username=None</em>, <em class="sig-param">password=None</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.env.CortexEnv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets environment variables for Cortex.</p>
+<dl class="method">
+<dt id="cortex.env.CortexEnv.get_cortex_profile">
+<em class="property">static </em><code class="sig-name descname">get_cortex_profile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cortex.env.CortexEnv.get_cortex_profile" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the configured cortex profile from the local machine</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.env.CortexEnv.get_cortex_token">
+<em class="property">static </em><code class="sig-name descname">get_cortex_token</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cortex.env.CortexEnv.get_cortex_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the cortex token from the local machine</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.env.CortexEnv.get_token">
+<em class="property">static </em><code class="sig-name descname">get_token</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cortex.env.CortexEnv.get_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the token from either the cortex_token env variable or the profile’s token.
+if cortex_token and both cortex_profile are falsey, then cortexToken will be None</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>profile</strong> – configured cortex profile from the local machine</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="cortex-client">
+<h2>Cortex Client<a class="headerlink" href="#cortex-client" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cortex.client.Client">
+<em class="property">class </em><code class="sig-prename descclassname">cortex.client.</code><code class="sig-name descname">Client</code><span class="sig-paren">(</span><em class="sig-param">url: str</em>, <em class="sig-param">token: cortex.client._Token</em>, <em class="sig-param">version: int = 3</em>, <em class="sig-param">verify_ssl_cert: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.client.Client" title="Permalink to this definition">¶</a></dt>
+<dd><p>API client used to access agents, skills, and datasets.</p>
+<dl class="method">
+<dt id="cortex.client.Client.action">
+<code class="sig-name descname">action</code><span class="sig-paren">(</span><em class="sig-param">name: str</em><span class="sig-paren">)</span> &#x2192; cortex.action.Action<a class="headerlink" href="#cortex.client.Client.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets an action with the specified name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.client.Client.agent">
+<code class="sig-name descname">agent</code><span class="sig-paren">(</span><em class="sig-param">name: str</em><span class="sig-paren">)</span> &#x2192; cortex.agent.Agent<a class="headerlink" href="#cortex.client.Client.agent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets an agent with the specified name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.client.Client.builder">
+<code class="sig-name descname">builder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cortex.client.Client.builder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a builder.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.client.Client.dataset">
+<code class="sig-name descname">dataset</code><span class="sig-paren">(</span><em class="sig-param">name: str</em><span class="sig-paren">)</span> &#x2192; cortex.dataset.Dataset<a class="headerlink" href="#cortex.client.Client.dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a dataset with the specified name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.client.Client.experiment">
+<code class="sig-name descname">experiment</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">version: str = '2'</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.client.Client.experiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets an experiment with the specified name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.client.Client.message">
+<code class="sig-name descname">message</code><span class="sig-paren">(</span><em class="sig-param">payload: dict</em>, <em class="sig-param">properties: dict = None</em><span class="sig-paren">)</span> &#x2192; cortex.message.Message<a class="headerlink" href="#cortex.client.Client.message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs a Message from payload and properties if given.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>payload</strong> – The payload to include in the Message.</p></li>
+<li><p><strong>properties</strong> – The properties to include in the Message.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A Message object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.client.Client.session">
+<code class="sig-name descname">session</code><span class="sig-paren">(</span><em class="sig-param">session_id=None</em>, <em class="sig-param">ttl=None</em>, <em class="sig-param">instance_id=None</em><span class="sig-paren">)</span> &#x2192; cortex.session.Session<a class="headerlink" href="#cortex.client.Client.session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a session with the specified identifier.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.client.Client.skill">
+<code class="sig-name descname">skill</code><span class="sig-paren">(</span><em class="sig-param">name: str</em><span class="sig-paren">)</span> &#x2192; cortex.skill.Skill<a class="headerlink" href="#cortex.client.Client.skill" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a skill with the specified name.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="cortex-action">
+<h2>Cortex Action<a class="headerlink" href="#cortex-action" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cortex.action.Action">
+<em class="property">class </em><code class="sig-prename descclassname">cortex.action.</code><code class="sig-name descname">Action</code><span class="sig-paren">(</span><em class="sig-param">action</em>, <em class="sig-param">connector: cortex.serviceconnector.ServiceConnector</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.action.Action" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Cortex Action. Actions are the computional part of a skill.</p>
+<dl class="method">
+<dt id="cortex.action.Action.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cortex.action.Action.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete an action.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.action.Action.get_action">
+<em class="property">static </em><code class="sig-name descname">get_action</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">connector: cortex.serviceconnector.ServiceConnector</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.action.Action.get_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetches an Action to work with.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> – The name of the Action to retrieve.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An Action object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.action.Action.get_deployment_status">
+<code class="sig-name descname">get_deployment_status</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cortex.action.Action.get_deployment_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the deployment status of an action.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.action.Action.get_task_logs">
+<code class="sig-name descname">get_task_logs</code><span class="sig-paren">(</span><em class="sig-param">task_id</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.action.Action.get_task_logs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the logs for a task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>task_id</strong> – The identifier for the task.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.action.Action.get_task_status">
+<code class="sig-name descname">get_task_status</code><span class="sig-paren">(</span><em class="sig-param">task_id</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.action.Action.get_task_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the status for a job task (a task is a particular invocation of the action type: job).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>task_id</strong> – The identifier for the task.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.action.Action.invoke">
+<code class="sig-name descname">invoke</code><span class="sig-paren">(</span><em class="sig-param">message: cortex.message.Message</em>, <em class="sig-param">timeout=30</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.action.Action.invoke" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invoke an action.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>message</strong> – A Message to send as input to the action.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A response Message.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="cortex-agent">
+<h2>Cortex Agent<a class="headerlink" href="#cortex-agent" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cortex.agent.Agent">
+<em class="property">class </em><code class="sig-prename descclassname">cortex.agent.</code><code class="sig-name descname">Agent</code><span class="sig-paren">(</span><em class="sig-param">agent</em>, <em class="sig-param">connector: cortex.serviceconnector.ServiceConnector</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.agent.Agent" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Cortex5 agent, which represents the deployable applications
+that aggregate the skills, inputs and outputs, and data flows.</p>
+<dl class="method">
+<dt id="cortex.agent.Agent.get_agent">
+<em class="property">static </em><code class="sig-name descname">get_agent</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">connector: cortex.serviceconnector.ServiceConnector</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.agent.Agent.get_agent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetches an agent to work with.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the agent to retrieve.</p></li>
+<li><p><strong>connector</strong> – A service connector.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An agent object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.agent.Agent.invoke_service">
+<code class="sig-name descname">invoke_service</code><span class="sig-paren">(</span><em class="sig-param">service_name: str</em>, <em class="sig-param">message: cortex.message.Message</em>, <em class="sig-param">timeout=30</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.agent.Agent.invoke_service" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invokes a service, polling for a result for the number of seconds specified when the service times out.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>service_name</strong> – The name of the service to invoke.</p></li>
+<li><p><strong>message</strong> – The payload for the service invocation.</p></li>
+<li><p><strong>timeout</strong> – Number of seconds to poll for a result.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Service activation result.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.agent.Agent.invoke_service_async">
+<code class="sig-name descname">invoke_service_async</code><span class="sig-paren">(</span><em class="sig-param">service_name: str</em>, <em class="sig-param">message: cortex.message.Message</em><span class="sig-paren">)</span> &#x2192; cortex.agent.ServiceActivation<a class="headerlink" href="#cortex.agent.Agent.invoke_service_async" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invokes a service.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>service_name</strong> – The name of the service to invoke.</p></li>
+<li><p><strong>message</strong> – The payload for the service invocation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Service activation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="cortex-dataset">
+<h2>Cortex Dataset<a class="headerlink" href="#cortex-dataset" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cortex.dataset.Dataset">
+<em class="property">class </em><code class="sig-prename descclassname">cortex.dataset.</code><code class="sig-name descname">Dataset</code><span class="sig-paren">(</span><em class="sig-param">ds</em>, <em class="sig-param">client: cortex.dataset.DatasetsClient</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.dataset.Dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the data and query parameters for accessing inputs to
+a managed content file or database connection.</p>
+<dl class="method">
+<dt id="cortex.dataset.Dataset.as_pandas">
+<code class="sig-name descname">as_pandas</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cortex.dataset.Dataset.as_pandas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a pandas dataframe for the dataset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.dataset.Dataset.get_dataframe">
+<code class="sig-name descname">get_dataframe</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cortex.dataset.Dataset.get_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the dataframe for the dataset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.dataset.Dataset.get_dataset">
+<em class="property">static </em><code class="sig-name descname">get_dataset</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">client: cortex.dataset.DatasetsClient</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.dataset.Dataset.get_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the dataset to retrieve.</p></li>
+<li><p><strong>client</strong> – The client instance to use.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dataset object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.dataset.Dataset.get_stream">
+<code class="sig-name descname">get_stream</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cortex.dataset.Dataset.get_stream" title="Permalink to this definition">¶</a></dt>
+<dd><p>Streams the data coming from the dataset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.dataset.Dataset.pipeline">
+<code class="sig-name descname">pipeline</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">clear_cache=False</em>, <em class="sig-param">depends=None</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.dataset.Dataset.pipeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a pipeline for the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – name of the pipeline</p></li>
+<li><p><strong>clear_cache</strong> – a flag to indicate whether previous results for the pipeline should be cleared</p></li>
+<li><p><strong>depends</strong> – a list of pipeline names upon which this pipeline depends</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="cortex-experiment">
+<h2>Cortex Experiment<a class="headerlink" href="#cortex-experiment" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cortex.experiment.Experiment">
+<em class="property">class </em><code class="sig-prename descclassname">cortex.experiment.</code><code class="sig-name descname">Experiment</code><span class="sig-paren">(</span><em class="sig-param">document: Dict</em>, <em class="sig-param">client: cortex.experiment.ExperimentClient</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.experiment.Experiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracks runs, associated parameters, metrics, and artifacts of experiments.</p>
+<dl class="method">
+<dt id="cortex.experiment.Experiment.get_experiment">
+<em class="property">static </em><code class="sig-name descname">get_experiment</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">client: cortex.experiment.ExperimentClient</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.experiment.Experiment.get_experiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetches or creates an experiment to work with.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the experiment to retrieve.</p></li>
+<li><p><strong>client</strong> – The client instance to use.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An experiment object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="cortex-pipeline">
+<h2>Cortex Pipeline<a class="headerlink" href="#cortex-pipeline" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cortex.pipeline.Pipeline">
+<em class="property">class </em><code class="sig-prename descclassname">cortex.pipeline.</code><code class="sig-name descname">Pipeline</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">depends=None</em>, <em class="sig-param">loader=&lt;cortex.pipeline_loader.PipelineLoader object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.pipeline.Pipeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a pipeline abstraction used to transform or enrich data; steps either Python functions
+or classes with a transform method; a pipeline step accepts a dataframe as an argument and is expected to transform
+or enrich the dataframe in sequential order.</p>
+<p>To create a pipeline to remove an unused column:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cortex</span> <span class="kn">import</span> <span class="n">Cortex</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_ds</span> <span class="o">=</span> <span class="n">cortex</span><span class="o">.</span><span class="n">dataset</span><span class="p">(</span><span class="s1">&#39; &lt;path to your data set&gt; &#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">train_ds</span><span class="o">.</span><span class="n">pipeline</span><span class="p">(</span><span class="s1">&#39; &lt;pipeline name&gt; &#39;</span><span class="p">,</span> <span class="n">clear_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pipeline</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">drop_unused</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Id&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># this pipeline will drop the field ID</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pipeline</span><span class="o">.</span><span class="n">add_step</span><span class="p">(</span><span class="n">drop_unused</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="cortex.pipeline.Pipeline.add_dependency">
+<code class="sig-name descname">add_dependency</code><span class="sig-paren">(</span><em class="sig-param">pipeline</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.pipeline.Pipeline.add_dependency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a dependency on another pipeline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pipeline</strong> – the pipeline on which this pipeline depends.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.pipeline.Pipeline.add_step">
+<code class="sig-name descname">add_step</code><span class="sig-paren">(</span><em class="sig-param">step</em>, <em class="sig-param">name=None</em>, <em class="sig-param">serializer=&lt;function dumps&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.pipeline.Pipeline.add_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a transformation function to the pipeline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fn</strong> – The function to add.</p></li>
+<li><p><strong>name</strong> – An optional name for the function to add.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.pipeline.Pipeline.dependencies">
+<em class="property">property </em><code class="sig-name descname">dependencies</code><a class="headerlink" href="#cortex.pipeline.Pipeline.dependencies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a list of dependencies for the pipeline.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.pipeline.Pipeline.dumps">
+<code class="sig-name descname">dumps</code><span class="sig-paren">(</span><em class="sig-param">stream=None</em>, <em class="sig-param">notebook=False</em>, <em class="sig-param">camel='1.0.0'</em>, <em class="sig-param">yaml_format=False</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.pipeline.Pipeline.dumps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dumps the steps, dependencies, and context for the pipeline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stream</strong> – Optional stream on which to dump the pipeline.</p></li>
+<li><p><strong>notebook</strong> – Optional notebook where the dump should be displayed.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.pipeline.Pipeline.from_pipeline">
+<code class="sig-name descname">from_pipeline</code><span class="sig-paren">(</span><em class="sig-param">pipeline</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.pipeline.Pipeline.from_pipeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copies a pipeline from the given pipeline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pipeline</strong> – The pipeline from which to copy this pipeline.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.pipeline.Pipeline.get_context">
+<code class="sig-name descname">get_context</code><span class="sig-paren">(</span><em class="sig-param">key: str</em>, <em class="sig-param">default_value=None</em>, <em class="sig-param">deserializer=&lt;function loads&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.pipeline.Pipeline.get_context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the context for the pipeline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – The key for the context.</p></li>
+<li><p><strong>default_value</strong> – (Optional) A default value to return if the context for the given key is not found</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The context for the given key, if it exists. If it does not exist, the default value or <cite>none</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.pipeline.Pipeline.get_step">
+<code class="sig-name descname">get_step</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">deserializer=&lt;function loads&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.pipeline.Pipeline.get_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a pipeline step by name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> – Name of the function to get.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The code for the step.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.pipeline.Pipeline.name">
+<em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#cortex.pipeline.Pipeline.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the name of the pipeline.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.pipeline.Pipeline.remove_step">
+<code class="sig-name descname">remove_step</code><span class="sig-paren">(</span><em class="sig-param">name</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.pipeline.Pipeline.remove_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes a step by name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> – Name of the function to remove.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.pipeline.Pipeline.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param">reset_deps=False</em>, <em class="sig-param">reset_context=False</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.pipeline.Pipeline.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes all steps from the pipeline, but leaves context and dependencies in place. Context and
+dependencies can also be reset using the optional flags for each.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reset_deps</strong> – If <cite>True</cite>, removes all dependencies.  Default: <cite>False</cite>.</p></li>
+<li><p><strong>reset_context</strong> – If <cite>True</cite>, resets context. Default: <cite>False</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The pipeline instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.pipeline.Pipeline.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">code_deserializer=&lt;function loads&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.pipeline.Pipeline.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the steps on the pipeline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – Data to pass to dependencies.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The dataframe as transformed by the dependencies and steps.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.pipeline.Pipeline.set_context">
+<code class="sig-name descname">set_context</code><span class="sig-paren">(</span><em class="sig-param">key: str</em>, <em class="sig-param">obj</em>, <em class="sig-param">serializer=&lt;function dumps&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.pipeline.Pipeline.set_context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the context for the pipeline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – The key for the context to set.</p></li>
+<li><p><strong>obj</strong> – The value for the context to set.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.pipeline.Pipeline.steps">
+<em class="property">property </em><code class="sig-name descname">steps</code><a class="headerlink" href="#cortex.pipeline.Pipeline.steps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a list of steps in the pipeline.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="cortex-skill">
+<h2>Cortex Skill<a class="headerlink" href="#cortex-skill" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cortex.skill.Skill">
+<em class="property">class </em><code class="sig-prename descclassname">cortex.skill.</code><code class="sig-name descname">Skill</code><span class="sig-paren">(</span><em class="sig-param">skill</em>, <em class="sig-param">connector: cortex.serviceconnector.ServiceConnector</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.skill.Skill" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computational components of an agent; executes an
+atomic unit of work and can be triggered by one or more inputs to produce
+one or more outputs.</p>
+<dl class="method">
+<dt id="cortex.skill.Skill.get_skill">
+<em class="property">static </em><code class="sig-name descname">get_skill</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">connector: cortex.serviceconnector.ServiceConnector</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.skill.Skill.get_skill" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetches a skill to work with.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the skill to retrieve.</p></li>
+<li><p><strong>connector</strong> – connector to use</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A skill object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.skill.Skill.invoke">
+<code class="sig-name descname">invoke</code><span class="sig-paren">(</span><em class="sig-param">input_name: str</em>, <em class="sig-param">message: cortex.message.Message</em>, <em class="sig-param">timeout=30</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.skill.Skill.invoke" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invokes the skill with a given message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_name</strong> – Identifier for an input to this skill.</p></li>
+<li><p><strong>message</strong> – The message used for the invocation.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="rest-api-clients">
+<h1>REST API Clients<a class="headerlink" href="#rest-api-clients" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="actionclient">
+<h2>ActionClient<a class="headerlink" href="#actionclient" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cortex.action.ActionClient">
+<em class="property">class </em><code class="sig-prename descclassname">cortex.action.</code><code class="sig-name descname">ActionClient</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.action.ActionClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>A client for the Cortex Actions API.</p>
+<dl class="method">
+<dt id="cortex.action.ActionClient.delete_action">
+<code class="sig-name descname">delete_action</code><span class="sig-paren">(</span><em class="sig-param">action_name</em>, <em class="sig-param">action_type=None</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.action.ActionClient.delete_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes an action.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>action_name</strong> – The name of the action to delete.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The status of the deletion.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.action.ActionClient.delete_task">
+<code class="sig-name descname">delete_task</code><span class="sig-paren">(</span><em class="sig-param">action_name</em>, <em class="sig-param">task_id</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.action.ActionClient.delete_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a task associated with a job action.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>action_name</strong> – The name of the job action.</p></li>
+<li><p><strong>task_id</strong> – The ID of the task to delete.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Deletion status.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.action.ActionClient.deploy_action">
+<code class="sig-name descname">deploy_action</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">kind: str</em>, <em class="sig-param">docker: str</em>, <em class="sig-param">code=''</em>, <em class="sig-param">action_type=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.action.ActionClient.deploy_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deploys an action.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The resource name of the action.</p></li>
+<li><p><strong>kind</strong> – The action kind (only for functions) - python:2 or python:3</p></li>
+<li><p><strong>docker</strong> – The Docker image to use (optional for functions, required for <strong>jobs</strong> and <strong>daemons</strong>)</p></li>
+<li><p><strong>code</strong> – The action code to deploy; expects a file-like object and zip compressed contents.</p></li>
+<li><p><strong>action_type</strong> – The type of action workload: function, daemon, job (default: function).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The action deployment result.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.action.ActionClient.get_job_stats">
+<code class="sig-name descname">get_job_stats</code><span class="sig-paren">(</span><em class="sig-param">action_name</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.action.ActionClient.get_job_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets execution stats for tasks associated with action <cite>action_name</cite> of type job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>action_name</strong> – The name of the job action.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A <cite>dict</cite> with stats information.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.action.ActionClient.get_logs">
+<code class="sig-name descname">get_logs</code><span class="sig-paren">(</span><em class="sig-param">action_name</em><span class="sig-paren">)</span> &#x2192; Dict[str, object]<a class="headerlink" href="#cortex.action.ActionClient.get_logs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the most recent logs for an action.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>action_name</strong> – The action name to retrieve logs from.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The most recent logs for the requested action.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.action.ActionClient.get_task_logs">
+<code class="sig-name descname">get_task_logs</code><span class="sig-paren">(</span><em class="sig-param">action_name</em>, <em class="sig-param">task_id</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.action.ActionClient.get_task_logs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the logs for an action task (for job type actions only).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>action_name</strong> – The name of the job action for the task.</p></li>
+<li><p><strong>task_id</strong> – The task id to get logs for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Task logs.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.action.ActionClient.get_task_status">
+<code class="sig-name descname">get_task_status</code><span class="sig-paren">(</span><em class="sig-param">action_name</em>, <em class="sig-param">task_id</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.action.ActionClient.get_task_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the status for an action task (for job type actions only).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>action_name</strong> – The name of the job action for the task.</p></li>
+<li><p><strong>task_id</strong> – The task id to get status for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Task status.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.action.ActionClient.get_tasks">
+<code class="sig-name descname">get_tasks</code><span class="sig-paren">(</span><em class="sig-param">action_name</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.action.ActionClient.get_tasks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets list of tasks associated with the give job <cite>action_name</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>action_name</strong> – The name of the job action.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A <cite>dict</cite> with tasks.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.action.ActionClient.invoke_action">
+<code class="sig-name descname">invoke_action</code><span class="sig-paren">(</span><em class="sig-param">action_name, params: Dict[str, object]</em><span class="sig-paren">)</span> &#x2192; Dict[str, object]<a class="headerlink" href="#cortex.action.ActionClient.invoke_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invokes an action.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>action_name</strong> – The name of the action to invoke.</p></li>
+<li><p><strong>params</strong> – The body params to send the action.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The result of calling the action.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.action.ActionClient.send_message">
+<code class="sig-name descname">send_message</code><span class="sig-paren">(</span><em class="sig-param">message</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.action.ActionClient.send_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send Synapse Message</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>message</strong> – Input message</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>status of message</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="authenticationclient">
+<h2>AuthenticationClient<a class="headerlink" href="#authenticationclient" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cortex.auth.AuthenticationClient">
+<em class="property">class </em><code class="sig-prename descclassname">cortex.auth.</code><code class="sig-name descname">AuthenticationClient</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.auth.AuthenticationClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Client authentication.</p>
+<dl class="method">
+<dt id="cortex.auth.AuthenticationClient.fetch_auth_token">
+<code class="sig-name descname">fetch_auth_token</code><span class="sig-paren">(</span><em class="sig-param">tenant_id</em>, <em class="sig-param">username</em>, <em class="sig-param">password</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.auth.AuthenticationClient.fetch_auth_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the JWT token for a given user in a given tenant.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tenant_id</strong> – The ID of the tenant/account to authenticate to.</p></li>
+<li><p><strong>username</strong> – The name of the user.</p></li>
+<li><p><strong>password</strong> – The user’s password.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A JWT string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.auth.AuthenticationClient.register">
+<code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param">tenant_info</em>, <em class="sig-param">invitation_code</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.auth.AuthenticationClient.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Registers a client with an invitation code.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tenant_info</strong> – The tenant to register.</p></li>
+<li><p><strong>invitation_code</strong> – The invitation code for the registration requset.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="connectionclient">
+<h2>ConnectionClient<a class="headerlink" href="#connectionclient" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cortex.connection.ConnectionClient">
+<em class="property">class </em><code class="sig-prename descclassname">cortex.connection.</code><code class="sig-name descname">ConnectionClient</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.connection.ConnectionClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>A client used to manage connections.</p>
+<dl class="method">
+<dt id="cortex.connection.ConnectionClient.save_connection">
+<code class="sig-name descname">save_connection</code><span class="sig-paren">(</span><em class="sig-param">connection: object</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.connection.ConnectionClient.save_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Posts the connection client information.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="managedcontentclient">
+<h2>ManagedContentClient<a class="headerlink" href="#managedcontentclient" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cortex.content.ManagedContentClient">
+<em class="property">class </em><code class="sig-prename descclassname">cortex.content.</code><code class="sig-name descname">ManagedContentClient</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.content.ManagedContentClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>A client used to access the Cortex managed content service (blob store).</p>
+<dl class="method">
+<dt id="cortex.content.ManagedContentClient.download">
+<code class="sig-name descname">download</code><span class="sig-paren">(</span><em class="sig-param">key: str</em>, <em class="sig-param">retries: int = 1</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.content.ManagedContentClient.download" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download a file from managed content (S3).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – The path of the file to retrieve.</p></li>
+<li><p><strong>retries</strong> – Number of times to retry a failed request from a response.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A Generator.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.content.ManagedContentClient.exists">
+<code class="sig-name descname">exists</code><span class="sig-paren">(</span><em class="sig-param">key: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#cortex.content.ManagedContentClient.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that a file from managed content (S3) exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>key</strong> – The path of the file to check.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A boolean indicating wether the file exists or not.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.content.ManagedContentClient.upload">
+<code class="sig-name descname">upload</code><span class="sig-paren">(</span><em class="sig-param">key: str</em>, <em class="sig-param">stream_name: str</em>, <em class="sig-param">stream: object</em>, <em class="sig-param">content_type: str</em>, <em class="sig-param">retries: int = 1</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.content.ManagedContentClient.upload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Store <cite>stream</cite> file in S3.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – The path where the file will be stored.</p></li>
+<li><p><strong>stream_name</strong> – The name under which to save the <cite>stream</cite>.</p></li>
+<li><p><strong>stream</strong> – The file object.</p></li>
+<li><p><strong>content_type</strong> – the type of the file to store (e.g., <cite>text/csv</cite>).</p></li>
+<li><p><strong>retries</strong> – Number of times to retry a failed request from a retryable response.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a dict with the response to request upload.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.content.ManagedContentClient.upload_directory">
+<code class="sig-name descname">upload_directory</code><span class="sig-paren">(</span><em class="sig-param">source: str</em>, <em class="sig-param">destination: str</em>, <em class="sig-param">retries: int = 1</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.content.ManagedContentClient.upload_directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Walk source directory and store in S3</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> – The path to the local directory.</p></li>
+<li><p><strong>destination</strong> – Prefix to add to resulting saved directory.</p></li>
+<li><p><strong>retries</strong> – Number of times to retry a failed request from a retryable response.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dict with the response to request upload.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.content.ManagedContentClient.upload_streaming">
+<code class="sig-name descname">upload_streaming</code><span class="sig-paren">(</span><em class="sig-param">key: str</em>, <em class="sig-param">stream: object</em>, <em class="sig-param">content_type: str</em>, <em class="sig-param">retries: int = 1</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.content.ManagedContentClient.upload_streaming" title="Permalink to this definition">¶</a></dt>
+<dd><p>Store <cite>stream</cite> file in S3.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – The path where the file will be stored.</p></li>
+<li><p><strong>stream</strong> – The file object.</p></li>
+<li><p><strong>content_type</strong> – The type of the file to store (e.g., <cite>text/csv</cite>)</p></li>
+<li><p><strong>retries</strong> – Number of times to retry a failed request from a retryable response.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dict with the response to request upload.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="datasetsclient">
+<h2>DatasetsClient<a class="headerlink" href="#datasetsclient" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cortex.dataset.DatasetsClient">
+<em class="property">class </em><code class="sig-prename descclassname">cortex.dataset.</code><code class="sig-name descname">DatasetsClient</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.dataset.DatasetsClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>A client used to manage datasets.</p>
+<dl class="method">
+<dt id="cortex.dataset.DatasetsClient.get_dataframe">
+<code class="sig-name descname">get_dataframe</code><span class="sig-paren">(</span><em class="sig-param">dataset_name: str</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.dataset.DatasetsClient.get_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets data from a dataset as a dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dataset_name</strong> – The name of the dataset to pull data.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dataframe dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.dataset.DatasetsClient.get_stream">
+<code class="sig-name descname">get_stream</code><span class="sig-paren">(</span><em class="sig-param">stream_name: str</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.dataset.DatasetsClient.get_stream" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a dataset as a stream.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.dataset.DatasetsClient.list_datasets">
+<code class="sig-name descname">list_datasets</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cortex.dataset.DatasetsClient.list_datasets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all datasets.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.dataset.DatasetsClient.save_dataset">
+<code class="sig-name descname">save_dataset</code><span class="sig-paren">(</span><em class="sig-param">dataset: Dict[str, object]</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.dataset.DatasetsClient.save_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves a dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dataset</strong> – A Cortex dataset as dict.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="sessionclient">
+<h2>SessionClient<a class="headerlink" href="#sessionclient" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cortex.session.SessionClient">
+<em class="property">class </em><code class="sig-prename descclassname">cortex.session.</code><code class="sig-name descname">SessionClient</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.session.SessionClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>A client for the Cortex Sessions API.</p>
+<dl class="method">
+<dt id="cortex.session.SessionClient.delete_session">
+<code class="sig-name descname">delete_session</code><span class="sig-paren">(</span><em class="sig-param">session_id</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.session.SessionClient.delete_session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>session_id</strong> – The ID of the session to delete.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.session.SessionClient.get_session_data">
+<code class="sig-name descname">get_session_data</code><span class="sig-paren">(</span><em class="sig-param">session_id</em>, <em class="sig-param">key=None</em><span class="sig-paren">)</span> &#x2192; Dict[str, object]<a class="headerlink" href="#cortex.session.SessionClient.get_session_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets data for a specific session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>session_id</strong> – The ID of the session to query.</p></li>
+<li><p><strong>key</strong> – An optional key in the session memory; the entire session memory is returned if a key is not specified.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dict containing the requested session data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.session.SessionClient.put_session_data">
+<code class="sig-name descname">put_session_data</code><span class="sig-paren">(</span><em class="sig-param">session_id</em>, <em class="sig-param">data: Dict</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.session.SessionClient.put_session_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds data to an existing session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>session_id</strong> – The ID of the session to modify.</p></li>
+<li><p><strong>data</strong> – Dict containing the new session keys to set.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cortex.session.SessionClient.start_session">
+<code class="sig-name descname">start_session</code><span class="sig-paren">(</span><em class="sig-param">ttl=None</em>, <em class="sig-param">instance_id=None</em>, <em class="sig-param">description='No description given'</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#cortex.session.SessionClient.start_session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts a new session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ttl</strong> – Resets sessions expiration; default is 15 minutes.</p></li>
+<li><p><strong>instance_id</strong> – An optional ID that scopes this session to a deployed agent-instance</p></li>
+<li><p><strong>description</strong> – An optional human readable description for this sessions instance</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The ID of the new Session.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="types">
+<h2>Types<a class="headerlink" href="#types" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cortex.message.Message">
+<em class="property">class </em><code class="sig-prename descclassname">cortex.message.</code><code class="sig-name descname">Message</code><span class="sig-paren">(</span><em class="sig-param">params: Dict = None</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.message.Message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wraps a set of parameters or a payload when invoking an action, skill, or agent.</p>
+<p>params:
+instanceId: The ID of the agent instance that produced the message.
+typeName: The resource name of the type/schema contained in the payload of this message.
+token: The JWT token to be used for making authenticated requests to APIs needed to process this message.
+sessionId: The ID of the session associated with this message
+channelId: The ID of the channel (wire) this message was sent on
+apiEndpoint: The URI of the API server to use when making requests to platform services in processing of this message.
+properties: An object whose keys represent metadata properties set for the message.
+payload: The body of the message in one of three supported payload formats (see the CAMEL spec for details).</p>
+</dd></dl>
+
+</div>
+<div class="section" id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cortex.exceptions.CortexException">
+<em class="property">class </em><code class="sig-prename descclassname">cortex.exceptions.</code><code class="sig-name descname">CortexException</code><a class="headerlink" href="#cortex.exceptions.CortexException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base exception type.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cortex.exceptions.AuthenticationException">
+<em class="property">class </em><code class="sig-prename descclassname">cortex.exceptions.</code><code class="sig-name descname">AuthenticationException</code><a class="headerlink" href="#cortex.exceptions.AuthenticationException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cortex authentication exception.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cortex.exceptions.BadTokenException">
+<em class="property">class </em><code class="sig-prename descclassname">cortex.exceptions.</code><code class="sig-name descname">BadTokenException</code><a class="headerlink" href="#cortex.exceptions.BadTokenException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cortex token invalid exception.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cortex.exceptions.ConfigurationException">
+<em class="property">class </em><code class="sig-prename descclassname">cortex.exceptions.</code><code class="sig-name descname">ConfigurationException</code><a class="headerlink" href="#cortex.exceptions.ConfigurationException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cortex configuration exception.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cortex.exceptions.APIException">
+<em class="property">class </em><code class="sig-prename descclassname">cortex.exceptions.</code><code class="sig-name descname">APIException</code><a class="headerlink" href="#cortex.exceptions.APIException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cortex API exception.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2017, Cognitive Scale
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    <span class="fa fa-book"> Other Versions</span>
+    v: sphinxVersion
+    <span class="fa fa-caret-down"></span>
+  </span>
+    <div class="rst-other-versions">
+        <dl>
+            <dt>Tags</dt>
+            <dd><a href="../release/1.4.0/index.html">release/1.4.0</a></dd>
+            <dd><a href="../v1.0.2/index.html">v1.0.2</a></dd>
+        </dl>
+        <dl>
+            <dt>Branches</dt>
+            <dd><a href="../CM-453/index.html">CM-453</a></dd>
+            <dd><a href="../develop/index.html">develop</a></dd>
+            <dd><a href="../master/index.html">master</a></dd>
+            <dd><a href="../multiVersion/index.html">multiVersion</a></dd>
+            <dd><a href="index.html">sphinxVersion</a></dd>
+            <dd><a href="../sphinxVersion2/index.html">sphinxVersion2</a></dd>
+        </dl>
+    </div>
+</div>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
