@@ -221,5 +221,5 @@ else:
 smv_branch_whitelist = 'master'
 # tag format vX.Y.Z
 smv_tag_whitelist = r'^v\d+\.\d+\.\d+$'
-# tags are considered released
-smv_released_pattern = r'^tags/.*$'
+# all tags are considered released
+smv_released_pattern = r'^refs/tags/.*$'
