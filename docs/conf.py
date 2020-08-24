@@ -51,9 +51,6 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.githubpages'
               ]
 
-# TODO this seems to be breaking the build
-# extensions.append('sphinxcontrib.versioning.sphinx_')
-
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 html_sidebars = {'items': ['versioning.html']}
@@ -220,3 +217,6 @@ if 'REPO_NAME' in os.environ:
     REPO_NAME = os.environ['REPO_NAME']
 else:
     REPO_NAME = repo.remotes.origin.url.split('.git')[0].split('/')[-1]
+
+smv_branch_whitelist = 'master'
+smv_tag_whitelist = r'^v\d+\.\d+\.\d+$'
