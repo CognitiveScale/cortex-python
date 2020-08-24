@@ -57,6 +57,7 @@ extensions = ['sphinx.ext.autodoc',
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
+html_sidebars = {'items': ['versioning.html']}
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -240,20 +241,20 @@ templates_path = ['_templates']
 # # for lang in languages:
 # #     html_context['languages'].append( (lang, '/' +REPO_NAME+ '/' +lang+ '/' +current_version+ '/') )
 #
-# if 'REPO_NAME' in os.environ:
-#     REPO_NAME = os.environ['REPO_NAME']
-# else:
-#     REPO_NAME = 'cortex-python'
-#     # REPO_NAME = repo.remotes.origin.url.split('.git')[0].split('/')[-1]
+if 'REPO_NAME' in os.environ:
+    REPO_NAME = os.environ['REPO_NAME']
+else:
+    REPO_NAME = 'cortex-python'
+    # REPO_NAME = repo.remotes.origin.url.split('.git')[0].split('/')[-1]
 #
 # # TODO this block is what generates the version links for a single build
 # # # POPULATE LINKS TO OTHER VERSIONS
-# # html_context['versions'] = list()
-# #
-# versions = ['sphinxVersion']
+html_context['versions'] = list()
+
+versions = ['sphinxVersion']
 # # # versions = [branch.name for branch in repo.branches]
-# # for version in versions:
-# #     html_context['versions'].append( (version, '/' +REPO_NAME+ '/' +version+ '/') )
+for version in versions:
+    html_context['versions'].append( (version, '/' +REPO_NAME+ '/' +version+ '/') )
 #
 # #
 # # html_context['downloads'] = list()

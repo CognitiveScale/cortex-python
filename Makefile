@@ -60,7 +60,7 @@ docs.dev:
 	sphinx-build -b html -v docs docs/_build/
 
 docs.multi:
-	sphinx-multiversion -b html -v docs docs/_build/
+	sphinx-multiversion -v docs docs/_build/
 
 docs.all:
 	sphinx-versioning -v build -r sphinxVersion2 -w sphinxVersion -w sphinxVersion2 -p tags docs docs/_build
