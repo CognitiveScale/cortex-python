@@ -62,9 +62,6 @@ docs.dev:
 docs.multi:
 	sphinx-multiversion -v docs docs/_build/
 
-docs.all:
-	sphinx-versioning -v build -r sphinxVersion2 -w sphinxVersion -w sphinxVersion2 -p tags docs docs/_build
-
 docs.package:
 	tar -cvzf cortex-python.docs.tgz -C docs/_build .
 
