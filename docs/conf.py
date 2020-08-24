@@ -219,4 +219,7 @@ else:
     REPO_NAME = repo.remotes.origin.url.split('.git')[0].split('/')[-1]
 
 smv_branch_whitelist = 'master'
+# tag format vX.Y.Z
 smv_tag_whitelist = r'^v\d+\.\d+\.\d+$'
+# tags are considered released
+smv_released_pattern = r'^tags/.*$'
