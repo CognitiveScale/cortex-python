@@ -1,5 +1,5 @@
-Sphinx>=1.8.3,<2
-sphinx-versions
+Sphinx>=2,<3
+sphinx-multiversion
 gitpython
 sphinx-rtd-theme==0.4.3
 sphinxcontrib-restbuilder==0.2
