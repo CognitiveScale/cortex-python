@@ -46,7 +46,11 @@ sys.path.insert(0, os.path.abspath('..'))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 #extensions = ['sphinx.ext.autodoc', 'sphinxcontrib.restbuilder']
-extensions = ['sphinx.ext.autodoc']
+extensions = ['sphinx.ext.autodoc',
+              "sphinx_rtd_theme",
+              "sphinx_multiversion",
+              'sphinx.ext.githubpages'
+              ]
 
 # Add any paths that contain templates here, relative to this directory.
 # templates_path = ['_templates']
@@ -98,15 +102,18 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'classic'
+html_theme = "sphinx_rtd_theme"
 
 # for classic theme options see https://www.sphinx-doc.org/en/master/usage/theming.html#builtin-themes
 html_theme_options = {
-    "rightsidebar": "false",
-    "stickysidebar": "true",
-    "relbarbgcolor": "black",
-    "externalrefs": "true",
-    "codebgcolor": "#f2f2f2"
+    'display_version': False,
+    'prev_next_buttons_location': 'bottom',
+    # Toc options
+    'collapse_navigation': False,
+    'sticky_navigation': True,
+    'navigation_depth': 4,
+    'includehidden': True,
+    'titles_only': False
 }
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -177,5 +184,44 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
+# Copied from https://stackoverflow.com/questions/49331914/enable-versions-in-sidebar-in-sphinx-read-the-docs-theme
+############################
+# SETUP THE RTD LOWER-LEFT #
+############################
+try:
+    html_context
+except NameError:
+    html_context = dict()
+html_context['display_lower_left'] = True
 
+templates_path = ['_templates']
 
+# SET CURRENT_VERSION
+from git import Repo
+repo = Repo( search_parent_directories=True )
+
+if 'current_version' in os.environ:
+    # get the current_version env var set by buildDocs.sh
+    current_version = os.environ['current_version']
+else:
+    # the user is probably doing `make html`
+    # set this build's current version by looking at the branch
+    current_version = repo.active_branch.name
+
+# tell the theme which version we're currently on ('current_version' affects
+# the lower-left rtd menu and 'version' affects the logo-area version)
+html_context['current_version'] = current_version
+html_context['version'] = current_version
+
+if 'REPO_NAME' in os.environ:
+    REPO_NAME = os.environ['REPO_NAME']
+else:
+    REPO_NAME = repo.remotes.origin.url.split('.git')[0].split('/')[-1]
+
+smv_branch_whitelist = 'master'
+# tag format vX.Y.Z
+smv_tag_whitelist = r'^v\d+\.\d+\.\d+$'
+# all tags are considered released
+smv_released_pattern = r'^refs/tags/.*$'
+
+html_favicon = '_static/favicon.png'
