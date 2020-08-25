@@ -63,7 +63,7 @@ docs.multi:
 	sphinx-multiversion -v docs docs/_build/
 
 docs.package:
-	tar -cvzf cortex-python.docs.tgz -C docs/_build .
+	tar -cvzf ${DISTRIBUTION_NAME}.docs.tgz -C docs/_build .
 
 dev.push: build.alpha
 	twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
