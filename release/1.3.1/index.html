@@ -179,7 +179,7 @@
 <dd><p>Entry point to the Cortex API.</p>
 <dl class="method">
 <dt id="cortex.client.Cortex.client">
-<em class="property">static </em><code class="sig-name descname">client</code><span class="sig-paren">(</span><em class="sig-param">api_endpoint: str = None</em>, <em class="sig-param">api_version: int = 3</em>, <em class="sig-param">verify_ssl_cert=None</em>, <em class="sig-param">token: str = None</em>, <em class="sig-param">account: str = None</em>, <em class="sig-param">username: str = None</em>, <em class="sig-param">password: str = None</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.client.Cortex.client" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">client</code><span class="sig-paren">(</span><em class="sig-param">api_endpoint: str = None</em>, <em class="sig-param">api_version: int = 3</em>, <em class="sig-param">verify_ssl_cert: bool = False</em>, <em class="sig-param">token: str = None</em>, <em class="sig-param">account: str = None</em>, <em class="sig-param">username: str = None</em>, <em class="sig-param">password: str = None</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.client.Cortex.client" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets a client with the provided parameters. All parameters are optional and default to environment variable values if not specified.</p>
 <p><strong>Example</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cortex</span> <span class="kn">import</span> <span class="n">Cortex</span>
@@ -776,7 +776,7 @@ one or more outputs.</p>
 <h2>ActionClient<a class="headerlink" href="#actionclient" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="cortex.action.ActionClient">
-<em class="property">class </em><code class="sig-prename descclassname">cortex.action.</code><code class="sig-name descname">ActionClient</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.action.ActionClient" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cortex.action.</code><code class="sig-name descname">ActionClient</code><span class="sig-paren">(</span><em class="sig-param">url</em>, <em class="sig-param">version</em>, <em class="sig-param">token</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.action.ActionClient" title="Permalink to this definition">¶</a></dt>
 <dd><p>A client for the Cortex Actions API.</p>
 <dl class="method">
 <dt id="cortex.action.ActionClient.delete_action">
@@ -943,7 +943,7 @@ one or more outputs.</p>
 <h2>AuthenticationClient<a class="headerlink" href="#authenticationclient" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="cortex.auth.AuthenticationClient">
-<em class="property">class </em><code class="sig-prename descclassname">cortex.auth.</code><code class="sig-name descname">AuthenticationClient</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.auth.AuthenticationClient" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cortex.auth.</code><code class="sig-name descname">AuthenticationClient</code><span class="sig-paren">(</span><em class="sig-param">url</em>, <em class="sig-param">version</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.auth.AuthenticationClient" title="Permalink to this definition">¶</a></dt>
 <dd><p>Client authentication.</p>
 <dl class="method">
 <dt id="cortex.auth.AuthenticationClient.fetch_auth_token">
@@ -984,7 +984,7 @@ one or more outputs.</p>
 <h2>ConnectionClient<a class="headerlink" href="#connectionclient" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="cortex.connection.ConnectionClient">
-<em class="property">class </em><code class="sig-prename descclassname">cortex.connection.</code><code class="sig-name descname">ConnectionClient</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.connection.ConnectionClient" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cortex.connection.</code><code class="sig-name descname">ConnectionClient</code><span class="sig-paren">(</span><em class="sig-param">url</em>, <em class="sig-param">version</em>, <em class="sig-param">token</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.connection.ConnectionClient" title="Permalink to this definition">¶</a></dt>
 <dd><p>A client used to manage connections.</p>
 <dl class="method">
 <dt id="cortex.connection.ConnectionClient.save_connection">
@@ -999,7 +999,7 @@ one or more outputs.</p>
 <h2>ManagedContentClient<a class="headerlink" href="#managedcontentclient" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="cortex.content.ManagedContentClient">
-<em class="property">class </em><code class="sig-prename descclassname">cortex.content.</code><code class="sig-name descname">ManagedContentClient</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.content.ManagedContentClient" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cortex.content.</code><code class="sig-name descname">ManagedContentClient</code><span class="sig-paren">(</span><em class="sig-param">url</em>, <em class="sig-param">version</em>, <em class="sig-param">token</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.content.ManagedContentClient" title="Permalink to this definition">¶</a></dt>
 <dd><p>A client used to access the Cortex managed content service (blob store).</p>
 <dl class="method">
 <dt id="cortex.content.ManagedContentClient.download">
@@ -1096,7 +1096,7 @@ one or more outputs.</p>
 <h2>DatasetsClient<a class="headerlink" href="#datasetsclient" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="cortex.dataset.DatasetsClient">
-<em class="property">class </em><code class="sig-prename descclassname">cortex.dataset.</code><code class="sig-name descname">DatasetsClient</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.dataset.DatasetsClient" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cortex.dataset.</code><code class="sig-name descname">DatasetsClient</code><span class="sig-paren">(</span><em class="sig-param">url</em>, <em class="sig-param">version</em>, <em class="sig-param">token</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.dataset.DatasetsClient" title="Permalink to this definition">¶</a></dt>
 <dd><p>A client used to manage datasets.</p>
 <dl class="method">
 <dt id="cortex.dataset.DatasetsClient.get_dataframe">
@@ -1142,7 +1142,7 @@ one or more outputs.</p>
 <h2>SessionClient<a class="headerlink" href="#sessionclient" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="cortex.session.SessionClient">
-<em class="property">class </em><code class="sig-prename descclassname">cortex.session.</code><code class="sig-name descname">SessionClient</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.session.SessionClient" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cortex.session.</code><code class="sig-name descname">SessionClient</code><span class="sig-paren">(</span><em class="sig-param">url</em>, <em class="sig-param">version</em>, <em class="sig-param">token</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#cortex.session.SessionClient" title="Permalink to this definition">¶</a></dt>
 <dd><p>A client for the Cortex Sessions API.</p>
 <dl class="method">
 <dt id="cortex.session.SessionClient.delete_session">
@@ -1297,20 +1297,20 @@ payload: The body of the message in one of three supported payload formats (see 
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
   <span class="rst-current-version" data-toggle="rst-current-version">
     <span class="fa fa-book"> Other Versions</span>
-    v: master
+    v: release/1.3.1
     <span class="fa fa-caret-down"></span>
   </span>
     <div class="rst-other-versions">
         <dl>
             <dt>Tags</dt>
-            <dd><a href="../release/1.0.5/index.html">release/1.0.5</a></dd>
-            <dd><a href="../release/1.1.0/index.html">release/1.1.0</a></dd>
-            <dd><a href="../release/1.3.1/index.html">release/1.3.1</a></dd>
-            <dd><a href="../release/1.4.0/index.html">release/1.4.0</a></dd>
+            <dd><a href="../1.0.5/index.html">release/1.0.5</a></dd>
+            <dd><a href="../1.1.0/index.html">release/1.1.0</a></dd>
+            <dd><a href="index.html">release/1.3.1</a></dd>
+            <dd><a href="../1.4.0/index.html">release/1.4.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
-            <dd><a href="index.html">master</a></dd>
+            <dd><a href="../../master/index.html">master</a></dd>
         </dl>
     </div>
 </div>
