@@ -61,6 +61,7 @@ docs.dev:
 
 docs.multi:
 	sphinx-multiversion -v docs docs/_build/
+	cp docs/index.html docs/_build/
 
 docs.package:
 	tar -cvzf ${DISTRIBUTION_NAME}.docs.tgz -C docs/_build .
