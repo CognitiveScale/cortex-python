@@ -79,13 +79,6 @@ After contributing to the library, and before you submit changes as a PR, please
 
 ### Documentation
 
-The package documentation is built with Sphinx. To build the documentation:
-
-```
-> make docs
-```
-The documentation will be rendered in HTML format under the `docs/_build/html` directory.
-
 Activate your virtual environment:
 ```
 > source _venv/bin/activate
@@ -95,6 +88,13 @@ Setup your environment, if you have not done so:
 ```
 > make dev.install 
 ```
+
+The package documentation is built with Sphinx and generates versioned documentation for all tag matching the `release/X.Y.Z` pattern and for the `master` branch. To build the documentation:
+
+```
+> make docs.multi
+```
+The documentation will be rendered in HTML format under the `docs/_build/${VERSION}` directory.
 
 ### Pre-release to staging
 

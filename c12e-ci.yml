@@ -1,10 +1,11 @@
 builder:
   image: python:3.6-slim
   command: bash -cx 'apt-get update
-    && apt-get install -y curl jq libmagic-dev gcc make
+    && apt-get install -y tar git curl jq libmagic-dev gcc make
     && make dev.install
     && make test
     && make build
-    && make docs'
+    && make docs.multi
+    && make docs.package'
   environment:
     - ALPHA_BUILD
