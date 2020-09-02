@@ -225,3 +225,7 @@ smv_tag_whitelist = r'^release/\d+\.\d+\.\d+$'
 smv_released_pattern = r'^refs/tags/.*$'
 
 html_favicon = '_static/favicon.png'
+
+if 'MULTI_VERSION' in os.environ:
+    # skip version template if metadata isn't available
+    MULTI_VERSION = os.environ['MULTI_VERSION']

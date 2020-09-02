@@ -5,7 +5,7 @@
 Cortex Python Reference
 =======================
 
-This reference guide describes the base API client library to integrate with Cortex Fabric. 
+This reference guide describes the base API client library to integrate with Cortex Fabric.
 Refer to the `Cortex Fabric documentation <https://cognitivescale.github.io/cortex-fabric/>`_ for more info about how to use the library.
 
 Cortex
@@ -113,3 +113,15 @@ Exceptions
    :members:
 .. autoclass:: cortex.exceptions.APIException
    :members:
+
+Related Projects
+================================
+
+`Cortex Fabric <https://cognitivescale.github.io/cortex-fabric>`_
+-------------------------------------------------------------------
+
+`Cortex Python Builders <https://cognitivescale.github.io/cortex-python-builders>`_
+-------------------------------------------------------------------
+
+`Cortex Python Profiles <https://cognitivescale.github.io/cortex-python-profiles>`_
+--------------------------------------------------------------------------------------
