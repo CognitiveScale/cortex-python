@@ -229,3 +229,4 @@ html_favicon = '_static/favicon.png'
 if 'MULTI_VERSION' in os.environ:
     # skip version template if metadata isn't available
     MULTI_VERSION = os.environ['MULTI_VERSION']
+    html_context['MULTI_VERSION'] = MULTI_VERSION

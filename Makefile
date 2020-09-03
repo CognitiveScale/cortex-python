@@ -53,10 +53,10 @@ stage:
 	git checkout develop
 
 docs.dev:
-	MULTI_VERSION="false" sphinx-build -b html -v docs docs/_build/
+	sphinx-build -b html -v docs docs/_build/
 
 docs.multi:
-	sphinx-multiversion -v docs docs/_build/
+	MULTI_VERSION="true" sphinx-multiversion -v docs docs/_build/
 	cp docs/index.html docs/_build/
 
 docs.package:
