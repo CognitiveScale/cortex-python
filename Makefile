@@ -52,15 +52,11 @@ stage:
 	git push
 	git checkout develop
 
-docs:
-	cd docs && make build && cd -
-	# The resulting reference docs file is in docs/_build/html/index.html
-
 docs.dev:
 	sphinx-build -b html -v docs docs/_build/
 
 docs.multi:
-	sphinx-multiversion -v docs docs/_build/
+	MULTI_VERSION="true" sphinx-multiversion -v docs docs/_build/
 	cp docs/index.html docs/_build/
 
 docs.package:
