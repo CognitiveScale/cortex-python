@@ -46,10 +46,14 @@ sys.path.insert(0, os.path.abspath('..'))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 #extensions = ['sphinx.ext.autodoc', 'sphinxcontrib.restbuilder']
-extensions = ['sphinx.ext.autodoc']
+extensions = ['sphinx.ext.autodoc',
+              "sphinx_rtd_theme",
+              "sphinx_multiversion",
+              'sphinx.ext.githubpages'
+              ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+# templates_path = ['_templates']
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -61,16 +65,16 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'CORTEX Python SDK'
-copyright = u'2017, Cognitive Scale'
-author = u'Cognitive Scale'
+project = u'Cortex Python Library'
+copyright = u'2020, CognitiveScale'
+author = u'CognitiveScale'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
 # The short X.Y version.
-version = u'5.0.11'
+version = u''
 # The full version, including alpha/beta/rc tags.
 release = version 
 
@@ -98,7 +102,19 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'basic'
+html_theme = "sphinx_rtd_theme"
+
+# for classic theme options see https://www.sphinx-doc.org/en/master/usage/theming.html#builtin-themes
+html_theme_options = {
+    'display_version': False,
+    'prev_next_buttons_location': 'bottom',
+    # Toc options
+    'collapse_navigation': False,
+    'sticky_navigation': True,
+    'navigation_depth': 4,
+    'includehidden': True,
+    'titles_only': False
+}
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -115,7 +131,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'CORTEXPythonSDKdoc'
+htmlhelp_basename = 'CORTEXPythonLibraryDoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -142,8 +158,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'CORTEXPythonSDK.tex', u'CORTEX Python SDK Documentation',
-     u'Cognitive Scale', 'manual'),
+    (master_doc, 'CORTEXPythonSDK.tex', u'Cortex Python Library Documentation',
+     u'CognitiveScale', 'manual'),
 ]
 
 
@@ -152,7 +168,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'cortexpythonclient', u'CORTEX Python SDK Documentation',
+    (master_doc, 'cortexpythonclient', u'Cortex Python Library Documentation',
      [author], 1)
 ]
 
@@ -163,10 +179,54 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'CORTEXPythonSDK', u'CORTEX Python SDK Documentation',
-     author, 'CORTEXPythonSDK', 'One line description of project.',
+    (master_doc, 'CORTEXPythonSDK', u'Cortex Python Library Documentation',
+     author, 'CORTEXPythonSDK', 'Cortex Python Library Documentation',
      'Miscellaneous'),
 ]
 
+# Copied from https://stackoverflow.com/questions/49331914/enable-versions-in-sidebar-in-sphinx-read-the-docs-theme
+############################
+# SETUP THE RTD LOWER-LEFT #
+############################
+try:
+    html_context
+except NameError:
+    html_context = dict()
+html_context['display_lower_left'] = True
 
+templates_path = ['_templates']
 
+# SET CURRENT_VERSION
+from git import Repo
+repo = Repo( search_parent_directories=True )
+
+if 'current_version' in os.environ:
+    # get the current_version env var set by buildDocs.sh
+    current_version = os.environ['current_version']
+else:
+    # the user is probably doing `make html`
+    # set this build's current version by looking at the branch
+    current_version = repo.active_branch.name
+
+# tell the theme which version we're currently on ('current_version' affects
+# the lower-left rtd menu and 'version' affects the logo-area version)
+html_context['current_version'] = current_version
+html_context['version'] = current_version
+
+if 'REPO_NAME' in os.environ:
+    REPO_NAME = os.environ['REPO_NAME']
+else:
+    REPO_NAME = repo.remotes.origin.url.split('.git')[0].split('/')[-1]
+
+smv_branch_whitelist = 'master'
+# tag format vX.Y.Z
+smv_tag_whitelist = r'^release/\d+\.\d+\.\d+$'
+# all tags are considered released
+smv_released_pattern = r'^refs/tags/.*$'
+
+html_favicon = '_static/favicon.png'
+
+if 'MULTI_VERSION' in os.environ:
+    # skip version template if metadata isn't available
+    MULTI_VERSION = os.environ['MULTI_VERSION']
+    html_context['MULTI_VERSION'] = MULTI_VERSION
