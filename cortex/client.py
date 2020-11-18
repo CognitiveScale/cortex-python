@@ -213,13 +213,13 @@ class Cortex(object):
     @staticmethod
     def login():
         """
-        Login to Cortex5. The function prompts the caller for Cortex Personal Access Config.
+        Login to Cortex6. The function prompts the caller for Cortex Personal Access Config.
 
         **Example**
 
         >>> Cortex.login()
-        Cortex URI: [https://api.cortex.insights.ai]
-        Cortex Personal Access Config:
+        Cortex Personal Access Config: Cortex Personal Access Config
+        Cortex Project: The project that you to start using you Cortex assets from. (Not required)
         """
         config = input('Cortex Personal Access Config: ')
         project = input('Project: ')
