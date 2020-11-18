@@ -32,6 +32,6 @@ class AuthenticationClient(_Client):
         :param config: The ID of the tenant/account to authenticate to.
         :return: A JWT string.
         """
-        token = generate_token(config)
+        token = generate_token(config, validity=1440)
         return token
 

@@ -150,14 +150,14 @@ def verify_JWT(token, config, verify):
         raise BadTokenException(invalidTokenMsg)
 
 
-def generate_token(config):
+def generate_token(config, validity=2):
     key = jwkLib.JWK.from_json(json.dumps(config.get('jwk')))
     token_payload = {
-        "iss": config.get('issuer'),
+        "iss": config.get('issuer')
         "aud": config.get('audience'),
         "sub": config.get('username'),
     }
-    token = py_jwt.generate_jwt(token_payload, key, 'EdDSA', datetime.timedelta(minutes=2),
+    token = py_jwt.generate_jwt(token_payload, key, 'EdDSA', datetime.timedelta(minutes=validity),
                                 other_headers={"kid": key.thumbprint()})
     return token
 
