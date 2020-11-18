@@ -153,7 +153,7 @@ def verify_JWT(token, config, verify):
 def generate_token(config, validity=2):
     key = jwkLib.JWK.from_json(json.dumps(config.get('jwk')))
     token_payload = {
-        "iss": config.get('issuer')
+        "iss": config.get('issuer'),
         "aud": config.get('audience'),
         "sub": config.get('username'),
     }
