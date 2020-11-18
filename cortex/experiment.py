@@ -38,24 +38,24 @@ class ExperimentClient(_Client):
     """
 
     URIs = {
-        'experiments': 'experiments',
-        'experiment': 'experiments/{experiment_name}',
-        'runs': 'experiments/{experiment_name}/runs',
-        'run': 'experiments/{experiment_name}/runs/{run_id}',
-        'artifact': 'experiments/{experiment_name}/runs/{run_id}/artifacts/{artifact}',
-        'meta': 'experiments/{experiment_name}/runs/{run_id}/meta/{meta}',
-        'param': 'experiments/{experiment_name}/runs/{run_id}/params/{param}',
-        'metric': 'experiments/{experiment_name}/runs/{run_id}/metrics/{metric}'
+        'experiments': 'projects/{projectId}/experiments',
+        'experiment': 'projects/{projectId}/experiments/{experimentName}',
+        'runs': 'projects/{projectId}/experiments/{experimentName}/runs',
+        'run': 'projects/{projectId}/experiments/{experimentName}/runs/{runId}',
+        'artifact': 'projects/{projectId}/experiments/{experimentName}/runs/{runId}/artifacts/{artifactId}',
+        'meta': 'projects/{projectId}/experiments/{experimentName}/runs/{runId}/meta/{metaId}',
+        'param': 'projects/{projectId}/experiments/{experimentName}/runs/{runId}/params/{paramId}',
+        'metric': 'projects/{projectId}/experiments/{experimentName}/runs/{runId}/metrics/{metricId}'
     }
 
-    def list_experiments(self):
-        r = self._serviceconnector.request(method='GET', uri=self.URIs['experiments'])
+    def list_experiments(self, project):
+        r = self._serviceconnector.request(method='GET', uri=self.URIs['experiments'].format(projectId=project))
         raise_for_status_with_detail(r)
         rs = r.json()
 
         return rs.get('experiments', [])
 
-    def save_experiment(self, experiment_name, **kwargs):
+    def save_experiment(self, experiment_name, project, **kwargs):
         body_obj = {'name': experiment_name}
 
         if kwargs:
@@ -63,36 +63,36 @@ class ExperimentClient(_Client):
 
         body = json.dumps(body_obj)
         headers = {'Content-Type': 'application/json'}
-        uri = self.URIs['experiments']
+        uri = self.URIs['experiments'].format(projectId=project)
         r = self._serviceconnector.request(method='POST', uri=uri, body=body, headers=headers)
         raise_for_status_with_detail(r)
         return r.json()
 
-    def delete_experiment(self, experiment_name):
-        uri = self.URIs['experiment'].format(experiment_name=experiment_name)
+    def delete_experiment(self, experiment_name, project):
+        uri = self.URIs['experiment'].format(projectId=project, experimentName=experiment_name)
         r = self._serviceconnector.request(method='DELETE', uri=uri)
         raise_for_status_with_detail(r)
         rs = r.json()
 
         return rs.get('success', False)
 
-    def get_experiment(self, experiment_name):
-        uri = self.URIs['experiment'].format(experiment_name=experiment_name)
+    def get_experiment(self, experiment_name, project):
+        uri = self.URIs['experiment'].format(projectId=project, experimentName=experiment_name)
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
 
         return r.json()
 
-    def list_runs(self, experiment_name):
-        uri = self.URIs['runs'].format(experiment_name=experiment_name)
+    def list_runs(self, experiment_name, project):
+        uri = self.URIs['runs'].format(projectId=project, experimentName=experiment_name)
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
         rs = r.json()
 
         return rs.get('runs', [])
 
-    def find_runs(self, experiment_name, filter, sort=None, limit=25):
-        uri = self.URIs['runs'].format(experiment_name=experiment_name)
+    def find_runs(self, experiment_name, project, filter, sort=None, limit=25):
+        uri = self.URIs['runs'].format(projectId=project, experimentName=experiment_name)
 
         # filter and limit are required query params
         params = {
@@ -110,8 +110,8 @@ class ExperimentClient(_Client):
 
         return rs.get('runs', [])
 
-    def delete_runs(self, experiment_name, filter=None, sort=None, limit=None):
-        uri = self.URIs['runs'].format(experiment_name=experiment_name)
+    def delete_runs(self, experiment_name, project, filter=None, sort=None, limit=None):
+        uri = self.URIs['runs'].format(projectId=project, experimentName=experiment_name)
 
         params = {}
 
@@ -133,7 +133,7 @@ class ExperimentClient(_Client):
 
         return rs.get('message')
 
-    def create_run(self, experiment_name, **kwargs):
+    def create_run(self, experiment_name, project, **kwargs):
         body_obj = {}
 
         if kwargs:
@@ -141,19 +141,19 @@ class ExperimentClient(_Client):
 
         body = json.dumps(body_obj)
         headers = {'Content-Type': 'application/json'}
-        uri = self.URIs['runs'].format(experiment_name=experiment_name)
+        uri = self.URIs['runs'].format(projectId=project, experimentName=experiment_name)
         r = self._serviceconnector.request(method='POST', uri=uri, body=body, headers=headers)
         raise_for_status_with_detail(r)
         return r.json()
 
-    def get_run(self, experiment_name, run_id):
-        uri = self.URIs['run'].format(experiment_name=experiment_name, run_id=run_id)
+    def get_run(self, experiment_name, project, run_id):
+        uri = self.URIs['run'].format(projectId=project, experimentName=experiment_name, runId=run_id)
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
 
         return r.json()
 
-    def update_run(self, experiment_name, run_id, **kwargs):
+    def update_run(self, experiment_name, project, run_id, **kwargs):
         body_obj = {}
 
         if kwargs:
@@ -161,7 +161,7 @@ class ExperimentClient(_Client):
 
         body = json.dumps(body_obj)
         headers = {'Content-Type': 'application/json'}
-        uri = self.URIs['run'].format(experiment_name=experiment_name, run_id=run_id)
+        uri = self.URIs['run'].format(projectId=project, experimentName=experiment_name, runId=run_id)
         r = self._serviceconnector.request(method='PUT', uri=uri, body=body, headers=headers)
         raise_for_status_with_detail(r)
         rs = r.json()
@@ -171,8 +171,8 @@ class ExperimentClient(_Client):
             raise Exception('Error updating run {}: {}'.format(run_id, rs.get('error')))
         return success
 
-    def delete_run(self, experiment_name, run_id):
-        uri = self.URIs['run'].format(experiment_name=experiment_name, run_id=run_id)
+    def delete_run(self, experiment_name, project, run_id):
+        uri = self.URIs['run'].format(projectId=project, experimentName=experiment_name, runId=run_id)
         r = self._serviceconnector.request(method='DELETE', uri=uri)
         raise_for_status_with_detail(r)
         rs = r.json()
@@ -182,8 +182,8 @@ class ExperimentClient(_Client):
             raise Exception('Error deleting run {}: {}'.format(run_id, rs.get('error')))
         return success
 
-    def update_meta(self, experiment_name, run_id, meta, val):
-        uri = self.URIs['meta'].format(experiment_name=experiment_name, run_id=run_id, meta=meta)
+    def update_meta(self, experiment_name, project, run_id, meta, val):
+        uri = self.URIs['meta'].format(projectId=project, experimentName=experiment_name, runId=run_id, metaId=meta)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=headers)
         raise_for_status_with_detail(r)
@@ -194,8 +194,8 @@ class ExperimentClient(_Client):
             raise Exception('Error updating run {} meta property {}: {}'.format(run_id, meta, rs.get('error')))
         return success
 
-    def update_param(self, experiment_name, run_id, param, val):
-        uri = self.URIs['param'].format(experiment_name=experiment_name, run_id=run_id, param=param)
+    def update_param(self, experiment_name, project, run_id, param, val):
+        uri = self.URIs['param'].format(projectId=project, experimentName=experiment_name, runId=run_id, paramId=param)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=headers)
         raise_for_status_with_detail(r)
@@ -206,8 +206,8 @@ class ExperimentClient(_Client):
             raise Exception('Error updating run {} param {}: {}'.format(run_id, param, rs.get('error')))
         return success
 
-    def update_metric(self, experiment_name, run_id, metric, val):
-        uri = self.URIs['metric'].format(experiment_name=experiment_name, run_id=run_id, metric=metric)
+    def update_metric(self, experiment_name, project, run_id, metric, val):
+        uri = self.URIs['metric'].format(projectId=project, experimentName=experiment_name, runId=run_id, metricId=metric)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=headers)
         raise_for_status_with_detail(r)
@@ -218,8 +218,8 @@ class ExperimentClient(_Client):
             raise Exception('Error updating run {} metric {}: {}'.format(run_id, metric, rs.get('error')))
         return success
 
-    def update_artifact(self, experiment_name, run_id, artifact, stream):
-        uri = self.URIs['artifact'].format(experiment_name=experiment_name, run_id=run_id, artifact=artifact)
+    def update_artifact(self, experiment_name, project, run_id, artifact, stream):
+        uri = self.URIs['artifact'].format(projectId=project, experimentName=experiment_name, runId=run_id, artifactId=artifact)
         r = self._serviceconnector.request(method='PUT', uri=uri, body=stream)
         raise_for_status_with_detail(r)
         rs = r.json()
@@ -229,8 +229,8 @@ class ExperimentClient(_Client):
             raise Exception('Error updating run {} artifact {}: {}'.format(run_id, artifact, rs.get('error')))
         return success
 
-    def get_artifact(self, experiment_name, run_id, artifact):
-        uri = self.URIs['artifact'].format(experiment_name=experiment_name, run_id=run_id, artifact=artifact)
+    def get_artifact(self, experiment_name, project, run_id, artifact):
+        uri = self.URIs['artifact'].format(projectId=project, experimentName=experiment_name, runId=run_id, artifactId=artifact)
         r = self._serviceconnector.request(method='GET', uri=uri, stream=True)
         raise_for_status_with_detail(r)
 
@@ -341,63 +341,67 @@ class Experiment(CamelResource):
     Tracks runs, associated parameters, metrics, and artifacts of experiments.
     """
 
-    def __init__(self, document: Dict, client: ExperimentClient):
+    def __init__(self, document: Dict, project: str, client: ExperimentClient):
         super().__init__(document, False)
+        self._project = project
         self._client = client
         if not self.meta:
             self.meta = {}
 
     @staticmethod
-    def get_experiment(name, client: ExperimentClient, **kwargs):
+    def get_experiment(name, project, client: ExperimentClient, **kwargs):
         """
         Fetches or creates an experiment to work with.
 
         :param name: The name of the experiment to retrieve.
+        :param project: The project from which the experiment is to be retrieved.
         :param client: The client instance to use.
         :return: An experiment object.
         """
         try:
-            exp = client.get_experiment(name)
+            exp = client.get_experiment(name, project)
         except HTTPError:
             # Likely a 404, try to create a new experiment
-            exp = client.save_experiment(name, **kwargs)
+            exp = client.save_experiment(name, project, **kwargs)
 
-        return Experiment(exp, client)
+        return Experiment(exp, project, client)
 
     def start_run(self) -> Run:
-        return RemoteRun.create(self, self._client)
+        return RemoteRun.create(self, self._project, self._client)
 
     def save_run(self, run: Run):
-        self._client.update_run(self.name, run.id, took=run.took, startTime=run.start_time, endTime=run.end_time)
+        self._client.update_run(self.name, self._project, run.id, took=run.took, startTime=run.start_time, endTime=run.end_time)
 
     def reset(self, filter=None, sort=None, limit=None):
-        self._client.delete_runs(self.name, filter, sort, limit)
+        self._client.delete_runs(self.name, self._project, filter, sort, limit)
 
     def set_meta(self, prop, value):
         self.meta[prop] = value
-        self._client.save_experiment(self.name, **self.to_camel())
+        self._client.save_experiment(self.name, self._project, **self.to_camel())
 
     def runs(self) -> List[Run]:
-        runs = self._client.list_runs(self.name)
-        return [RemoteRun.from_json(r, self) for r in runs]
+        runs = self._client.list_runs(self.name, self._project)
+        return [RemoteRun.from_json(r, self._project, self) for r in runs]
 
     def get_run(self, run_id) -> Run:
-        run = self._client.get_run(self.name, run_id)
-        return RemoteRun.from_json(run, self)
+        run = self._client.get_run(self.name, self._project, run_id)
+        return RemoteRun.from_json(run, self._project, self)
 
     def last_run(self) -> Run:
         sort = {'endTime': -1}
-        runs = self._client.find_runs(self.name, {}, sort=sort, limit=1)
+        runs = self._client.find_runs(self.name, self._project, {}, sort=sort, limit=1)
+        print(runs)
         if len(runs) == 1:
-            return RemoteRun.from_json(runs[0], self)
+            print(self)
+            return RemoteRun.from_json(runs[0], self._project, self)
         raise APIException('Last run for experiment {} not found'.format(self.name))
 
     def find_runs(self, filter, sort, limit: int) -> List[Run]:
-        runs = self._client.find_runs(self.name, filter or {}, sort=sort, limit=limit)
-        return [RemoteRun.from_json(r, self) for r in runs]
+        runs = self._client.find_runs(self.name, self._project, filter or {}, sort=sort, limit=limit)
+        return [RemoteRun.from_json(r, self._project, self) for r in runs]
 
     def load_artifact(self, run: Run, name: str):
-        return dill.loads(self._client.get_artifact(self.name, run.id, name))
+        return dill.loads(self._client.get_artifact(self.name, self._project, run.id, name))
 
     def to_camel(self, camel='1.0.0'):
         return {

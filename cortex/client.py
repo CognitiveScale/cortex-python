@@ -14,24 +14,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import getpass
 import os
 import time
-
 from .serviceconnector import ServiceConnector
-from .auth import AuthenticationClient
-from .action import Action
-from .agent import Agent
-from .dataset import Dataset, LocalDataset, DatasetsClient
 from .env import CortexEnv
-from .exceptions import AuthenticationException, ConfigurationException
+from .exceptions import ProjectException
 from .experiment import Experiment, LocalExperiment, ExperimentClient
 from .message import Message
+from .connection import Connection, ConnectionClient
+from .secrets import SecretsClient, Secret
 from .session import Session, SessionClient
 from .skill import Skill
-from .utils import log_message, decode_JWT, get_logger
+from .utils import decode_JWT, get_logger, generate_token
 
-_DEFAULT_API_VERSION = 3
+_DEFAULT_API_VERSION = 4
 
 _msg_token_exp_no_creds = """
 Your Cortex token is expired, and the required credentials for auto-refresh have not been provided. Supply these credentials; account, username,
@@ -43,25 +39,11 @@ log = get_logger(__name__)
 
 class _Token(object):
 
-    def __init__(self, auth_client: AuthenticationClient, token: str, account: str, username: str, password: str):
-        self._auth = auth_client
+    def __init__(self, token: str):
         self._token = token
-        self._account = account
-        self._username = username
-        self._password = password
-
         self._jwt = None
         if token:
             self._jwt = decode_JWT(self._token, verify=False)
-
-    def login(self):
-        try:
-            log_message('Login with user %s/%s' % (self._account, self._username), log)
-            self._token = self._auth.fetch_auth_token(self._account, self._username, self._password)
-        except Exception as e:
-            raise AuthenticationException(str(e))
-
-        self._jwt = decode_JWT(self._token, verify=False)
 
     def is_expired(self):
         current_time = time.time()
@@ -73,67 +55,65 @@ class _Token(object):
 
 
 class Client(object):
-
     """
     API client used to access agents, skills, and datasets.
     """
 
-    def __init__(self, url: str, token: _Token, version: int = 3, verify_ssl_cert: bool = False):
+    def __init__(self, url: str, token: _Token = None, config: dict = None, project: str = None, version: int = 4,
+                 verify_ssl_cert: bool = False):
+
         self._token = token
+        self._config = config
+        self._project = project
         self._url = url
         self._version = version
         self._verify_ssl_cert = verify_ssl_cert
-
-    def agent(self, name: str) -> Agent:
-        """
-        Gets an agent with the specified name.
-        """
-        return Agent.get_agent(name, self._mk_connector())
 
     def skill(self, name: str) -> Skill:
         """
         Gets a skill with the specified name.
         """
-        return Skill.get_skill(name, self._mk_connector())
+        if not self._token.token:
+            self._token = _Token(generate_token(self._config))
+        return Skill.get_skill(name, self._project, self._mk_connector())
 
-    def dataset(self, name: str) -> Dataset:
+    def connection(self, name: str, version: str = '4'):
         """
-        Gets a dataset with the specified name.
+        Gets an connection with the specified name.
         """
-        ds_client = DatasetsClient(self._url, self._version, self._token.token)
-        return Dataset.get_dataset(name, ds_client)
+        if not self._token.token:
+            self._token = _Token(generate_token(self._config))
+        conn_client = ConnectionClient(self._url, version, self._token.token, self._config)
+        return Connection.get_connection(name, self._project, conn_client)
+
+    def get_secret(self, name: str, version: str = '4'):
+        """
+        Gets a secret with the specified name.
+        """
+        if not self._token.token:
+            self._token = _Token(generate_token(self._config))
+        sec_client = SecretsClient(self._url, version, self._token.token, self._config)
+        return Secret.get_secret(name, self._project, sec_client)
 
     def session(self, session_id=None, ttl=None, instance_id=None) -> Session:
         """
         Gets a session with the specified identifier.
         """
-        session_client = SessionClient(self._url, self._version, self._token.token)
+        if not self._token.token:
+            self._token = _Token(generate_token(self._config))
+        session_client = SessionClient(self._url, self._version, self._token.token, self._config)
         if not session_id:
             return Session.start(session_client, ttl, instance_id)
         return Session(session_id, session_client)
 
-    def action(self, name: str) -> Action:
-        """
-        Gets an action with the specified name.
-        """
-        return Action.get_action(name, self._mk_connector())
-
-    def builder(self):
-        """
-        Gets a builder.
-        """
-        try:
-            from cortex_builders import Builder
-            return Builder(self)
-        except ImportError:
-            raise ConfigurationException('Please install the cortex-python-builders library to use this function')
-
-    def experiment(self, name: str, version: str = '2'):
+    def experiment(self, name: str, version: str = '4'):
         """
         Gets an experiment with the specified name.
         """
-        exp_client = ExperimentClient(self._url, version, self._token.token)
-        return Experiment.get_experiment(name, exp_client)
+        if not self._token.token:
+            self._token = _Token(generate_token(self._config))
+        exp_client = ExperimentClient(self._url, version, self._token.token, self._config)
+        return Experiment.get_experiment(name, self._project, exp_client)
 
     def message(self, payload: dict, properties: dict = None) -> Message:
         """Constructs a Message from payload and properties if given.
@@ -142,6 +122,8 @@ class Client(object):
         :param properties: The properties to include in the Message.
         :return: A Message object.
         """
+        if not self._token.token:
+            self._token = _Token(generate_token(self._config))
         params = {}
         params['payload'] = payload
         if properties:
@@ -151,14 +133,14 @@ class Client(object):
         return Message(params)
 
     def _mk_connector(self):
-        return ServiceConnector(self._url, self._version, self._token.token, self._verify_ssl_cert)
+        return ServiceConnector(self._url, self._version, self._token.token, self._config, self._verify_ssl_cert)
 
     # expose this to allow developer to pass client instance into Connectors
     def to_connector(self):
         return self._mk_connector()
 
-class Local:
 
+class Local:
     """
     Provides local, on-disk implementations of Cortex APIs.
     """
@@ -169,45 +151,31 @@ class Local:
     def experiment(self, name: str) -> LocalExperiment:
         return LocalExperiment(name, self._basedir)
 
-    def dataset(self, name: str):
-        return LocalDataset(name, self._basedir)
-
-    def action(self, name: str):
-        raise NotImplementedError('Local actions are not implemented yet.')
-
-    def builder(self):
-        try:
-            from cortex_builders import LocalBuilder
-            return LocalBuilder(self._basedir)
-        except ImportError:
-            raise ConfigurationException('Please install the cortex-python-builders library to use this function')
-
 
 class Cortex(object):
-
     """
     Entry point to the Cortex API.
     """
 
     @staticmethod
-    def client(api_endpoint:str=None, api_version:int=_DEFAULT_API_VERSION, verify_ssl_cert=None, token:str=None, account:str=None, username:str=None, password:str=None):
+    def client(api_endpoint: str = None, api_version: int = _DEFAULT_API_VERSION, verify_ssl_cert=None,
+               token: str = None, config: dict = None, project: str = None):
         """
         Gets a client with the provided parameters. All parameters are optional and default to environment variable values if not specified.
 
         **Example**
 
         >>> from cortex import Cortex
-        >>> cortex = Cortex.client()
+        >>> cortex = Cortex.client(project='example-project')
 
         :param api_endpoint: The Cortex URL.
         :param api_version: The version of the API to use with this client.
         :param verify_ssl_cert: A boolean to indiciate if the SSL certificate needs to be validated.
         :param token: An authentication token.
-        :param account: The Cortex account the client connects to.
-        :param username: The user name for the client.
-        :param password: The password for the client.
+        :param config: Cortex Personal Access Config.
+        :param project: Cortex Project that you want to use.
         """
-        env = CortexEnv(api_endpoint=api_endpoint, token=token, account=account, username=username, password=password)
+        env = CortexEnv(api_endpoint=api_endpoint, token=token, config=config, project=project)
 
         if not api_endpoint:
             api_endpoint = env.api_endpoint
@@ -215,19 +183,19 @@ class Cortex(object):
         if not token:
             token = env.token
 
-        if not account:
-            account = env.account
+        if not config:
+            config = env.config
 
-        if not username:
-            username = env.username
+        if not project:
+            project = env.project
 
-        if not password:
-            password = env.password
+        if not project:
+            raise ProjectException('Please Provide Project Name that you want to access Cortex Assets for')
 
-        auth = AuthenticationClient(api_endpoint, version=2, verify_ssl_cert=verify_ssl_cert)
-        t = _Token(auth, token, account, username, password)
+        t = _Token(token)
 
-        return Client(url=api_endpoint, version=api_version, token=t, verify_ssl_cert=verify_ssl_cert)
+        return Client(url=api_endpoint, version=api_version, token=t, config=config, project=project,
+                      verify_ssl_cert=verify_ssl_cert)
 
     @staticmethod
     def from_message(msg):
@@ -245,25 +213,16 @@ class Cortex(object):
     @staticmethod
     def login():
         """
-        Login to Cortex5. The function prompts the caller for Cortex URI, account, user name, and password, retrieves the user's JWT token and sets the information as environment variables for use by the SDK.
+        Login to Cortex5. The function prompts the caller for Cortex Personal Access Config.
 
         **Example**
 
         >>> Cortex.login()
         Cortex URI: [https://api.cortex.insights.ai]
-        Account: accountId
-        Username: userName
-        Password: ****
+        Cortex Personal Access Config:
         """
-        prod_uri = 'https://api.cortex.insights.ai'
-        uri = input('Cortex URI: [{}]'.format(prod_uri)) or prod_uri
-        account = input('Account: ')
-        username = input('Username: ')
-        password = getpass.getpass('Password: ')
-        auth = AuthenticationClient(uri, version=2)
-        token = auth.fetch_auth_token(account, username, password)
-        os.environ['CORTEX_URI'] = uri
-        os.environ['CORTEX_ACCOUNT'] = account
-        os.environ['CORTEX_TOKEN'] = token
-        os.environ['CORTEX_USERNAME'] = username
-        os.environ['CORTEX_PASSWORD'] = password
+        config = input('Cortex Personal Access Config: ')
+        project = input('Project: ')
+        os.environ['CORTEX_PERSONAL_ACCESS_CONFIG'] = config
+        if project:
+            os.environ['CORTEX_PROJECT'] = project

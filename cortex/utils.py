@@ -19,9 +19,10 @@ import jwt
 import base64
 import hashlib
 import logging
+import python_jwt as py_jwt, jwcrypto.jwk as jwkLib
 from requests.exceptions import HTTPError
 from pathlib import Path
-from datetime import datetime
+import datetime
 from collections import namedtuple
 from .exceptions import BadTokenException
 
@@ -76,7 +77,7 @@ def log_message(msg: str, log: logging.Logger, level=logging.INFO, *args, **kwar
         log.log(level, msg, *args, **kwargs)
 
 
-def b64encode(b: bytes)->str:
+def b64encode(b: bytes) -> str:
     """
     Returns a string from an iterable collection of bytes.
     """
@@ -84,7 +85,7 @@ def b64encode(b: bytes)->str:
     return encoded.decode('utf-8')
 
 
-def b64decode(s: str)->bytes:
+def b64decode(s: str) -> bytes:
     """
     Returns an iterable collection of bytes representing a base-64 encoding of a given string.
     """
@@ -117,15 +118,48 @@ def decode_JWT(*args, verify):
         decodedJWT = jwt.decode(*args, verify=verify)
         # there are places in the sdk where we try to decode 'any ol token' before sending the token to kong to get verified
         # therefore, here we have some reasonable checks to make sure that this is a cortex token by checking the JWT keys exist
-        if not decodedJWT.get('tenant') or not decodedJWT.get('sub') or not decodedJWT.get('exp'):
+        if not decodedJWT.get('aud') or not decodedJWT.get('sub') or not decodedJWT.get('exp'):
             raise BadTokenException(invalidTokenMsg)
-        if datetime.today().timestamp() > decodedJWT['exp']:
+        if datetime.datetime.today().timestamp() > decodedJWT['exp']:
             raise jwt.ExpiredSignatureError
         return decodedJWT
     except jwt.ExpiredSignatureError:
         raise BadTokenException(expiredTokenMsg)
     except jwt.exceptions.InvalidTokenError:
         raise BadTokenException(invalidTokenMsg)
+
+
+def verify_JWT(token, config, verify):
+    """
+    thin wrapper around jwt.decode. This function exists for better error handling of the
+    jwt exceptions.
+    """
+    invalidTokenMsg = 'Your Cortex Token is invalid. For more information, go to Cortex Docs > Cortex Tools > Access'
+    try:
+        decodedJWT = jwt.decode(token, verify=verify)
+        # there are places in the sdk where we try to decode 'any ol token' before sending the token to kong to get verified
+        # therefore, here we have some reasonable checks to make sure that this is a cortex token by checking the JWT keys exist
+        if not decodedJWT.get('aud') or not decodedJWT.get('sub') or not decodedJWT.get('exp'):
+            raise BadTokenException(invalidTokenMsg)
+        if datetime.datetime.today().timestamp() > decodedJWT['exp']:
+            return generate_token(config)
+        return token
+    except jwt.ExpiredSignatureError:
+        return generate_token(config)
+    except jwt.exceptions.InvalidTokenError:
+        raise BadTokenException(invalidTokenMsg)
+
+
+def generate_token(config):
+    key = jwkLib.JWK.from_json(json.dumps(config.get('jwk')))
+    token_payload = {
+        "iss": config.get('issuer'),
+        "aud": config.get('audience'),
+        "sub": config.get('username'),
+    }
+    token = py_jwt.generate_jwt(token_payload, key, 'EdDSA', datetime.timedelta(minutes=2),
+                                other_headers={"kid": key.thumbprint()})
+    return token
 
 
 def get_cortex_profile(profile_name=None):
@@ -168,7 +202,7 @@ def json_str(val):
         return str(val)
 
 
-def base64decode_jsonstring(base64encoded_jsonstring:str):
+def base64decode_jsonstring(base64encoded_jsonstring: str):
     """
     Loads a json from a base64 encoded json string.
     :param base64encoded_jsonstring:
@@ -190,7 +224,6 @@ def raise_for_status_with_detail(resp):
         try:
             log_message(msg=resp.json(), log=get_logger('http_status'), level=logging.ERROR)
         except Exception as e:
-            pass # resp.json() failed
+            pass  # resp.json() failed
         finally:
             raise http_exception
-

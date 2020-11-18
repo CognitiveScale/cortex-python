@@ -24,37 +24,23 @@ from .utils import raise_for_status_with_detail
 log = get_logger(__name__)
 
 
-class ConnectionClient(_Client):
+class SecretsClient(_Client):
     """
-    A client used to manage connections.
+    A client for the Cortex Actions API.
     """
-    URIs = {'connections': 'projects/{projectId}/connections'}
+
+    URIs = {
+    }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = 4
 
-    def save_connection(self, project: str, connection: object):
-        """
-        Posts the connection client information.
-        """
-        uri = self.URIs['connections'].format(projectId=project)
-        data = json.dumps(connection)
-        headers = {'Content-Type': 'application/json'}
-        r = self._serviceconnector.request('POST', uri, data, headers)
-        raise_for_status_with_detail(r)
-        return r.json()
-
-    ## Private ##
-
-    def _bootstrap(self):
-        uri  = self.URIs['connections'] + '/_/bootstrap'
-        r = self._serviceconnector.request('GET', uri)
-        raise_for_status_with_detail(r)
-        return r.json()
+    def post_secret(self):
+        raise NotImplementedError()
 
 
-class Connection(CamelResource):
+class Secret(CamelResource):
 
     """
     Defines the connection for a dataset.
@@ -66,7 +52,7 @@ class Connection(CamelResource):
 
 
     @staticmethod
-    def get_connection(name, project, client: ConnectionClient):
+    def get_secret(name, project, client: SecretsClient):
         """
         Fetches a Connection to work with.
 
@@ -75,8 +61,8 @@ class Connection(CamelResource):
         :param project: The project from which connection has to be retrieved.
         :return: A Connection object.
         """
-        uri = 'projects/{projectId}/connections/{name}'.format(projectId=project, name=name)
-        log.debug('Getting connection using URI: %s' % uri)
+        uri = 'projects/{projectId}/secrets/{name}'.format(projectId=project, name=name)
+        log.debug('Getting Secret using URI: %s' % uri)
         r = client._serviceconnector.request('GET', uri)
         raise_for_status_with_detail(r)
 

@@ -48,3 +48,10 @@ class APIException(CortexException):
     Cortex API exception.
     """
     pass
+
+
+class ProjectException(CortexException):
+    """
+    Cortex Project exception.
+    """
+    pass
