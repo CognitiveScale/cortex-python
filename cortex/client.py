@@ -77,7 +77,7 @@ class Client(object):
             self._token = _Token(generate_token(self._config))
         return Skill.get_skill(name, self._project, self._mk_connector())
 
-    def connection(self, name: str, version: str = '4'):
+    def get_connection(self, name: str, version: str = '4'):
         """
         Gets an connection with the specified name.
         """
