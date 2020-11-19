@@ -263,12 +263,13 @@ class RemoteRun(Run):
     A run that is executed remotely, through a client.
     """
 
-    def __init__(self, experiment, experiment_client):
+    def __init__(self, experiment, project, experiment_client):
         super().__init__(experiment)
+        self._project = project
         self._client = experiment_client
 
     @staticmethod
-    def create(experiment, experiment_client):
+    def create(experiment, project, experiment_client):
         """
         Creates a remote run.
 
@@ -276,14 +277,15 @@ class RemoteRun(Run):
         :param experiment_client: The client for the run.
         :return: A run.
         """
-        r = experiment_client.create_run(experiment.name)
-        run = RemoteRun(experiment, experiment_client)
+        print(experiment, project)
+        r = experiment_client.create_run(experiment.name, project)
+        run = RemoteRun(experiment, project, experiment_client)
         run._id = r['runId']
 
         return run
 
     @staticmethod
-    def get(experiment, run_id, experiment_client):
+    def get(experiment, project, run_id, experiment_client):
         """
         Gets a run.
 
@@ -292,11 +294,11 @@ class RemoteRun(Run):
         :param experiment_client: The client for the run.
         :return: A run.
         """
-        r = experiment_client.get_run(experiment.name, run_id)
-        return RemoteRun.from_json(r, experiment)
+        r = experiment_client.get_run(experiment.name,project, run_id)
+        return RemoteRun.from_json(r, project, experiment)
 
     @staticmethod
-    def from_json(json, experiment):
+    def from_json(json, project, experiment):
         """
         Builds a run from the given json.
 
@@ -305,7 +307,7 @@ class RemoteRun(Run):
         :param experiment: the parent experiment of the run
         :return: a run
         """
-        run = RemoteRun(experiment, experiment._client)
+        run = RemoteRun(experiment,project, experiment._client)
         run._id = json['runId']
         run._start = json.get('startTime', json.get('start'))
         run._end = json.get('endTime', json.get('end'))
@@ -322,21 +324,21 @@ class RemoteRun(Run):
         Updates the params for the run.
         """
         super().log_param(name, param)
-        self._client.update_param(self._experiment.name, self.id, name, param)
+        self._client.update_param(self._experiment.name, self._project, self.id, name, param)
 
     def log_metric(self, name: str, metric):
         """
         Updates the metrics for the run.
         """
         super().log_metric(name, metric)
-        self._client.update_metric(self._experiment.name, self.id, name, metric)
+        self._client.update_metric(self._experiment.name, self._project, self.id, name, metric)
 
     def set_meta(self, name: str, val):
         """
         Sets the metadata for the run.
         """
         super().set_meta(name, val)
-        self._client.update_meta(self._experiment.name, self.id, name, val)
+        self._client.update_meta(self._experiment.name, self._project ,self.id, name, val)
 
     def log_artifact(self, name: str, artifact):
         """
@@ -364,7 +366,7 @@ class RemoteRun(Run):
         """
         Updates the artifact with the given stream.
         """
-        self._client.update_artifact(self._experiment.name, self.id, name, stream)
+        self._client.update_artifact(self._experiment.name, self._project, self.id, name, stream)
 
     def log_keras_model(self, model, artifact_name='model'):
         """
@@ -372,14 +374,14 @@ class RemoteRun(Run):
         """
         with tempfile.NamedTemporaryFile(mode='w+b') as temp:
             model.save(filepath=temp.name)
-            self.log_artifact_file(artifact_name, temp.name)
+            self.log_artifact_file(artifact_name, self._project, temp.name)
 
     def get_artifact(self, name: str, deserializer=dill.loads):
         """
         Gets an artifact with the given name.  Deserializes the artifact stream using dill by default.  Deserialization
         can be disabled entirely or the deserializer function can be overridden.
         """
-        artifact_bytes = self._client.get_artifact(self._experiment.name, self.id, name)
+        artifact_bytes = self._client.get_artifact(self._experiment.name, self._project, self.id, name)
         if deserializer:
             return deserializer(artifact_bytes)
         return artifact_bytes
@@ -394,7 +396,7 @@ class RemoteRun(Run):
             raise ConfigurationException('Keras needs to be installed in order to use get_keras_model')
 
         f = tempfile.NamedTemporaryFile(delete=False)
-        f.write(self.get_artifact(artifact_name, deserializer=lambda x: x))
+        f.write(self.get_artifact(artifact_name, self._project, deserializer=lambda x: x))
         model_file = f.name
         f.close()
         try:
