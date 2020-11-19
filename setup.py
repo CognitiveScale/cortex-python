@@ -36,7 +36,7 @@ setup(name='cortex-python',
           'requests>=2.12.4,<3',
           'requests-toolbelt==0.8.0',
           'pyjwt>=1.6.1,<2',
-          'python-jwt==3.3.0'
+          'python-jwt==3.3.0',
           'pyyaml>=5.3.1,<6',
           'cuid>=0.3,<1',
           'tenacity>=5.0.2',
