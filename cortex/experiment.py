@@ -48,6 +48,10 @@ class ExperimentClient(_Client):
         'metric': 'projects/{projectId}/experiments/{experimentName}/runs/{runId}/metrics/{metricId}'
     }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._serviceconnector.version = 4
+
     def list_experiments(self, project):
         r = self._serviceconnector.request(method='GET', uri=self.URIs['experiments'].format(projectId=project))
         raise_for_status_with_detail(r)

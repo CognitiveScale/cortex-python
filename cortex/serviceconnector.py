@@ -24,6 +24,7 @@ from urllib3.util.retry import Retry
 from typing import Dict, Any, List, Union, Optional, Type, TypeVar
 from .utils import get_logger, get_cortex_profile, decode_JWT, verify_JWT, generate_token
 from .utils import raise_for_status_with_detail
+from .exceptions import BadTokenException
 log = get_logger(__name__)
 
 JSONType = Union[str, int, float, bool, None, Dict[str, Any], List[Any]]
@@ -157,13 +158,13 @@ class ServiceConnector:
     def _construct_headers(self, headers):
         headersToSend = { 'User-Agent': userAgent }
 
-        if self.token:
+        if hasattr(self, "token") and self.token:
             self.token = verify_JWT(self.token, self._config, verify=False)
             decode_JWT(self.token, verify=False)
             auth = 'Bearer {}'.format(self.token)
             headersToSend[u'Authorization'] = auth
         else:
-            self.token = generate_token(self._config).token
+            self.token = generate_token(self._config)
             auth = 'Bearer {}'.format(self.token)
             headersToSend[u'Authorization'] = auth
 
