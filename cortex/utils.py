@@ -143,7 +143,8 @@ def verify_JWT(token, config, verify):
             raise BadTokenException(invalidTokenMsg)
         if datetime.datetime.today().timestamp() > decodedJWT['exp']:
             return generate_token(config)
-        return token
+        else:
+            return token
     except jwt.ExpiredSignatureError:
         return generate_token(config)
     except jwt.exceptions.InvalidTokenError:
@@ -151,15 +152,19 @@ def verify_JWT(token, config, verify):
 
 
 def generate_token(config, validity=2):
-    key = jwkLib.JWK.from_json(json.dumps(config.get('jwk')))
-    token_payload = {
-        "iss": config.get('issuer'),
-        "aud": config.get('audience'),
-        "sub": config.get('username'),
-    }
-    token = py_jwt.generate_jwt(token_payload, key, 'EdDSA', datetime.timedelta(minutes=validity),
-                                other_headers={"kid": key.thumbprint()})
-    return token
+    try:
+        key = jwkLib.JWK.from_json(json.dumps(config.get('jwk')))
+        token_payload = {
+            "iss": config.get('issuer'),
+            "aud": config.get('audience'),
+            "sub": config.get('username'),
+        }
+        token = py_jwt.generate_jwt(token_payload, key, 'EdDSA', datetime.timedelta(minutes=validity),
+                                    other_headers={"kid": key.thumbprint()})
+        return token
+    except Exception:
+        noTokenmsg = 'Please Provide Your Cortex Token. For more information, go to Cortex Docs > Cortex Tools > Access'
+        raise BadTokenException(noTokenmsg)
 
 
 def get_cortex_profile(profile_name=None):
