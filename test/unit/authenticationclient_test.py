@@ -20,24 +20,32 @@ from mocket.mockhttp import Entry
 from mocket import mocketize
 
 from cortex.auth import AuthenticationClient
+from cortex.utils import decode_JWT
 
 class TestAuthenticationClient(unittest.TestCase):
 
     def setUp(self):
-        self.ac = AuthenticationClient('http://localhost:8000', 2)
+        self.ac = AuthenticationClient('http://localhost:8000', 4)
 
     @mocketize
     def test_fetch_auth_token(self):
         # setup
-        uri = self.ac.URIs['authenticate'].format('cogscale')
-        url = self.ac._serviceconnector._construct_url(uri)
-        body={"jwt": "123"}
-        Entry.single_register(Entry.POST,
-                              url,
-                              status = 200,
-                              body = json.dumps(body))
+        # uri = self.ac.URIs['authenticate'].format(projectId='cogscale')
+        # url = self.ac._serviceconnector._construct_url(uri)
+        body={"jwk":{"crv":"Ed25519","x":"w5cHiafuEQF4TXrgdaR1c6GBYvDaHBujXx46Z6JnJ0o","d":"1lOTAnuFp7c_uhT_ZWC_fnXZwLefYI7ATvMh-YvOdwM","kty":"OKP","kid":"3ZNnm4uG41qr9-YvZjw7qI34V5FIPUAN_W9rASBw4zQ"},
+              "issuer":"cognitivescale.com",
+              "audience":"cortex",
+              "username":"71a8faac-9dfb-428d-a90c-0b53481b8665",
+              "url":"https://api.dci-blah.dev-eks.insights.ai"
+              }
+        # Entry.single_register(Entry.POST,
+        #                       url,
+        #                       status = 200,
+        #                       body = json.dumps(body))
         # execute
-        token = self.ac.fetch_auth_token('cogscale', 'marcus', 'secret')
+        # todo mock this call?..
+        token = self.ac.fetch_auth_token(body)
         # test
-        self.assertEqual(token, '123')
+        decodedBody = decode_JWT(token, verify=False)
+        self.assertEqual(body["issuer"], decodedBody["iss"])
 
