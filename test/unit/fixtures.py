@@ -51,3 +51,21 @@ def register_entry(verb, url, body:dict):
 def register_entry_from_path(verb, url, path:str):
     with open(path) as fh:
         register_entry(verb, url, json.load(fh))
+
+def mock_pat_config():
+    '''
+    Return a PAt config to allow test t ocreate new JWTs
+    :return: PAT config
+    '''
+    return {
+        "jwk":{
+            "crv":"Ed25519",
+            "x":"fPxYvREALYwHVpZtCmYxtc2EW6asDTpqyhqgfco6kWQ",
+            "d":"B9vmiGHtwG9GuFZNso3JDm5_O9bcUbtQyGgp6VrAfL4",
+            "kty":"OKP","kid":"HpW-ya7FSU7yV-alzyewPPDwPeFgrki0VQPKbh4J4Pw"
+        },
+        "issuer":"cognitivescale.com",
+        "audience":"cortex",
+        "username":"f354f53c-83d6-4af5-a2ac-13a8b7e7b09a",
+        "url":"https://192.168.39.27:31326"
+    }

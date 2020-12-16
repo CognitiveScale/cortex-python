@@ -23,10 +23,11 @@ from cortex.experiment import ExperimentClient
 
 from mocket.mockhttp import Entry
 from mocket import mocketize
-from .fixtures import john_doe_token, build_mock_url, mock_api_endpoint
+from .fixtures import mock_pat_config, build_mock_url, mock_api_endpoint
 import dill
 
 
+PROJECT = 'expproj'
 class TestExperiment(unittest.TestCase):
     '''
     Test experiment checks experiment functionality
@@ -37,16 +38,16 @@ class TestExperiment(unittest.TestCase):
     def setUp(self):
         self.local = Cortex.local()
         self.local_tmp = Cortex.local('/tmp/cortex')
-        self.cortex = Cortex.client(api_endpoint=mock_api_endpoint(), api_version=3, token=john_doe_token())
+        self.cortex = Cortex.client(api_endpoint=mock_api_endpoint(), config=mock_pat_config(), project=PROJECT)
 
         # register mock for getting an expeiment from the client
-        uri = ExperimentClient.URIs['experiment'].format(experiment_name=self.EXP_NAME)
+        uri = ExperimentClient.URIs['experiment'].format(experimentName=self.EXP_NAME, projectId=PROJECT)
         returns = {"name": self.EXP_NAME}
         Entry.single_register(Entry.GET, build_mock_url(uri), status=200, body=json.dumps(returns))
 
     @mocketize
     def test_make_remote_experiment(self):       
-        exp = self.cortex.experiment(self.EXP_NAME, version='3')
+        exp = self.cortex.experiment(self.EXP_NAME)
         self.assertNotEqual(exp, None)
 
     def test_make_local_experiment(self):
@@ -60,7 +61,7 @@ class TestExperiment(unittest.TestCase):
 
     @mocketize
     def test_remote_load_artifact(self):
-        exp = self.cortex.experiment(self.EXP_NAME, version='3')
+        exp = self.cortex.experiment(self.EXP_NAME)
         # add a run & artifact
 
         ## register mock for creating a run
