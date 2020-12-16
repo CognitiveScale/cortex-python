@@ -20,13 +20,13 @@ def john_doe_token():
             "exp": 12312411251
             }
     '''
-    return 'eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtbGl1IiwidGVuYW50IjoibWxpdSIsIm5hbWUiOiJKb2huIERvZSIsImlhdCI6MTUxNjIzOTAyMiwiZXhwIjoxMjMxMjQxMTI1MX0.lUathguAHKBxAlrN23ApExCB1b5OLf37EfX1gjI_plsPYYMyE0jHPUguByqrwKxT'
+    return 'eyJraWQiOiIzWk5ubTR1RzQxcXI5LVl2Wmp3N3FJMzRWNUZJUFVBTl9XOXJBU0J3NHpRIiwiYWxnIjoiRWREU0EifQ.eyJzdWIiOiI3MWE4ZmFhYy05ZGZiLTQyOGQtYTkwYy0wYjUzNDgxYjg2NjUiLCJhdWQiOiJjb3J0ZXgiLCJpc3MiOiJjb2duaXRpdmVzY2FsZS5jb20iLCJpYXQiOjE2MDgxNTkxNDcsImV4cCI6MTYwODI0NTU0N30.dqHdLRN_JJpKZ2Zzi4B9ZOsfKnNGw1L6qj7SmEcclIapstLa7E9CEzgaUVaxGo4ukRoxZLj27gmgslag2JXUDQ'
 
 def john_doe_subject():
     '''
     The subject part of the jwt token
     '''
-    return 'mliu'
+    return '71a8faac-9dfb-428d-a90c-0b53481b8665'
 
 
 def build_mock_url(uri, version=3):
@@ -66,6 +66,6 @@ def mock_pat_config():
         },
         "issuer":"cognitivescale.com",
         "audience":"cortex",
-        "username":"f354f53c-83d6-4af5-a2ac-13a8b7e7b09a",
+        "username":"71a8faac-9dfb-428d-a90c-0b53481b8665",
         "url":"https://192.168.39.27:31326"
     }

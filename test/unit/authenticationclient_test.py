@@ -21,7 +21,7 @@ from mocket import mocketize
 
 from cortex.auth import AuthenticationClient
 from cortex.utils import decode_JWT
-
+from .fixtures import mock_pat_config
 class TestAuthenticationClient(unittest.TestCase):
 
     def setUp(self):
@@ -32,12 +32,7 @@ class TestAuthenticationClient(unittest.TestCase):
         # setup
         # uri = self.ac.URIs['authenticate'].format(projectId='cogscale')
         # url = self.ac._serviceconnector._construct_url(uri)
-        body={"jwk":{"crv":"Ed25519","x":"w5cHiafuEQF4TXrgdaR1c6GBYvDaHBujXx46Z6JnJ0o","d":"1lOTAnuFp7c_uhT_ZWC_fnXZwLefYI7ATvMh-YvOdwM","kty":"OKP","kid":"3ZNnm4uG41qr9-YvZjw7qI34V5FIPUAN_W9rASBw4zQ"},
-              "issuer":"cognitivescale.com",
-              "audience":"cortex",
-              "username":"71a8faac-9dfb-428d-a90c-0b53481b8665",
-              "url":"https://api.dci-blah.dev-eks.insights.ai"
-              }
+        body=mock_pat_config()
         # Entry.single_register(Entry.POST,
         #                       url,
         #                       status = 200,
