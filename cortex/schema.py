@@ -14,13 +14,28 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from cortex.catalog import CatalogClient
-from cortex.serviceconnector import ServiceConnector
+from cortex.serviceconnector import _Client, ServiceConnector
 from cortex.utils import get_logger
 from .camel import CamelResource
 from .utils import raise_for_status_with_detail
 
 log = get_logger(__name__)
+
+
+class SchemaClient(_Client):
+    """
+    A client for the Cortex Actions API.
+    """
+
+    URIs = {
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._serviceconnector.version = 4
+
+    def save_schema(self):
+        raise NotImplementedError()
 
 
 class Schema(CamelResource):
@@ -32,7 +47,7 @@ class Schema(CamelResource):
         self._connector = connector
 
     @staticmethod
-    def get_schema(name, client: CatalogClient):
+    def get_schema(name, project, client: SchemaClient):
         """
         Fetches a schema to work with.
 
@@ -40,7 +55,7 @@ class Schema(CamelResource):
         :param name: The name of the schema to retrieve.
         :return: A schema object.
         """
-        uri = 'catalog/types/{name}'.format(name=name)
+        uri = 'projects/{projectId}types/{name}'.format(projectId=project, name=name)
         log.debug('Getting schema using URI: %s' % uri)
         r = client._serviceconnector.request('GET', uri)
         raise_for_status_with_detail(r)

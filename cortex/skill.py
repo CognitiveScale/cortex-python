@@ -14,12 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from .message import Message
 from .utils import get_logger
-from .action import ActionClient
 from .serviceconnector import ServiceConnector
 from .camel import CamelResource
-from .utils import raise_for_status_with_detail
 
 log = get_logger(__name__)
 
@@ -31,62 +28,11 @@ class Skill(CamelResource):
      one or more outputs.
     """
 
-    def __init__(self, skill, connector: ServiceConnector):
+    def __init__(self, skill, project, connector: ServiceConnector):
         super().__init__(skill, True)
         self._connector = connector
-
-    def _merge_properties(self, msg_props):
-        if self.properties:
-            for prop in self.properties:
-                name = prop.get('name')
-                value = prop.get('value', prop.get('defaultValue'))
-
-                if name in msg_props or not value:
-                    continue
-
-                msg_props[name] = value
-
-        return msg_props
-
-    def invoke(self, input_name: str, message: Message, timeout=30):
-        """
-        Invokes the skill with a given message.
-
-        :param input_name: Identifier for an input to this skill.
-        :param message: The message used for the invocation.
-        """
-        for input in self.inputs:
-            if input['name'] == input_name:
-                routing = input['routing']
-                action_name = routing.get('all', {}).get('action')
-                if action_name:
-                    action_client = ActionClient(self._connector.url, self._connector.version, self._connector.token)
-
-                    # Prepare message properties
-                    if not message.properties:
-                        message.properties = {}
-
-                    # Add Skill properties that are set to the message
-                    message.properties = self._merge_properties(message.properties)
-
-                    return Message(action_client.invoke_action(action_name, message.to_params()))
-                else:
-                    raise Exception('Skill invoke only works with "all" routing')
-        else:
-            raise Exception('No inputs defined')
+        self._project = project
 
     @staticmethod
-    def get_skill(name: str, connector: ServiceConnector):
-        """
-        Fetches a skill to work with.
-
-        :param name: The name of the skill to retrieve.
-        :param connector: connector to use
-        :return: A skill object.
-        """
-        uri = 'catalog/skills/{name}'.format(name=name)
-        log.debug('Getting skill using URI: %s' % uri)
-        r = connector.request('GET', uri)
-        raise_for_status_with_detail(r)
-
-        return Skill(r.json(), connector)
+    def get_skill(name: str, project: str, connector: ServiceConnector):
+        raise NotImplementedError()
