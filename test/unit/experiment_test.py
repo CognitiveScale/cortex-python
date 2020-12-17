@@ -23,10 +23,11 @@ from cortex.experiment import ExperimentClient
 
 from mocket.mockhttp import Entry
 from mocket import mocketize
-from .fixtures import john_doe_token, build_mock_url, mock_api_endpoint
+from .fixtures import mock_pat_config, build_mock_url, mock_api_endpoint
 import dill
 
 
+PROJECT = 'expproj'
 class TestExperiment(unittest.TestCase):
     '''
     Test experiment checks experiment functionality
@@ -37,16 +38,16 @@ class TestExperiment(unittest.TestCase):
     def setUp(self):
         self.local = Cortex.local()
         self.local_tmp = Cortex.local('/tmp/cortex')
-        self.cortex = Cortex.client(api_endpoint=mock_api_endpoint(), api_version=3, token=john_doe_token())
+        self.cortex = Cortex.client(api_endpoint=mock_api_endpoint(), config=mock_pat_config(), project=PROJECT)
 
         # register mock for getting an expeiment from the client
-        uri = ExperimentClient.URIs['experiment'].format(experiment_name=self.EXP_NAME)
+        uri = ExperimentClient.URIs['experiment'].format(experimentName=self.EXP_NAME, projectId=PROJECT)
         returns = {"name": self.EXP_NAME}
         Entry.single_register(Entry.GET, build_mock_url(uri), status=200, body=json.dumps(returns))
 
     @mocketize
     def test_make_remote_experiment(self):       
-        exp = self.cortex.experiment(self.EXP_NAME, version='3')
+        exp = self.cortex.experiment(self.EXP_NAME)
         self.assertNotEqual(exp, None)
 
     def test_make_local_experiment(self):
@@ -60,11 +61,11 @@ class TestExperiment(unittest.TestCase):
 
     @mocketize
     def test_remote_load_artifact(self):
-        exp = self.cortex.experiment(self.EXP_NAME, version='3')
+        exp = self.cortex.experiment(self.EXP_NAME)
         # add a run & artifact
 
         ## register mock for creating a run
-        uri = ExperimentClient.URIs['runs'].format(experiment_name=self.EXP_NAME)
+        uri = ExperimentClient.URIs['runs'].format(projectId=PROJECT, experimentName=self.EXP_NAME)
         run_id = '000001'
         returns = {"runId": run_id}
         Entry.single_register(Entry.POST, build_mock_url(uri), status=200, body=json.dumps(returns))
@@ -75,7 +76,7 @@ class TestExperiment(unittest.TestCase):
 
         # get the artifact & test if it is what is expected
         ## register mock for loading an artifact
-        uri = ExperimentClient.URIs['artifact'].format(experiment_name=self.EXP_NAME, run_id=run_id, artifact='my_dictionary')
+        uri = ExperimentClient.URIs['artifact'].format(experimentName=self.EXP_NAME, runId=run_id, artifactId='my_dictionary', projectId=PROJECT)
         Entry.single_register(Entry.GET, build_mock_url(uri), status=200, body=dill.dumps(my_dictionary))
 
         result = exp.load_artifact(run, 'my_dictionary')

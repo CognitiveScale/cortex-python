@@ -17,7 +17,7 @@ limitations under the License.
 import json
 import unittest
 import uuid
-
+from test.unit import fixtures
 from mocket.mockhttp import Entry
 from mocket import mocketize
 
@@ -27,7 +27,7 @@ from cortex.session import SessionClient
 class TestSessionClient(unittest.TestCase):
 
     def setUp(self):
-        self.client = SessionClient('http://localhost:8000', 3, 'token')
+        self.client = SessionClient('http://localhost:8000', config=fixtures.mock_pat_config())
         self.session_id = str(uuid.uuid4())
 
     def register_entry(self, verb, uri, body):
