@@ -152,6 +152,9 @@ def verify_JWT(token, config, verify):
 
 
 def generate_token(config, validity=2):
+    """
+    Use the Personal Access Token (JWK) obtained from Cortex's console to generate JWTs to access cortex services..
+    """
     try:
         key = jwkLib.JWK.from_json(json.dumps(config.get('jwk')))
         token_payload = {
