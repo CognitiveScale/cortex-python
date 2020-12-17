@@ -66,9 +66,10 @@ class TestRun(unittest.TestCase):
         # get the artifact & test if it is what is expected
         ## register mock for loading an artifact
         uri = ExperimentClient.URIs['artifact'].format(
-                experiment_name=self.RUN_EXP_NAME, 
-                run_id=self.RUN_ID, 
-                artifact='artifact'
+                experimentName=self.RUN_EXP_NAME,
+                runId=self.RUN_ID,
+                artifactId='artifact',
+                projectId=PROJECT,
                 )
         Entry.single_register(Entry.GET, build_mock_url(uri), status=200, body=dill.dumps(test_artifact))
         result = r.get_artifact('artifact')

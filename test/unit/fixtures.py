@@ -29,11 +29,11 @@ def john_doe_subject():
     return '71a8faac-9dfb-428d-a90c-0b53481b8665'
 
 
-def build_mock_url(uri, version=3):
+def build_mock_url(uri, version=4):
     '''
     build a mock url for testing
     '''
-    return "{api_endpoint}/v{version}/{uri}".format(api_endpoint=mock_api_endpoint(), version=version, uri=uri)
+    return "{api_endpoint}/fabric/v{version}/{uri}".format(api_endpoint=mock_api_endpoint(), version=version, uri=uri)
 
 
 def mock_api_endpoint():

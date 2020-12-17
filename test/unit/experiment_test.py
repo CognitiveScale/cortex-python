@@ -65,7 +65,7 @@ class TestExperiment(unittest.TestCase):
         # add a run & artifact
 
         ## register mock for creating a run
-        uri = ExperimentClient.URIs['runs'].format(experiment_name=self.EXP_NAME)
+        uri = ExperimentClient.URIs['runs'].format(projectId=PROJECT, experimentName=self.EXP_NAME)
         run_id = '000001'
         returns = {"runId": run_id}
         Entry.single_register(Entry.POST, build_mock_url(uri), status=200, body=json.dumps(returns))
@@ -76,7 +76,7 @@ class TestExperiment(unittest.TestCase):
 
         # get the artifact & test if it is what is expected
         ## register mock for loading an artifact
-        uri = ExperimentClient.URIs['artifact'].format(experiment_name=self.EXP_NAME, run_id=run_id, artifact='my_dictionary')
+        uri = ExperimentClient.URIs['artifact'].format(experimentName=self.EXP_NAME, runId=run_id, artifactId='my_dictionary', projectId=PROJECT)
         Entry.single_register(Entry.GET, build_mock_url(uri), status=200, body=dill.dumps(my_dictionary))
 
         result = exp.load_artifact(run, 'my_dictionary')
