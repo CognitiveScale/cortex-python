@@ -1,5 +1,3 @@
-------
-
 **Home:** `Cortex Fabric Documentation <https://cognitivescale.github.io/cortex-fabric/>`_
 
 Cortex Python Reference
@@ -26,35 +24,10 @@ Cortex Client
 .. autoclass:: cortex.client.Client
     :members:
 
-Cortex Action
--------------
-
-.. autoclass:: cortex.action.Action
-    :members:
-
-
-Cortex Agent
--------------
-
-.. autoclass:: cortex.agent.Agent
-    :members:
-
-Cortex Dataset
---------------
-
-.. autoclass:: cortex.dataset.Dataset
-    :members:
-
 Cortex Experiment
 -----------------
 
 .. autoclass:: cortex.experiment.Experiment
-    :members:
-
-Cortex Pipeline
----------------
-
-.. autoclass:: cortex.pipeline.Pipeline
     :members:
 
 Cortex Skill
@@ -66,11 +39,6 @@ Cortex Skill
 
 REST API Clients
 ==========================
-
-ActionClient
--------------
-.. autoclass:: cortex.action.ActionClient
-    :members:
 
 AuthenticationClient
 --------------------
@@ -85,11 +53,6 @@ ConnectionClient
 ManagedContentClient
 --------------------
 .. autoclass:: cortex.content.ManagedContentClient
-    :members:
-
-DatasetsClient
----------------
-.. autoclass:: cortex.dataset.DatasetsClient
     :members:
 
 SessionClient
