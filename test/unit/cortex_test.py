@@ -41,16 +41,16 @@ class Test_Cortex(unittest.TestCase):
         assert cortex._token._jwt['sub'] == john_doe_subject()
 
     def test_message_constructor(self):
+        token = john_doe_token()
         cortex = Cortex.client(
             api_endpoint = 'https://api.test.cortex',
             api_version = 4,
             project = 'unittest',
-            token = john_doe_token()
+            token = token
             )
         message = cortex.message({'foo': 'bar'})
         assert isinstance(message, Message)
         assert message.apiEndpoint == cortex._url
         assert message.token == cortex._token.token
-        assert message.token == john_doe_token()
-
+        assert message.token == token
 
