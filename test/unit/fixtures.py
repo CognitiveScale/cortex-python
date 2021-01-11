@@ -2,25 +2,12 @@
 functions for mocking connection to cortex for testing 
 '''
 
-
 import json
-
+from cortex.utils import generate_token
 from mocket.mockhttp import Entry
 
 def john_doe_token():
-    '''token with user name John Doe, this is a
-        slight modification to the default at
-        https://jwt.io/ debugger, with this json
-        payload:
-            {
-            "sub": "mliu",
-            "tenant": "mliu",
-            "name": "John Doe",
-            "iat": 1516239022,
-            "exp": 12312411251
-            }
-    '''
-    return 'eyJraWQiOiIzWk5ubTR1RzQxcXI5LVl2Wmp3N3FJMzRWNUZJUFVBTl9XOXJBU0J3NHpRIiwiYWxnIjoiRWREU0EifQ.eyJzdWIiOiI3MWE4ZmFhYy05ZGZiLTQyOGQtYTkwYy0wYjUzNDgxYjg2NjUiLCJhdWQiOiJjb3J0ZXgiLCJpc3MiOiJjb2duaXRpdmVzY2FsZS5jb20iLCJpYXQiOjE2MDgxNTkxNDcsImV4cCI6MTYwODI0NTU0N30.dqHdLRN_JJpKZ2Zzi4B9ZOsfKnNGw1L6qj7SmEcclIapstLa7E9CEzgaUVaxGo4ukRoxZLj27gmgslag2JXUDQ'
+    return generate_token(mock_pat_config())
 
 def john_doe_subject():
     '''
