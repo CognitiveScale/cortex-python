@@ -16,6 +16,7 @@ limitations under the License.
 """
 
 import json
+import urllib.parse
 from .serviceconnector import _Client, ServiceConnector
 from .camel import CamelResource
 from .utils import get_logger
@@ -75,7 +76,7 @@ class Connection(CamelResource):
         :param project: The project from which connection has to be retrieved.
         :return: A Connection object.
         """
-        uri = 'projects/{projectId}/connections/{name}'.format(projectId=project, name=name)
+        uri = 'projects/{projectId}/connections/{name}'.format(projectId=project, name=urllib.parse.quote(name, safe=''))
         log.debug('Getting connection using URI: %s' % uri)
         r = client._serviceconnector.request('GET', uri)
         raise_for_status_with_detail(r)

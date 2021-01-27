@@ -17,6 +17,7 @@ limitations under the License.
 import dill
 import os
 import json
+import urllib.parse
 
 from pathlib import Path
 from .run import Run, RemoteRun
@@ -73,7 +74,7 @@ class ExperimentClient(_Client):
         return r.json()
 
     def delete_experiment(self, experiment_name, project):
-        uri = self.URIs['experiment'].format(projectId=project, experimentName=experiment_name)
+        uri = self.URIs['experiment'].format(projectId=project, experimentName=self.parse_string(experiment_name))
         r = self._serviceconnector.request(method='DELETE', uri=uri)
         raise_for_status_with_detail(r)
         rs = r.json()
@@ -81,14 +82,14 @@ class ExperimentClient(_Client):
         return rs.get('success', False)
 
     def get_experiment(self, experiment_name, project):
-        uri = self.URIs['experiment'].format(projectId=project, experimentName=experiment_name)
+        uri = self.URIs['experiment'].format(projectId=project, experimentName=self.parse_string(experiment_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
 
         return r.json()
 
     def list_runs(self, experiment_name, project):
-        uri = self.URIs['runs'].format(projectId=project, experimentName=experiment_name)
+        uri = self.URIs['runs'].format(projectId=project, experimentName=self.parse_string(experiment_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
         rs = r.json()
@@ -96,7 +97,7 @@ class ExperimentClient(_Client):
         return rs.get('runs', [])
 
     def find_runs(self, experiment_name, project, filter, sort=None, limit=25):
-        uri = self.URIs['runs'].format(projectId=project, experimentName=experiment_name)
+        uri = self.URIs['runs'].format(projectId=project, experimentName=self.parse_string(experiment_name))
 
         # filter and limit are required query params
         params = {
@@ -115,7 +116,7 @@ class ExperimentClient(_Client):
         return rs.get('runs', [])
 
     def delete_runs(self, experiment_name, project, filter=None, sort=None, limit=None):
-        uri = self.URIs['runs'].format(projectId=project, experimentName=experiment_name)
+        uri = self.URIs['runs'].format(projectId=project, experimentName=self.parse_string(experiment_name))
 
         params = {}
 
@@ -145,13 +146,13 @@ class ExperimentClient(_Client):
 
         body = json.dumps(body_obj)
         headers = {'Content-Type': 'application/json'}
-        uri = self.URIs['runs'].format(projectId=project, experimentName=experiment_name)
+        uri = self.URIs['runs'].format(projectId=project, experimentName=self.parse_string(experiment_name))
         r = self._serviceconnector.request(method='POST', uri=uri, body=body, headers=headers)
         raise_for_status_with_detail(r)
         return r.json()
 
     def get_run(self, experiment_name, project, run_id):
-        uri = self.URIs['run'].format(projectId=project, experimentName=experiment_name, runId=run_id)
+        uri = self.URIs['run'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id)
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
 
@@ -165,7 +166,7 @@ class ExperimentClient(_Client):
 
         body = json.dumps(body_obj)
         headers = {'Content-Type': 'application/json'}
-        uri = self.URIs['run'].format(projectId=project, experimentName=experiment_name, runId=run_id)
+        uri = self.URIs['run'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id)
         r = self._serviceconnector.request(method='PUT', uri=uri, body=body, headers=headers)
         raise_for_status_with_detail(r)
         rs = r.json()
@@ -176,7 +177,7 @@ class ExperimentClient(_Client):
         return success
 
     def delete_run(self, experiment_name, project, run_id):
-        uri = self.URIs['run'].format(projectId=project, experimentName=experiment_name, runId=run_id)
+        uri = self.URIs['run'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id)
         r = self._serviceconnector.request(method='DELETE', uri=uri)
         raise_for_status_with_detail(r)
         rs = r.json()
@@ -187,7 +188,7 @@ class ExperimentClient(_Client):
         return success
 
     def update_meta(self, experiment_name, project, run_id, meta, val):
-        uri = self.URIs['meta'].format(projectId=project, experimentName=experiment_name, runId=run_id, metaId=meta)
+        uri = self.URIs['meta'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id, metaId=meta)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=headers)
         raise_for_status_with_detail(r)
@@ -199,7 +200,7 @@ class ExperimentClient(_Client):
         return success
 
     def update_param(self, experiment_name, project, run_id, param, val):
-        uri = self.URIs['param'].format(projectId=project, experimentName=experiment_name, runId=run_id, paramId=param)
+        uri = self.URIs['param'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id, paramId=param)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=headers)
         raise_for_status_with_detail(r)
@@ -211,7 +212,7 @@ class ExperimentClient(_Client):
         return success
 
     def update_metric(self, experiment_name, project, run_id, metric, val):
-        uri = self.URIs['metric'].format(projectId=project, experimentName=experiment_name, runId=run_id, metricId=metric)
+        uri = self.URIs['metric'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id, metricId=metric)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=headers)
         raise_for_status_with_detail(r)
@@ -223,7 +224,7 @@ class ExperimentClient(_Client):
         return success
 
     def update_artifact(self, experiment_name, project, run_id, artifact, stream):
-        uri = self.URIs['artifact'].format(projectId=project, experimentName=experiment_name, runId=run_id, artifactId=artifact)
+        uri = self.URIs['artifact'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id, artifactId=artifact)
         r = self._serviceconnector.request(method='PUT', uri=uri, body=stream)
         raise_for_status_with_detail(r)
         rs = r.json()
@@ -234,12 +235,15 @@ class ExperimentClient(_Client):
         return success
 
     def get_artifact(self, experiment_name, project, run_id, artifact):
-        uri = self.URIs['artifact'].format(projectId=project, experimentName=experiment_name, runId=run_id, artifactId=artifact)
+        uri = self.URIs['artifact'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id, artifactId=artifact)
         r = self._serviceconnector.request(method='GET', uri=uri, stream=True)
         raise_for_status_with_detail(r)
 
         return r.content
 
+    def parse_string(self, string):
+        # Replaces special characters like / with %2F
+        return urllib.parse.quote(string, safe='')
 
 def _to_html(exp):
     try:
@@ -338,7 +342,6 @@ def _to_html(exp):
             num_metrics=num_metrics, 
             metric_names=sorted(list(metric_names))
             )
-
 
 class Experiment(CamelResource):
     """
