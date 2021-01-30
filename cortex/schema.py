@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import urllib.parse
 from cortex.serviceconnector import _Client, ServiceConnector
 from cortex.utils import get_logger
 from .camel import CamelResource
@@ -55,7 +56,7 @@ class Schema(CamelResource):
         :param name: The name of the schema to retrieve.
         :return: A schema object.
         """
-        uri = 'projects/{projectId}types/{name}'.format(projectId=project, name=name)
+        uri = 'projects/{projectId}/types/{name}'.format(projectId=project, name=urllib.parse.quote(name, safe=''))
         log.debug('Getting schema using URI: %s' % uri)
         r = client._serviceconnector.request('GET', uri)
         raise_for_status_with_detail(r)
