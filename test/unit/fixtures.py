@@ -6,6 +6,7 @@ functions for mocking connection to cortex for testing
 import json
 
 from mocket.mockhttp import Entry
+from cortex.auth import AuthenticationClient
 
 def john_doe_token():
     '''token with user name John Doe, this is a
@@ -20,7 +21,8 @@ def john_doe_token():
             "exp": 12312411251
             }
     '''
-    return 'eyJraWQiOiIzWk5ubTR1RzQxcXI5LVl2Wmp3N3FJMzRWNUZJUFVBTl9XOXJBU0J3NHpRIiwiYWxnIjoiRWREU0EifQ.eyJzdWIiOiI3MWE4ZmFhYy05ZGZiLTQyOGQtYTkwYy0wYjUzNDgxYjg2NjUiLCJhdWQiOiJjb3J0ZXgiLCJpc3MiOiJjb2duaXRpdmVzY2FsZS5jb20iLCJpYXQiOjE2MDgxNTkxNDcsImV4cCI6MTYwODI0NTU0N30.dqHdLRN_JJpKZ2Zzi4B9ZOsfKnNGw1L6qj7SmEcclIapstLa7E9CEzgaUVaxGo4ukRoxZLj27gmgslag2JXUDQ'
+    ac = AuthenticationClient('http://localhost:8000', 4)
+    return ac.fetch_auth_token(mock_pat_config())
 
 def john_doe_subject():
     '''
@@ -66,6 +68,6 @@ def mock_pat_config():
         },
         "issuer":"cognitivescale.com",
         "audience":"cortex",
-        "username":"71a8faac-9dfb-428d-a90c-0b53481b8665",
+        "username":john_doe_subject(),
         "url":"https://192.168.39.27:31326"
     }
