@@ -196,27 +196,27 @@ html_context['display_lower_left'] = True
 
 templates_path = ['_templates']
 
-# SET CURRENT_VERSION
-from git import Repo
-repo = Repo( search_parent_directories=True )
-
-if 'current_version' in os.environ:
-    # get the current_version env var set by buildDocs.sh
-    current_version = os.environ['current_version']
-else:
-    # the user is probably doing `make html`
-    # set this build's current version by looking at the branch
-    current_version = repo.active_branch.name
-
-# tell the theme which version we're currently on ('current_version' affects
-# the lower-left rtd menu and 'version' affects the logo-area version)
-html_context['current_version'] = current_version
-html_context['version'] = current_version
-
-if 'REPO_NAME' in os.environ:
-    REPO_NAME = os.environ['REPO_NAME']
-else:
-    REPO_NAME = repo.remotes.origin.url.split('.git')[0].split('/')[-1]
+# # SET CURRENT_VERSION
+# from git import Repo
+# repo = Repo( search_parent_directories=True )
+#
+# if 'current_version' in os.environ:
+#     # get the current_version env var set by buildDocs.sh
+#     current_version = os.environ['current_version']
+# else:
+#     # the user is probably doing `make html`
+#     # set this build's current version by looking at the branch
+#     current_version = repo.active_branch.name
+#
+# # tell the theme which version we're currently on ('current_version' affects
+# # the lower-left rtd menu and 'version' affects the logo-area version)
+# html_context['current_version'] = current_version
+# html_context['version'] = current_version
+#
+# if 'REPO_NAME' in os.environ:
+#     REPO_NAME = os.environ['REPO_NAME']
+# else:
+#     REPO_NAME = repo.remotes.origin.url.split('.git')[0].split('/')[-1]
 
 smv_branch_whitelist = 'master'
 # tag format vX.Y.Z
