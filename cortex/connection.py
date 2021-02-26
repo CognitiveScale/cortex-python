@@ -16,6 +16,7 @@ limitations under the License.
 """
 
 import json
+import urllib.parse
 from .serviceconnector import _Client, ServiceConnector
 from .camel import CamelResource
 from .utils import get_logger
@@ -28,18 +29,17 @@ class ConnectionClient(_Client):
     """
     A client used to manage connections.
     """
-    URIs = {'connections': 'connections'}
+    URIs = {'connections': 'projects/{projectId}/connections'}
 
-    def __init__(self,  *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Content apis only have v2..
-        self._serviceconnector.version = 2
+        self._serviceconnector.version = 4
 
-    def save_connection(self, connection: object):
+    def save_connection(self, project: str, connection: object):
         """
         Posts the connection client information.
         """
-        uri  = self.URIs['connections']
+        uri = self.URIs['connections'].format(projectId=project)
         data = json.dumps(connection)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request('POST', uri, data, headers)
@@ -65,18 +65,20 @@ class Connection(CamelResource):
         super().__init__(connection, True)
         self._connector = connector
 
+
     @staticmethod
-    def get_connection(name, client: ConnectionClient):
+    def get_connection(name, project, client: ConnectionClient):
         """
         Fetches a Connection to work with.
 
         :param client: The client instance to use.
         :param name: The name of the connection to retrieve.
+        :param project: The project from which connection has to be retrieved.
         :return: A Connection object.
         """
-        uri = 'connections/{name}'.format(name=name)
+        uri = 'projects/{projectId}/connections/{name}'.format(projectId=project, name=urllib.parse.quote(name, safe=''))
         log.debug('Getting connection using URI: %s' % uri)
         r = client._serviceconnector.request('GET', uri)
         raise_for_status_with_detail(r)
 
-        return Connection(r.json(), client._serviceconnector)
+        return r.json()

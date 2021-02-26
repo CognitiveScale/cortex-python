@@ -2,38 +2,25 @@
 functions for mocking connection to cortex for testing 
 '''
 
-
 import json
-
+from cortex.utils import generate_token
 from mocket.mockhttp import Entry
 
 def john_doe_token():
-    '''token with user name John Doe, this is a
-        slight modification to the default at
-        https://jwt.io/ debugger, with this json
-        payload:
-            {
-            "sub": "mliu",
-            "tenant": "mliu",
-            "name": "John Doe",
-            "iat": 1516239022,
-            "exp": 12312411251
-            }
-    '''
-    return 'eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtbGl1IiwidGVuYW50IjoibWxpdSIsIm5hbWUiOiJKb2huIERvZSIsImlhdCI6MTUxNjIzOTAyMiwiZXhwIjoxMjMxMjQxMTI1MX0.lUathguAHKBxAlrN23ApExCB1b5OLf37EfX1gjI_plsPYYMyE0jHPUguByqrwKxT'
+    return generate_token(mock_pat_config())
 
 def john_doe_subject():
     '''
     The subject part of the jwt token
     '''
-    return 'mliu'
+    return '71a8faac-9dfb-428d-a90c-0b53481b8665'
 
 
-def build_mock_url(uri, version=3):
+def build_mock_url(uri, version=4):
     '''
     build a mock url for testing
     '''
-    return "{api_endpoint}/v{version}/{uri}".format(api_endpoint=mock_api_endpoint(), version=version, uri=uri)
+    return "{api_endpoint}/fabric/v{version}/{uri}".format(api_endpoint=mock_api_endpoint(), version=version, uri=uri)
 
 
 def mock_api_endpoint():
@@ -51,3 +38,21 @@ def register_entry(verb, url, body:dict):
 def register_entry_from_path(verb, url, path:str):
     with open(path) as fh:
         register_entry(verb, url, json.load(fh))
+
+def mock_pat_config():
+    '''
+    Return a PAt config to allow test t ocreate new JWTs
+    :return: PAT config
+    '''
+    return {
+        "jwk":{
+            "crv":"Ed25519",
+            "x":"fPxYvREALYwHVpZtCmYxtc2EW6asDTpqyhqgfco6kWQ",
+            "d":"B9vmiGHtwG9GuFZNso3JDm5_O9bcUbtQyGgp6VrAfL4",
+            "kty":"OKP","kid":"HpW-ya7FSU7yV-alzyewPPDwPeFgrki0VQPKbh4J4Pw"
+        },
+        "issuer":"cognitivescale.com",
+        "audience":"cortex",
+        "username":"71a8faac-9dfb-428d-a90c-0b53481b8665",
+        "url":"https://192.168.39.27:31326"
+    }

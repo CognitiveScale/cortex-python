@@ -22,8 +22,9 @@ import sys
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from typing import Dict, Any, List, Union, Optional, Type, TypeVar
-from .utils import get_logger, get_cortex_profile
+from .utils import get_logger, get_cortex_profile, decode_JWT, verify_JWT, generate_token
 from .utils import raise_for_status_with_detail
+from .exceptions import BadTokenException
 log = get_logger(__name__)
 
 JSONType = Union[str, int, float, bool, None, Dict[str, Any], List[Any]]
@@ -35,17 +36,18 @@ class ServiceConnector:
     """
     Defines the settings and security credentials required to access a service.
     """
-    def __init__(self, url, version=3, token=None, verify_ssl_cert=True):
+    def __init__(self, url, version=4, token=None, config=None, verify_ssl_cert=True):
         self.url = url
         self.version = version
         self.token = token
+        self._config = config
         self.verify_ssl_cert = verify_ssl_cert
 
     ## properties ##
 
     @property
     def base_url(self):
-        return u'{0}/v{1}'.format(self.url, self.version)
+        return u'{0}/fabric/v{1}'.format(self.url, self.version)
 
     ## methods ##
 
@@ -156,7 +158,13 @@ class ServiceConnector:
     def _construct_headers(self, headers):
         headersToSend = { 'User-Agent': userAgent }
 
-        if self.token:
+        if hasattr(self, "token") and self.token:
+            self.token = verify_JWT(self.token, self._config, verify=False)
+            decode_JWT(self.token, verify=False)
+            auth = 'Bearer {}'.format(self.token)
+            headersToSend[u'Authorization'] = auth
+        else:
+            self.token = generate_token(self._config)
             auth = 'Bearer {}'.format(self.token)
             headersToSend[u'Authorization'] = auth
 
@@ -177,6 +185,7 @@ class _Client:
         url = kwargs.get("url")
         version = kwargs.get("version")
         token = kwargs.get("token")
+        config = kwargs.get("config")
         verify_ssl_cert = kwargs.get("verify_ssl_cert")
         # If all kwargs or first arg is a string create a Connector
         if len(args) == 0 or (len(args) > 0 and type(args[0]) == str):
@@ -187,8 +196,10 @@ class _Client:
             if len(args) > 2:
                 token = args[2]
             if len(args) > 3:
-                verify_ssl_cert = args[3]
-            self._serviceconnector = ServiceConnector(url, version, token, verify_ssl_cert)
+                config = args[3]
+            if len(args) > 4:
+                verify_ssl_cert = args[4]
+            self._serviceconnector = ServiceConnector(url, version, token, config, verify_ssl_cert)
         # if first arg not string assume Client object was passed
         else:
             self._serviceconnector = args[0].to_connector()

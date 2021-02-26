@@ -1,3 +1,4 @@
+
 """
 Copyright 2019 Cognitive Scale, Inc. All Rights Reserved.
 
@@ -14,16 +15,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import urllib.parse
-from cortex.serviceconnector import _Client, ServiceConnector
-from cortex.utils import get_logger
+import json
+from .serviceconnector import _Client, ServiceConnector
 from .camel import CamelResource
+from .utils import get_logger
 from .utils import raise_for_status_with_detail
 
 log = get_logger(__name__)
 
 
-class SchemaClient(_Client):
+class SecretsClient(_Client):
     """
     A client for the Cortex Actions API.
     """
@@ -35,30 +36,34 @@ class SchemaClient(_Client):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = 4
 
-    def save_schema(self):
+    def post_secret(self):
         raise NotImplementedError()
 
 
-class Schema(CamelResource):
+class Secret(CamelResource):
+
     """
-    Represents a plan for accessing a service.
+    Defines the connection for a dataset.
     """
-    def __init__(self, schema, connector: ServiceConnector):
-        super().__init__(schema, True)
+
+    def __init__(self, connection, connector: ServiceConnector):
+        super().__init__(connection, True)
         self._connector = connector
 
+
     @staticmethod
-    def get_schema(name, project, client: SchemaClient):
+    def get_secret(name, project, client: SecretsClient):
         """
-        Fetches a schema to work with.
+        Fetches a Connection to work with.
 
         :param client: The client instance to use.
-        :param name: The name of the schema to retrieve.
-        :return: A schema object.
+        :param name: The name of the connection to retrieve.
+        :param project: The project from which connection has to be retrieved.
+        :return: A Connection object.
         """
-        uri = 'projects/{projectId}/types/{name}'.format(projectId=project, name=urllib.parse.quote(name, safe=''))
-        log.debug('Getting schema using URI: %s' % uri)
+        uri = 'projects/{projectId}/secrets/{name}'.format(projectId=project, name=name)
+        log.debug('Getting Secret using URI: %s' % uri)
         r = client._serviceconnector.request('GET', uri)
         raise_for_status_with_detail(r)
 
-        return Schema(r.json(), client._serviceconnector)
+        return r.json()

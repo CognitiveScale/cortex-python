@@ -26,40 +26,31 @@ class Test_Cortex(unittest.TestCase):
     
     def test_client(self):
         api_endpoint = 'https://api.test.cortex'
-        api_version = 1
+        api_version = 4
         account = 'unittest'
-        username = 'unittest'
-        password = 'unittest'
         token = john_doe_token()
 
         cortex = Cortex.client(
                 api_endpoint=api_endpoint,
                 api_version=api_version,
-                account=account,
-                username=username,
-                password=password,
+                project=account,
                 token=token
                 )
         assert cortex._url == api_endpoint
-        assert cortex._token._account == account
-        assert cortex._token._username == username
-        assert cortex._token._password == password
         assert cortex._token._token == token
         assert cortex._token._jwt['sub'] == john_doe_subject()
 
     def test_message_constructor(self):
+        token = john_doe_token()
         cortex = Cortex.client(
             api_endpoint = 'https://api.test.cortex',
-            api_version = 1,
-            account = 'unittest',
-            username = 'unittest',
-            password = 'unittest',
-            token = john_doe_token()
+            api_version = 4,
+            project = 'unittest',
+            token = token
             )
         message = cortex.message({'foo': 'bar'})
         assert isinstance(message, Message)
         assert message.apiEndpoint == cortex._url
         assert message.token == cortex._token.token
-        assert message.token == john_doe_token()
-
+        assert message.token == token
 

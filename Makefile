@@ -52,9 +52,15 @@ stage:
 	git push
 	git checkout develop
 
-docs:
-	cd docs && make html && cd -
-	# The resulting reference docs file is in docs/_build/html/index.html
+docs.dev:
+	sphinx-build -b html -v docs docs/_build/
+
+docs.multi:
+	MULTI_VERSION="true" sphinx-multiversion -v docs docs/_build/
+	cp docs/index.html docs/_build/
+
+docs.package:
+	tar -cvzf ${DISTRIBUTION_NAME}.docs.tgz -C docs/_build .
 
 dev.push: build.alpha
 	twine upload --repository-url https://upload.pypi.org/legacy/ dist/*

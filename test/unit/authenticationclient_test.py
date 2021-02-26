@@ -20,24 +20,27 @@ from mocket.mockhttp import Entry
 from mocket import mocketize
 
 from cortex.auth import AuthenticationClient
-
+from cortex.utils import decode_JWT
+from .fixtures import mock_pat_config
 class TestAuthenticationClient(unittest.TestCase):
 
     def setUp(self):
-        self.ac = AuthenticationClient('http://localhost:8000', 2)
+        self.ac = AuthenticationClient('http://localhost:8000', 4)
 
     @mocketize
     def test_fetch_auth_token(self):
         # setup
-        uri = self.ac.URIs['authenticate'].format('cogscale')
-        url = self.ac._serviceconnector._construct_url(uri)
-        body={"jwt": "123"}
-        Entry.single_register(Entry.POST,
-                              url,
-                              status = 200,
-                              body = json.dumps(body))
+        # uri = self.ac.URIs['authenticate'].format(projectId='cogscale')
+        # url = self.ac._serviceconnector._construct_url(uri)
+        body=mock_pat_config()
+        # Entry.single_register(Entry.POST,
+        #                       url,
+        #                       status = 200,
+        #                       body = json.dumps(body))
         # execute
-        token = self.ac.fetch_auth_token('cogscale', 'marcus', 'secret')
+        # todo mock this call?..
+        token = self.ac.fetch_auth_token(body)
         # test
-        self.assertEqual(token, '123')
+        decodedBody = decode_JWT(token, verify=False)
+        self.assertEqual(body["issuer"], decodedBody["iss"])
 

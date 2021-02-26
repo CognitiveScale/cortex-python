@@ -15,6 +15,7 @@ limitations under the License.
 """
 
 import os
+import json
 from .utils import get_cortex_profile
 from .exceptions import BadTokenException
 
@@ -26,20 +27,19 @@ class CortexEnv:
     Sets environment variables for Cortex.
     """
 
-    def __init__(self, api_endpoint=None, token=None, account=None, username=None, password=None):
+    def __init__(self, api_endpoint=None, token=None, config=None, project=None):
         profile = CortexEnv.get_cortex_profile()
 
-        cortexToken = token or CortexEnv.get_token()
-
-        if not cortexToken:
+        cortexToken = token or os.getenv('CORTEX_TOKEN')
+        cortexConfig = config or json.loads(os.getenv('CORTEX_PERSONAL_ACCESS_CONFIG', json.dumps(profile)))
+        if not cortexToken and not cortexConfig:
             raise BadTokenException(
                 'Your Cortex credentials cannot be retrieved. For more information, go to Cortex Docs > Cortex Tools > Access')
 
-        self.api_endpoint = api_endpoint or os.getenv('CORTEX_URI', profile.get('url'))
+        self.api_endpoint = api_endpoint or cortexConfig.get('url')
         self.token = cortexToken
-        self.account = account or os.getenv('CORTEX_ACCOUNT', profile.get('account'))
-        self.username = username or os.getenv('CORTEX_USERNAME', profile.get('username'))
-        self.password = password or os.getenv('CORTEX_PASSWORD')
+        self.config = cortexConfig
+        self.project = project or os.getenv('CORTEX_PROJECT', cortexConfig.get('project', None))
 
     @staticmethod
     def get_token():

@@ -16,6 +16,7 @@ limitations under the License.
 
 import json
 from mocket.mockhttp import Entry
+from test.unit import fixtures
 from mocket import mocketize
 import pkg_resources
 import requests
@@ -23,26 +24,24 @@ import requests
 from cortex.serviceconnector import ServiceConnector
 
 URL = "http://1.2.3.4:80"
-VERSION = 3
-TOKEN = "abc123"
+VERSION = 4
 
 def test__init__():
-    s = ServiceConnector(URL, VERSION, TOKEN)
+    s = ServiceConnector(URL, VERSION, config=fixtures.mock_pat_config())
 
-    assert s.token == TOKEN
     assert s.url == URL
     assert s.version == VERSION
 
 
 def test__construct_url():
-    sc = ServiceConnector(URL, VERSION, TOKEN)
+    sc = ServiceConnector(URL, VERSION, config=fixtures.mock_pat_config())
     r = sc._construct_url('abc')
-    expect = 'http://1.2.3.4:80/v3/{}'.format('abc')
+    expect = 'http://1.2.3.4:80/fabric/v4/{}'.format('abc')
     assert r == expect
 
 @mocketize
 def test_request():
-    sc = ServiceConnector(URL, VERSION, TOKEN)
+    sc = ServiceConnector(URL, VERSION, config=fixtures.mock_pat_config())
     path = 'models/events'
     url = sc._construct_url(path)
     body={"handle": 123}

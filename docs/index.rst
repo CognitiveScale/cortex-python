@@ -1,11 +1,10 @@
-.. CognitiveScale Cortex Python library documentation master file, created by
-   sphinx-quickstart.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
+**Home:** `Cortex Fabric Documentation <https://cognitivescale.github.io/cortex-fabric/>`_
 
 Cortex Python Reference
 =======================
+
+This reference guide describes the base API client library to integrate with Cortex Fabric.
+Refer to the `Cortex Fabric documentation <https://cognitivescale.github.io/cortex-fabric/>`_ for more info about how to use the library.
 
 Cortex
 ------
@@ -25,35 +24,10 @@ Cortex Client
 .. autoclass:: cortex.client.Client
     :members:
 
-Cortex Action
--------------
-
-.. autoclass:: cortex.action.Action
-    :members:
-
-
-Cortex Agent
--------------
-
-.. autoclass:: cortex.agent.Agent
-    :members:
-
-Cortex Dataset
---------------
-
-.. autoclass:: cortex.dataset.Dataset
-    :members:
-
 Cortex Experiment
 -----------------
 
 .. autoclass:: cortex.experiment.Experiment
-    :members:
-
-Cortex Pipeline
----------------
-
-.. autoclass:: cortex.pipeline.Pipeline
     :members:
 
 Cortex Skill
@@ -65,11 +39,6 @@ Cortex Skill
 
 REST API Clients
 ==========================
-
-ActionClient
--------------
-.. autoclass:: cortex.action.ActionClient
-    :members:
 
 AuthenticationClient
 --------------------
@@ -84,11 +53,6 @@ ConnectionClient
 ManagedContentClient
 --------------------
 .. autoclass:: cortex.content.ManagedContentClient
-    :members:
-
-DatasetsClient
----------------
-.. autoclass:: cortex.dataset.DatasetsClient
     :members:
 
 SessionClient
@@ -112,3 +76,28 @@ Exceptions
    :members:
 .. autoclass:: cortex.exceptions.APIException
    :members:
+
+Related Projects
+================================
+
+Cortex Fabric
+--------------
+
+Cortex Fabric provides a collaborative platform for building, deploying, and managing trusted AI systems.
+
+See the `Cortex Fabric documentation. <https://cognitivescale.github.io/cortex-fabric>`_
+
+Cortex Python Builders
+------------------------
+
+The cortex-python-builders library is an add-on library for use with the base cortex-python library that helps with building actions and skills.
+
+See the `Cortex Python Builders Reference documentation. <https://cognitivescale.github.io/cortex-python-builders>`_
+
+Cortex Python Profiles
+-------------------------
+
+The cortex-python-profiles library is an add-on for use with the base cortex-python library that helps with building and managing Profile-of-One profiles and schemas.
+
+See the `Cortex Python Profiles Reference documentation. <https://cognitivescale.github.io/cortex-python-profiles>`_
+
