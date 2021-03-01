@@ -26,63 +26,73 @@ class SessionClient(_Client):
     A client for the Cortex Sessions API.
     """
 
-    URIs = {'start': 'sessions/start', 'get': 'sessions/{session_id}', 'put': 'sessions/{session_id}', 'delete': 'sessions/{session_id}'}
+    URIs = {
+        'start': 'projects/{projectId}/sessions',
+        'get': 'projects/{projectId}/sessions/{session_id}',
+        'put': 'projects/{projectId}/sessions/{session_id}',
+        'delete': 'projects/{projectId}/sessions/{session_id}'
+    }
 
-    def start_session(self, ttl=None, instance_id=None, description='No description given') -> str:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._serviceconnector.version = 4
+
+    def start_session(self, ttl=None, description='No description given', project=None) -> str:
         """
         Starts a new session.
 
         :param ttl: Resets sessions expiration; default is 15 minutes.
-        :param instance_id: An optional ID that scopes this session to a deployed agent-instance
         :param description: An optional human readable description for this sessions instance
+        :param project: Project to use for this session
         :return: The ID of the new Session.
         """
-        uri = self.URIs['start']
+        uri = self.URIs['start'].format(projectId=project)
         params = {}
         if ttl:
             params['ttl'] = ttl
-        if instance_id:
-            params['instance_id'] = instance_id
 
         params['description'] = description
 
         result = self._post_json(uri, params)
         return result.get('sessionId')
 
-    def get_session_data(self, session_id, key=None) -> Dict[str, object]:
+    def get_session_data(self, session_id, key=None, project=None) -> Dict[str, object]:
         """
         Gets data for a specific session.
 
         :param session_id: The ID of the session to query.
         :param key: An optional key in the session memory; the entire session memory is returned if a key is not specified.
+        :param project: Project to use for this session
         :return: A dict containing the requested session data
         """
-        uri = self.URIs['get'].format(session_id=session_id)
+        uri = self.URIs['get'].format(session_id=session_id, projectId=project)
         if key:
             uri += '?key={key}'.format(key=key)
 
         result = self._get_json(uri) or {}
         return result.get('state', {})
 
-    def put_session_data(self, session_id, data: Dict):
+    def put_session_data(self, session_id, data: Dict, project=None):
         """
         Adds data to an existing session.
 
         :param session_id: The ID of the session to modify.
         :param data: Dict containing the new session keys to set.
+        :param project: Project to use for this session
 
         """
-        uri = self.URIs['put'].format(session_id=session_id)
+        uri = self.URIs['put'].format(session_id=session_id, projectId=project)
         return self._post_json(uri, {'state': data})
 
-    def delete_session(self, session_id):
+    def delete_session(self, session_id, project=None):
         """
         Deletes a session.
 
         :param session_id: The ID of the session to delete.
+        :param project: Project to use for this session
 
         """
-        uri = self.URIs['delete'].format(session_id=session_id)
+        uri = self.URIs['delete'].format(session_id=session_id, projectId=project)
         return self._request_json(uri, method='DELETE')
 
 
@@ -94,7 +104,7 @@ class Session:
     def __init__(self, session_id, client: SessionClient):
         self._session_id = session_id
         self._client = client
-
+        
     def get(self, key: str) -> object:
         """
         Gets the session data corresponding to the given key.
@@ -102,7 +112,7 @@ class Session:
         :param key: the key to retrieve
         :return: session data corresponding to the given key
         """
-        return self._client.get_session_data(self._session_id, key)
+        return self._client.get_session_data(self._session_id, key, self._project)
 
     def put(self, key: str, value: Dict):
         """
@@ -112,13 +122,13 @@ class Session:
         :param value: the value of the data to be put in the session
         :return: a json representation of the data put in the session
         """
-        return self._client.put_session_data(self._session_id, value)
+        return self._client.put_session_data(self._session_id, value, self._project)
 
     def get_all(self) -> Dict:
         """
         Gets all the data associated with the session.
         """
-        return self._client.get_session_data(self._session_id)
+        return self._client.get_session_data(self._session_id, self._project)
 
     def delete(self):
         """
@@ -137,5 +147,5 @@ class Session:
         provided, the client creates a number.
         :return: A session attached to the given client.
         """
-        session_id = client.start_session(ttl, instance_id)
+        session_id = client.start_session(ttl, instance_id, client._project,)
         return Session(session_id, client)
