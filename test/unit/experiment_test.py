@@ -33,27 +33,29 @@ class TestExperiment(unittest.TestCase):
     Test experiment checks experiment functionality
     '''    
     # values for testing experiments
-    EXP_NAME = 'unittest/exp'
+    EXP_NAME = 'unittest-exp'
 
     def setUp(self):
         self.local = Cortex.local()
         self.local_tmp = Cortex.local('/tmp/cortex')
         self.cortex = Cortex.client(api_endpoint=mock_api_endpoint(), config=mock_pat_config(), project=PROJECT)
 
-        # register mock for getting an expeiment from the client
+        # register mock for getting an experiment from the client
         uri = ExperimentClient.URIs['experiment'].format(experimentName=self.EXP_NAME, projectId=PROJECT)
         returns = {"name": self.EXP_NAME}
         Entry.single_register(Entry.GET, build_mock_url(uri), status=200, body=json.dumps(returns))
 
     @mocketize
-    def test_make_remote_experiment(self):       
+    def test_make_remote_experiment(self):
         exp = self.cortex.experiment(self.EXP_NAME)
         self.assertNotEqual(exp, None)
 
+    @mocketize
     def test_make_local_experiment(self):
         exp = self.local.experiment(self.EXP_NAME)
         self.assertNotEqual(exp, None)
 
+    @mocketize
     def test_make_local_experiment_custom_basedir(self):
         exp = self.local_tmp.experiment(self.EXP_NAME)
         self.assertNotEqual(exp, None)
