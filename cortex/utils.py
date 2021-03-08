@@ -174,6 +174,7 @@ def get_cortex_profile(profile_name=None):
     """
     Gets the current cortex profile or the profile that matches the optionaly given name.
     """
+
     cortex_config_path = Path.home() / '.cortex/config'
 
     if cortex_config_path.exists():

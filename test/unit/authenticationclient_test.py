@@ -25,7 +25,12 @@ from .fixtures import mock_pat_config
 class TestAuthenticationClient(unittest.TestCase):
 
     def setUp(self):
-        self.ac = AuthenticationClient('http://localhost:8000', 4)
+        self.ac = AuthenticationClient()
+
+    def test_contructor_with_args(self):
+        # This client doesn't need parameters, but allow them for backward compat
+        ac = AuthenticationClient('http://localhost:8000', 4)
+        jwt = ac.fetch_auth_token(mock_pat_config())
 
     @mocketize
     def test_fetch_auth_token(self):
