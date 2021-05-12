@@ -32,7 +32,7 @@ class TestRun(unittest.TestCase):
     '''
     Test experiment checks experiment functionality
     '''
-    RUN_EXP_NAME = 'unittest/exp'
+    RUN_EXP_NAME = 'unittest-exp'
     RUN_ID = '000001'
     def setUp(self):
         self.local = Cortex.local()

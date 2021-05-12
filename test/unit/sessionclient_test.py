@@ -23,6 +23,7 @@ from mocket import mocketize
 
 from cortex.session import SessionClient
 
+PROJECTID = 'sesstest'
 
 class TestSessionClient(unittest.TestCase):
 
@@ -41,45 +42,45 @@ class TestSessionClient(unittest.TestCase):
 
     @mocketize
     def test_start_sessions(self):
-        uri = self.client.URIs['start']
-        returns = {'sessionId': self.session_id}
+        uri = self.client.URIs['start'].format(projectId=PROJECTID)
+        returns = { 'sessionId': self.session_id }
         self.register_entry(Entry.POST, uri, returns)
 
-        r = self.client.start_session()
+        r = self.client.start_session(100, 'test', PROJECTID)
         self.assertEqual(r, self.session_id)
 
     @mocketize
     def test_get_all(self):
-        uri = self.client.URIs['get'].format(session_id=self.session_id)
+        uri = self.client.URIs['get'].format(session_id=self.session_id, projectId=PROJECTID)
         returns = {'state': {'key1': 'value1'}}
         self.register_entry(Entry.GET, uri, returns)
 
-        r = self.client.get_session_data(self.session_id)
+        r = self.client.get_session_data(self.session_id, None, PROJECTID)
         self.assertEqual(r, returns['state'])
 
     @mocketize
     def test_get_by_key(self):
-        uri = self.client.URIs['get'].format(session_id=self.session_id) + '?key=key1'
+        uri = self.client.URIs['get'].format(session_id=self.session_id, projectId=PROJECTID) + '?key=key1'
         returns = {'state': {'key1': 'value1'}}
         self.register_entry(Entry.GET, uri, returns)
 
-        r = self.client.get_session_data(self.session_id, 'key1')
+        r = self.client.get_session_data(self.session_id, 'key1', PROJECTID)
         self.assertEqual(r, returns['state'])
 
     @mocketize
     def test_put(self):
-        uri = self.client.URIs['put'].format(session_id=self.session_id)
+        uri = self.client.URIs['put'].format(session_id=self.session_id, projectId=PROJECTID)
         returns = {}
         self.register_entry(Entry.POST, uri, returns)
 
-        r = self.client.put_session_data(self.session_id, {})
+        r = self.client.put_session_data(self.session_id, {}, PROJECTID)
         self.assertEqual(r, returns)
 
     @mocketize
     def test_delete(self):
-        uri = self.client.URIs['delete'].format(session_id=self.session_id)
+        uri = self.client.URIs['delete'].format(session_id=self.session_id, projectId=PROJECTID)
         returns = {}
         self.register_entry(Entry.DELETE, uri, returns)
 
-        r = self.client.delete_session(self.session_id)
+        r = self.client.delete_session(self.session_id, PROJECTID)
         self.assertEqual(r, returns)

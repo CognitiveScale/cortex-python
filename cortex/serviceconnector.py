@@ -92,7 +92,7 @@ class ServiceConnector:
             log.debug("  END {} {}".format('GET', uri))
         return r
 
-    def request(self, method, uri, body=None, headers=None, debug=False, **kwargs):
+    def request(self, method, uri, body=None, headers=None, debug=False, is_internal_url=False, **kwargs):
         """
         Sends a request to the specified URI.
 
@@ -104,7 +104,7 @@ class ServiceConnector:
         :return: :class:`Response <Response>` object
         """
         headersToSend = self._construct_headers(headers)
-        url = self._construct_url(uri)
+        url = uri if is_internal_url else self._construct_url(uri)
         if debug:
             log.debug("START {} {}".format('GET', uri))
         r = requests.request(
