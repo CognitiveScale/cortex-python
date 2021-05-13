@@ -169,7 +169,7 @@ Cortex magics can be used only when the optional `builders` dependency is instal
 ```
 
 ## Run in local (out of cluster) environment:
-APIs working with secrets are protected to work inside of cluster only. To test/run them outside the cluster we need to mock them. Follow local [setup guide](local/README.md)
+APIs working with secrets are protected to work inside of cluster only. To test/run them outside the cluster, you need to set them up locally the same way you would in a dedicated instance. Follow local [setup guide](local/README.md)
 
 ## Deprecations and Removals from cortex-client
 

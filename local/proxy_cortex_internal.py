@@ -1,11 +1,32 @@
+"""
+Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
+
 from mitmproxy import http
 from cortex import Cortex
 import json
 import re
 import os
 
+"""
+This script is to intercept HTTP traffic through MITM proxy (https://docs.mitmproxy.org/stable/addons-scripting/)
+Install MITM proxy and run with this script as described in `local/README.md`
+"""
 
-# This script will intercept internal routes traffic, so this URL won't have public DNS name.
+
+# This script will intercept internal routes traffic, so this URL won't have a public DNS name.
 cortex_endpoint = os.getenv("CORTEX_URL")
 if not cortex_endpoint:
     raise Exception("CORTEX_URL environment variable must be set to DCI URL")
@@ -14,9 +35,11 @@ else:
 
 '''
 Secret file should be json like:
+```json
 {
     "secret": "value"
 }
+```
 '''
 # Local secrets store json filepath
 secrets_env_filepath = os.getenv("SECRETS_PATH")
