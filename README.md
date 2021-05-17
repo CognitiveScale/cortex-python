@@ -167,6 +167,10 @@ Cortex magics can be used only when the optional `builders` dependency is instal
 ```
 > %reload_ext cortex_builders
 ```
+
+## Run in local (out of cluster) environment:
+APIs working with secrets are protected to work inside of cluster only. To test/run them outside the cluster, you need to set them up locally the same way you would in a dedicated instance. Follow local [setup guide](local/README.md)
+
 ## Deprecations and Removals from cortex-client
 
 1. The `InputMessage` and `OutputMessage` classes have been deprecated. Instead use the `Message` class:
