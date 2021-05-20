@@ -101,9 +101,10 @@ class Session:
     Represents a state for a client interaction with Cortex.
     """
 
-    def __init__(self, session_id, client: SessionClient):
+    def __init__(self, session_id, client: SessionClient, project: str):
         self._session_id = session_id
         self._client = client
+        self._project = project
         
     def get(self, key: str) -> object:
         """
@@ -148,4 +149,4 @@ class Session:
         :return: A session attached to the given client.
         """
         session_id = client.start_session(ttl, instance_id, client._project,)
-        return Session(session_id, client)
+        return Session(session_id, client, client._project)

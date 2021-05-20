@@ -104,7 +104,7 @@ class Client(object):
         session_client = SessionClient(self._url, self._version, self._token.token, self._config)
         if not session_id:
             return Session.start(session_client, ttl, instance_id)
-        return Session(session_id, session_client)
+        return Session(session_id, session_client, self._project)
 
     def experiment(self, name: str, version: str = '4'):
         """
