@@ -95,7 +95,7 @@ class Client(object):
         sec_client = SecretsClient(self._url, version, self._token.token, self._config)
         return Secret.get_secret(name, self._project, sec_client)
 
-    def session(self, session_id=None, ttl=None, instance_id=None) -> Session:
+    def session(self, session_id=None, ttl=None) -> Session:
         """
         Gets a session with the specified identifier.
         """
@@ -103,8 +103,8 @@ class Client(object):
             self._token = _Token(generate_token(self._config))
         session_client = SessionClient(self._url, self._version, self._token.token, self._config)
         if not session_id:
-            return Session.start(session_client, ttl, instance_id)
-        return Session(session_id, session_client)
+            return Session.start(session_client, self._project, ttl)
+        return Session(session_id, session_client, self._project)
 
     def experiment(self, name: str, version: str = '4'):
         """
