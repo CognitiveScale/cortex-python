@@ -76,7 +76,7 @@ class Connection(CamelResource):
         :param project: The project from which connection has to be retrieved.
         :return: A Connection object.
         """
-        conn_svc_url = f'{client._serviceconnector.url.replace("cortex-internal", "cortex-connections")}:4500'
+        conn_svc_url = f'{client._serviceconnector.url.replace("cortex-internal", "cortex-connections")}:4450'
         uri = f'{conn_svc_url}/internal/projects/{project}/connections/{urllib.parse.quote(name, safe="")}'
         log.debug('Getting connection using URI: %s' % uri)
         r = client._serviceconnector.request('GET', uri, is_internal_url=True)
