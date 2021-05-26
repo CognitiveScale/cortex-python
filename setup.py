@@ -1,5 +1,5 @@
 """
-Copyright 2019 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -29,13 +29,13 @@ setup(name='cortex-python',
       author_email='info@cognitivescale.com',
       url='https://github.com/CognitiveScale/cortex-python',
       license='Apache License Version 2.0',
-      platforms=['linux', 'osx'],
+      platforms=['any'],
       packages=find_packages(),
       include_package_data=True,
       install_requires=[
           'requests>=2.12.4,<3',
-          'requests-toolbelt==0.8.0',
-          'pyjwt>=1.6.1,<2',
+          'requests-toolbelt>=0.8.0',
+          'pyjwt>=1.6.1,<2', # TODO remove..
           'python-jwt==3.3.0',
           'pyyaml>=5.3.1,<6',
           'cuid>=0.3,<1',
@@ -53,9 +53,6 @@ setup(name='cortex-python',
               'maya>=0.5.0',
               'jinja2'
           ],
-          'builders': [
-              'cortex-python-builders>=1.0.0,<2'
-          ]
       },
       tests_require=[
           'mocket>=2.5.0,<3',

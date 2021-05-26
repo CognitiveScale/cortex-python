@@ -1,5 +1,5 @@
 """
-Copyright 2019 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ from urllib3.util.retry import Retry
 from typing import Dict, Any, List, Union, Optional, Type, TypeVar
 from .utils import get_logger, get_cortex_profile, decode_JWT, verify_JWT, generate_token
 from .utils import raise_for_status_with_detail
-from .exceptions import BadTokenException
 log = get_logger(__name__)
 
 JSONType = Union[str, int, float, bool, None, Dict[str, Any], List[Any]]
