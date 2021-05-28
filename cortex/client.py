@@ -204,7 +204,7 @@ class Cortex(object):
 
         :param msg: A message for constructing a Cortex Client.
         """
-        return Cortex.client(api_endpoint=msg.apiEndpoint, token=msg.token)
+        return Cortex.client(api_endpoint=msg.apiEndpoint, token=msg.token, project=msg.projectId )
 
     @staticmethod
     def local(basedir=None):
