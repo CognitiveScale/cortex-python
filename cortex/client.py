@@ -24,7 +24,6 @@ from .message import Message
 from .connection import Connection, ConnectionClient
 from .secrets import SecretsClient, Secret
 from .session import Session, SessionClient
-from .skill import Skill
 from .utils import decode_JWT, get_logger, generate_token
 
 _DEFAULT_API_VERSION = 4
@@ -68,14 +67,6 @@ class Client(object):
         self._url = url
         self._version = version
         self._verify_ssl_cert = verify_ssl_cert
-
-    def skill(self, name: str) -> Skill:
-        """
-        Gets a skill with the specified name.
-        """
-        if not self._token.token:
-            self._token = _Token(generate_token(self._config))
-        return Skill.get_skill(name, self._project, self._mk_connector())
 
     def get_connection(self, name: str, version: str = '4'):
         """
@@ -133,7 +124,9 @@ class Client(object):
         return Message(params)
 
     def _mk_connector(self):
-        return ServiceConnector(self._url, self._version, self._token.token, self._config, self._verify_ssl_cert)
+        return ServiceConnector(self._url, self._version,
+                                self._token.token, self._config,
+                                self._verify_ssl_cert, self._project)
 
     # expose this to allow developer to pass client instance into Connectors
     def to_connector(self):
@@ -200,11 +193,14 @@ class Cortex(object):
     @staticmethod
     def from_message(msg):
         """
-        Creates a Cortex client from a message that must incluide an API endpoint and a token.
+        Creates a Cortex client from a skill's input message, expects { api_endpoint:'..', token:'..', projectId:'..' }
 
         :param msg: A message for constructing a Cortex Client.
         """
-        return Cortex.client(api_endpoint=msg.apiEndpoint, token=msg.token, project=msg.projectId )
+        keys= ('apiEndpoint', 'token', 'projectId')
+        if not all(key in msg for key in keys):
+            raise Exception(f'Skill message must contain these keys: {keys}')
+        return Cortex.client(api_endpoint=msg.get('apiEndpoint'), token=msg.get('token'), project=msg.get('projectId') )
 
     @staticmethod
     def local(basedir=None):

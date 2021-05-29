@@ -35,12 +35,13 @@ class ServiceConnector:
     """
     Defines the settings and security credentials required to access a service.
     """
-    def __init__(self, url, version=4, token=None, config=None, verify_ssl_cert=True):
+    def __init__(self, url, version=4, token=None, config=None, verify_ssl_cert=True, project=''):
         self.url = url
         self.version = version
         self.token = token
         self._config = config
         self.verify_ssl_cert = verify_ssl_cert
+        self.project=project
 
     ## properties ##
 
