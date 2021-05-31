@@ -17,26 +17,25 @@ limitations under the License.
 import json
 import urllib.parse
 
-from .utils import get_logger
 from .serviceconnector import _Client
 from .camel import CamelResource
+from .utils import get_logger
 from .utils import raise_for_status_with_detail
 
 log = get_logger(__name__)
 
-
 class SkillClient(_Client):
     """
-    A client for the Cortex Skill management API.
+    A client used to interact with skills.
     """
-
     URIs = {
-        'skills': 'projects/{projectId}/skills',
-        'skill': 'projects/{projectId}/skills/{skillName}',
-        'logs': 'projects/{projectId}/skills/{skillName}/action/{actionName}/logs',
         'deploy': 'projects/{projectId}/skills/{skillName}/deploy',
-        'undeploy': 'projects/{projectId}/skills/{skillName}/undeploy'
-
+        'invoke': '/fabric/v4/projects/{project}/skillinvoke/{skill_name}/inputs/{input}',
+        'logs': 'projects/{projectId}/skills/{skillName}/action/{actionName}/logs',
+        'send_message': '/internal/messages/{activation}/{channel}/{output_name}',
+        'skill': 'projects/{projectId}/skills/{skillName}',
+        'skills': 'projects/{projectId}/skills',
+        'undeploy': 'projects/{projectId}/skills/{skillName}/undeploy',
     }
 
     def __init__(self, *args, **kwargs):
@@ -103,6 +102,26 @@ class SkillClient(_Client):
         # Replaces special characters like / with %2F
         return urllib.parse.quote(string, safe='')
 
+    def send_message(self, activation: str, channel: str, output_name: str, message: object):
+        """
+        """
+        uri = self.URIs['send_message'].format(activation=activation, channel=channel, output_name=output_name)
+        data = json.dumps(message)
+        headers = {'Content-Type': 'application/json'}
+        r = self._serviceconnector.request('POST', uri, data, headers)
+        raise_for_status_with_detail(r)
+        return r.json()
+
+
+    def invoke(self, project: str, skill_name: str, input: str, payload: object, properties: object):
+        """
+        """
+        uri = self.URIs['send_message'].format(project=project, skill_name=skill_name, input=input)
+        data = json.dumps({ payload: payload, properties: properties})
+        headers = {'Content-Type': 'application/json'}
+        r = self._serviceconnector.request('POST', uri, data, headers)
+        raise_for_status_with_detail(r)
+        return r.json()
 
 class Skill(CamelResource):
     """
@@ -110,7 +129,7 @@ class Skill(CamelResource):
      atomic unit of work and can be triggered by one or more inputs to produce
      one or more outputs.
     """
-    def __init__(self, skill, project: str, client: SkillClient):
-        super().__init__(skill, True)
-        self._client = client
-        self._project = project
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._serviceconnector.version = 4
+
