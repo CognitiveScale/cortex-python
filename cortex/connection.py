@@ -1,4 +1,3 @@
-
 """
 Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
 
@@ -16,7 +15,6 @@ limitations under the License.
 """
 
 import json
-import os
 import urllib.parse
 from .serviceconnector import _Client, ServiceConnector
 from .camel import CamelResource
@@ -36,10 +34,17 @@ class ConnectionClient(_Client):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = 4
 
-    def save_connection(self, project: str, connection: object):
+    def save_connection(self, *args, **kwargs):
         """
         Posts the connection client information.
         """
+        connection = kwargs.get('connection')
+        project = kwargs.get('project', self._serviceconnector.project)
+        if len(args) > 0:
+            if len(args) == 2:
+                project = args[0]
+            if not connection:
+                connection = args[1]
         uri = self.URIs['connections'].format(projectId=project)
         data = json.dumps(connection)
         headers = {'Content-Type': 'application/json'}
@@ -50,14 +55,13 @@ class ConnectionClient(_Client):
     ## Private ##
 
     def _bootstrap(self):
-        uri  = self.URIs['connections'] + '/_/bootstrap'
+        uri = self.URIs['connections'] + '/_/bootstrap'
         r = self._serviceconnector.request('GET', uri)
         raise_for_status_with_detail(r)
         return r.json()
 
 
 class Connection(CamelResource):
-
     """
     Defines the connection for a dataset.
     """
@@ -66,9 +70,8 @@ class Connection(CamelResource):
         super().__init__(connection, True)
         self._connector = connector
 
-
     @staticmethod
-    def get_connection(name, project, client: ConnectionClient):
+    def get_connection(*args, **kwargs):
         """
         Fetches a Connection to work with.
 
@@ -77,8 +80,18 @@ class Connection(CamelResource):
         :param project: The project from which connection has to be retrieved.
         :return: A Connection object.
         """
-        port = os.getenv('CORTEX_CONNECTIONS_SERVICE_PORT_HTTP_CORTEX_CONNECTIONS') or '4450'
-        conn_svc_url = f'{client._serviceconnector.url.replace("cortex-internal", "cortex-connections")}:{port}'
+        name = kwargs.get('name')
+        client = kwargs.get('client')
+        # TODO not safe
+        project = kwargs.get('project', client._serviceconnector.project)
+        if len(args) > 0:
+            if len(args) == 3:
+                project = args[1]
+            if not name:
+                name = args[0]
+            if not client:
+                name = args[2]
+        conn_svc_url = f'{client._serviceconnector.url.replace("cortex-internal", "cortex-connections")}:4500'
         uri = f'{conn_svc_url}/internal/projects/{project}/connections/{urllib.parse.quote(name, safe="")}'
         log.debug('Getting connection using URI: %s' % uri)
         r = client._serviceconnector.request('GET', uri, is_internal_url=True)

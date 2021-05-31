@@ -53,14 +53,26 @@ class ExperimentClient(_Client):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = 4
 
-    def list_experiments(self, project):
+    def list_experiments(self, *args, **kwargs):
+        project = kwargs.get('project', self._serviceconnector.project)
+        if len(args) == 1:
+            project = args[0]
+
         r = self._serviceconnector.request(method='GET', uri=self.URIs['experiments'].format(projectId=project))
         raise_for_status_with_detail(r)
         rs = r.json()
 
         return rs.get('experiments', [])
 
-    def save_experiment(self, experiment_name, project, model_id=None, **kwargs):
+    def save_experiment(self, *args, **kwargs):
+        experiment_name = kwargs.get('experiment_name')
+        model_id = kwargs.get('model_id')
+        project = kwargs.get('project', self._serviceconnector.project)
+        if len(args) > 0:
+            if len(args) == 2:
+               project = args[1]
+            if not experiment_name:
+                experiment_name = args[0]
         body_obj = {'name': experiment_name, 'modelId': model_id}
 
         if kwargs:
@@ -73,7 +85,14 @@ class ExperimentClient(_Client):
         raise_for_status_with_detail(r)
         return r.json()
 
-    def delete_experiment(self, experiment_name, project):
+    def delete_experiment(self, *args, **kwargs):
+        experiment_name = kwargs.get('experiment_name')
+        project = kwargs.get('project', self._serviceconnector.project)
+        if len(args) > 0:
+            if len(args) == 2:
+               project = args[1]
+            if not experiment_name:
+                experiment_name = args[0]
         uri = self.URIs['experiment'].format(projectId=project, experimentName=self.parse_string(experiment_name))
         r = self._serviceconnector.request(method='DELETE', uri=uri)
         raise_for_status_with_detail(r)
@@ -81,14 +100,29 @@ class ExperimentClient(_Client):
 
         return rs.get('success', False)
 
-    def get_experiment(self, experiment_name, project):
+    def get_experiment(self, *args, **kwargs):
+        experiment_name = kwargs.get('experiment_name')
+        project = kwargs.get('project', self._serviceconnector.project)
+        if len(args) > 0:
+            if len(args) == 2:
+               project = args[1]
+            if not experiment_name:
+                experiment_name = args[0]
         uri = self.URIs['experiment'].format(projectId=project, experimentName=self.parse_string(experiment_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
 
         return r.json()
 
-    def list_runs(self, experiment_name, project):
+    def list_runs(self, *args, **kwargs):
+        experiment_name = kwargs.get('experiment_name')
+        project = kwargs.get('project', self._serviceconnector.project)
+        if len(args) > 0:
+            if len(args) == 2:
+               project = args[1]
+            if not experiment_name:
+                experiment_name = args[0]
+
         uri = self.URIs['runs'].format(projectId=project, experimentName=self.parse_string(experiment_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
@@ -138,7 +172,15 @@ class ExperimentClient(_Client):
 
         return rs.get('message')
 
-    def create_run(self, experiment_name, project, **kwargs):
+    def create_run(self, *args, **kwargs):
+        experiment_name = kwargs.get('experiment_name')
+        project = kwargs.get('project', self._serviceconnector.project)
+        if len(args) > 0:
+            if len(args) == 2:
+               project = args[1]
+            if not experiment_name:
+                experiment_name = args[0]
+
         body_obj = {}
 
         if kwargs:
