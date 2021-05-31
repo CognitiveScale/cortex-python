@@ -28,9 +28,6 @@ class SecretsClient(_Client):
     A client for the Cortex Actions API.
     """
 
-    URIs = {
-    }
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = 4
@@ -60,9 +57,9 @@ class Secret(CamelResource):
         :param project: The project from which connection has to be retrieved.
         :return: A Connection object.
         """
-        uri = 'projects/{projectId}/secrets/{name}'.format(projectId=project, name=name)
+        uri = '/internal/projects/{projectId}/secrets/{name}'.format(projectId=project, name=name)
         log.debug('Getting Secret using URI: %s' % uri)
-        r = client._serviceconnector.request('GET', uri)
+        r = client._serviceconnector.request('GET', uri, is_internal_url=True)
         raise_for_status_with_detail(r)
 
         return r.json()
