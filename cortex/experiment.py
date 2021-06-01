@@ -37,6 +37,7 @@ class ExperimentClient(_Client):
     """
     A client for the Cortex experiment and model management API.
     """
+    headers = {'Content-Type': 'application/json'}
 
     URIs = {
         'experiments': 'projects/{projectId}/experiments',
@@ -231,8 +232,7 @@ class ExperimentClient(_Client):
 
     def update_meta(self, experiment_name, project, run_id, meta, val):
         uri = self.URIs['meta'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id, metaId=meta)
-        headers = {'Content-Type': 'application/json'}
-        r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=headers)
+        r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=self.headers)
         raise_for_status_with_detail(r)
         rs = r.json()
 
@@ -243,8 +243,7 @@ class ExperimentClient(_Client):
 
     def update_param(self, experiment_name, project, run_id, param, val):
         uri = self.URIs['param'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id, paramId=param)
-        headers = {'Content-Type': 'application/json'}
-        r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=headers)
+        r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=self.headers)
         raise_for_status_with_detail(r)
         rs = r.json()
 
@@ -255,8 +254,7 @@ class ExperimentClient(_Client):
 
     def update_metric(self, experiment_name, project, run_id, metric, val):
         uri = self.URIs['metric'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id, metricId=metric)
-        headers = {'Content-Type': 'application/json'}
-        r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=headers)
+        r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=self.headers)
         raise_for_status_with_detail(r)
         rs = r.json()
 
