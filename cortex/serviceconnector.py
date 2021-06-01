@@ -111,6 +111,7 @@ class ServiceConnector:
             method,
             url,
             data=body,
+            allow_redirects=False,
             headers=headersToSend,
             verify=self.verify_ssl_cert,
             **kwargs
