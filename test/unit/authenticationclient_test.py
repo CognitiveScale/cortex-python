@@ -46,6 +46,6 @@ class TestAuthenticationClient(unittest.TestCase):
         # todo mock this call?..
         token = self.ac.fetch_auth_token(body)
         # test
-        decodedBody = decode_JWT(token, verify=False)
+        decodedBody = decode_JWT(token)
         self.assertEqual(body["issuer"], decodedBody["iss"])
 

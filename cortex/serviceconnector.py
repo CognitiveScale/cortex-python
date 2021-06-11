@@ -62,7 +62,7 @@ class ServiceConnector:
         """
         headersToSend = self._construct_headers(headers)
         url = self._construct_url(uri)
-        return requests.post(url, files=files, data=data, headers=headersToSend,
+        return requests.post(url, files=files, data=data, headers=headersToSend, allow_redirects=False,
                              verify=self.verify_ssl_cert)
 
     def request_with_retry(self, method, uri, body=None, headers=None, debug=False, **kwargs):
@@ -84,6 +84,7 @@ class ServiceConnector:
             method,
             url,
             data=body,
+            allow_redirects=False,
             headers=headersToSend,
             verify=self.verify_ssl_cert,
             **kwargs
@@ -160,8 +161,7 @@ class ServiceConnector:
         headersToSend = { 'User-Agent': userAgent }
 
         if hasattr(self, "token") and self.token:
-            self.token = verify_JWT(self.token, self._config, verify=False)
-            decode_JWT(self.token, verify=False)
+            self.token = verify_JWT(self.token, self._config)
             auth = 'Bearer {}'.format(self.token)
             headersToSend[u'Authorization'] = auth
         else:

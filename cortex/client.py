@@ -42,7 +42,7 @@ class _Token(object):
         self._token = token
         self._jwt = None
         if token:
-            self._jwt = decode_JWT(self._token, verify=False)
+            self._jwt = decode_JWT(self._token)
 
     def is_expired(self):
         current_time = time.time()

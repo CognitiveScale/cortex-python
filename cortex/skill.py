@@ -116,7 +116,7 @@ class SkillClient(_Client):
     def invoke(self, project: str, skill_name: str, input: str, payload: object, properties: object):
         """
         """
-        uri = self.URIs['send_message'].format(project=project, skill_name=skill_name, input=input)
+        uri = self.URIs['invoke'].format(project=project, skill_name=skill_name, input=input)
         data = json.dumps({ payload: payload, properties: properties})
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request('POST', uri, data, headers)

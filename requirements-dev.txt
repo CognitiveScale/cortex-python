@@ -9,4 +9,3 @@ pytest-cov==2.5.1
 pytest>=3.2.5,<4
 mitmproxy
 mock>=2,<3
-pyjwt
