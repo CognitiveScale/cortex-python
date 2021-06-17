@@ -104,6 +104,12 @@ class SkillClient(_Client):
 
     def send_message(self, activation: str, channel: str, output_name: str, message: object):
         """
+        Send a payload to a specific output, this can be called more than one and will replace the stdout/stderr as payload for jobs
+        :param activation: ActivationId provided in resources
+        :param channel: ChannelId provided in the parameters
+        :param output_name: Output name provided in the parameters or another skill output connected from this skill
+        :param payload: JSON payload to be send to the agent
+        :return: success or failure message
         """
         uri = self.URIs['send_message'].format(activation=activation, channel=channel, output_name=output_name)
         data = json.dumps(message)
