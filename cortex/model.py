@@ -63,6 +63,14 @@ class ModelClient(_Client):
 
         return r.json()
 
+    def delete_model(self, model_name):
+        uri = self.URIs['model'].format(projectId=self._project, modelName=self.parse_string(model_name))
+        r = self._serviceconnector.request(method='DELETE', uri=uri)
+        raise_for_status_with_detail(r)
+        rs = r.json()
+
+        return rs.get('success', False)
+
     def parse_string(self, string):
         # Replaces special characters like / with %2F
         return urllib.parse.quote(string, safe='')
