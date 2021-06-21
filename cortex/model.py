@@ -48,7 +48,6 @@ class ModelClient(_Client):
         return rs.get('models', [])
 
     def save_model(self, model_obj):
-        print(model_obj)
         body = json.dumps(model_obj)
         headers = {'Content-Type': 'application/json'}
         uri = self.URIs['models'].format(projectId=self._project)
