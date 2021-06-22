@@ -101,11 +101,12 @@ class Session:
     Represents a state for a client interaction with Cortex.
     """
 
-    def __init__(self, session_id, client: SessionClient):
+    def __init__(self, session_id, client: SessionClient, project: str):
         self._session_id = session_id
         self._client = client
+        self._project = project
         
-    def get(self, key: str) -> object:
+    def get(self, key=None) -> object:
         """
         Gets the session data corresponding to the given key.
 
@@ -114,11 +115,10 @@ class Session:
         """
         return self._client.get_session_data(self._session_id, key, self._project)
 
-    def put(self, key: str, value: Dict):
+    def put(self, value: Dict):
         """
         Gets the session data corresponding to the given key.
 
-        :param key: the key for the data to be put in the session
         :param value: the value of the data to be put in the session
         :return: a json representation of the data put in the session
         """
@@ -137,15 +137,14 @@ class Session:
         return self._client.delete_session(self._session_id)
 
     @staticmethod
-    def start(client: SessionClient, ttl=None, instance_id=None):
+    def start(client: SessionClient, project: str, ttl=None):
         """
         Creates a new session for a given client.
 
         :param client: The client to associate with this session.
+        :param project: Project to use for this session
         :param ttl: An optional session time to live.
-        :param instance_id: An optional identifier for this session; if not
-        provided, the client creates a number.
         :return: A session attached to the given client.
         """
-        session_id = client.start_session(ttl, instance_id, client._project,)
-        return Session(session_id, client)
+        session_id = client.start_session(ttl=ttl, project=project)
+        return Session(session_id, client, project)
