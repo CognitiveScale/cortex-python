@@ -397,7 +397,6 @@ class Experiment(CamelResource):
     def last_run(self) -> Run:
         sort = {'endTime': -1}
         runs = self._client.find_runs(self.name, self._project, {}, sort=sort, limit=1)
-        print(runs)
         if len(runs) == 1:
             print(self)
             return RemoteRun.from_json(runs[0], self._project, self)
