@@ -106,14 +106,14 @@ class Client(object):
             return Session.start(session_client, self._project, ttl)
         return Session(session_id, session_client, self._project)
 
-    def experiment(self, name: str, version: str = '4'):
+    def experiment(self, name: str, version: str = '4', model_id=None):
         """
         Gets an experiment with the specified name.
         """
         if not self._token.token:
             self._token = _Token(generate_token(self._config))
         exp_client = ExperimentClient(self._url, version, self._token.token, self._config)
-        return Experiment.get_experiment(name, self._project, exp_client)
+        return Experiment.get_experiment(name, self._project, exp_client, model_id)
 
     def message(self, payload: dict, properties: dict = None) -> Message:
         """Constructs a Message from payload and properties if given.
