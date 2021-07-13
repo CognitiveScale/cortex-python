@@ -112,8 +112,8 @@ class Client(object):
         """
         if not self._token.token:
             self._token = _Token(generate_token(self._config))
-        exp_client = ExperimentClient(self._url, version, self._token.token, self._config)
-        return Experiment.get_experiment(name, self._project, exp_client, model_id)
+        exp_client = ExperimentClient(self._project, self._url, version, self._token.token, self._config)
+        return Experiment.get_experiment(name, exp_client, model_id)
 
     def message(self, payload: dict, properties: dict = None) -> Message:
         """Constructs a Message from payload and properties if given.

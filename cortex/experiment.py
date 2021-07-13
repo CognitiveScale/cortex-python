@@ -49,18 +49,19 @@ class ExperimentClient(_Client):
         'metric': 'projects/{projectId}/experiments/{experimentName}/runs/{runId}/metrics/{metricId}'
     }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, project, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = 4
+        self._project = project
 
-    def list_experiments(self, project):
-        r = self._serviceconnector.request(method='GET', uri=self.URIs['experiments'].format(projectId=project))
+    def list_experiments(self):
+        r = self._serviceconnector.request(method='GET', uri=self.URIs['experiments'].format(projectId=self._project))
         raise_for_status_with_detail(r)
         rs = r.json()
 
         return rs.get('experiments', [])
 
-    def save_experiment(self, experiment_name, project, model_id=None, **kwargs):
+    def save_experiment(self, experiment_name, model_id=None, **kwargs):
         body_obj = {'name': experiment_name, 'modelId': model_id}
 
         if kwargs:
@@ -68,36 +69,36 @@ class ExperimentClient(_Client):
 
         body = json.dumps(body_obj)
         headers = {'Content-Type': 'application/json'}
-        uri = self.URIs['experiments'].format(projectId=project)
+        uri = self.URIs['experiments'].format(projectId=self._project)
         r = self._serviceconnector.request(method='POST', uri=uri, body=body, headers=headers)
         raise_for_status_with_detail(r)
         return r.json()
 
-    def delete_experiment(self, experiment_name, project):
-        uri = self.URIs['experiment'].format(projectId=project, experimentName=self.parse_string(experiment_name))
+    def delete_experiment(self, experiment_name):
+        uri = self.URIs['experiment'].format(projectId=self._project, experimentName=self.parse_string(experiment_name))
         r = self._serviceconnector.request(method='DELETE', uri=uri)
         raise_for_status_with_detail(r)
         rs = r.json()
 
         return rs.get('success', False)
 
-    def get_experiment(self, experiment_name, project):
-        uri = self.URIs['experiment'].format(projectId=project, experimentName=self.parse_string(experiment_name))
+    def get_experiment(self, experiment_name):
+        uri = self.URIs['experiment'].format(projectId=self._project, experimentName=self.parse_string(experiment_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
 
         return r.json()
 
-    def list_runs(self, experiment_name, project):
-        uri = self.URIs['runs'].format(projectId=project, experimentName=self.parse_string(experiment_name))
+    def list_runs(self, experiment_name):
+        uri = self.URIs['runs'].format(projectId=self._project, experimentName=self.parse_string(experiment_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
         rs = r.json()
 
         return rs.get('runs', [])
 
-    def find_runs(self, experiment_name, project, filter, sort=None, limit=25):
-        uri = self.URIs['runs'].format(projectId=project, experimentName=self.parse_string(experiment_name))
+    def find_runs(self, experiment_name, filter, sort=None, limit=25):
+        uri = self.URIs['runs'].format(projectId=self._project, experimentName=self.parse_string(experiment_name))
 
         # filter and limit are required query params
         params = {
@@ -115,8 +116,8 @@ class ExperimentClient(_Client):
 
         return rs.get('runs', [])
 
-    def delete_runs(self, experiment_name, project, filter=None, sort=None, limit=None):
-        uri = self.URIs['runs'].format(projectId=project, experimentName=self.parse_string(experiment_name))
+    def delete_runs(self, experiment_name, filter=None, sort=None, limit=None):
+        uri = self.URIs['runs'].format(projectId=self._project, experimentName=self.parse_string(experiment_name))
 
         params = {}
 
@@ -138,7 +139,7 @@ class ExperimentClient(_Client):
 
         return rs.get('message')
 
-    def create_run(self, experiment_name, project, **kwargs):
+    def create_run(self, experiment_name, **kwargs):
         body_obj = {}
 
         if kwargs:
@@ -146,19 +147,19 @@ class ExperimentClient(_Client):
 
         body = json.dumps(body_obj)
         headers = {'Content-Type': 'application/json'}
-        uri = self.URIs['runs'].format(projectId=project, experimentName=self.parse_string(experiment_name))
+        uri = self.URIs['runs'].format(projectId=self._project, experimentName=self.parse_string(experiment_name))
         r = self._serviceconnector.request(method='POST', uri=uri, body=body, headers=headers)
         raise_for_status_with_detail(r)
         return r.json()
 
-    def get_run(self, experiment_name, project, run_id):
-        uri = self.URIs['run'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id)
+    def get_run(self, experiment_name, run_id):
+        uri = self.URIs['run'].format(projectId=self._project, experimentName=self.parse_string(experiment_name), runId=run_id)
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
 
         return r.json()
 
-    def update_run(self, experiment_name, project, run_id, **kwargs):
+    def update_run(self, experiment_name, run_id, **kwargs):
         body_obj = {}
 
         if kwargs:
@@ -166,7 +167,7 @@ class ExperimentClient(_Client):
 
         body = json.dumps(body_obj)
         headers = {'Content-Type': 'application/json'}
-        uri = self.URIs['run'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id)
+        uri = self.URIs['run'].format(projectId=self._project, experimentName=self.parse_string(experiment_name), runId=run_id)
         r = self._serviceconnector.request(method='PUT', uri=uri, body=body, headers=headers)
         raise_for_status_with_detail(r)
         rs = r.json()
@@ -176,8 +177,8 @@ class ExperimentClient(_Client):
             raise Exception('Error updating run {}: {}'.format(run_id, rs.get('error')))
         return success
 
-    def delete_run(self, experiment_name, project, run_id):
-        uri = self.URIs['run'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id)
+    def delete_run(self, experiment_name, run_id):
+        uri = self.URIs['run'].format(projectId=self._project, experimentName=self.parse_string(experiment_name), runId=run_id)
         r = self._serviceconnector.request(method='DELETE', uri=uri)
         raise_for_status_with_detail(r)
         rs = r.json()
@@ -187,8 +188,8 @@ class ExperimentClient(_Client):
             raise Exception('Error deleting run {}: {}'.format(run_id, rs.get('error')))
         return success
 
-    def update_meta(self, experiment_name, project, run_id, meta, val):
-        uri = self.URIs['meta'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id, metaId=meta)
+    def update_meta(self, experiment_name, run_id, meta, val):
+        uri = self.URIs['meta'].format(projectId=self._project, experimentName=self.parse_string(experiment_name), runId=run_id, metaId=meta)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=headers)
         raise_for_status_with_detail(r)
@@ -199,8 +200,8 @@ class ExperimentClient(_Client):
             raise Exception('Error updating run {} meta property {}: {}'.format(run_id, meta, rs.get('error')))
         return success
 
-    def update_param(self, experiment_name, project, run_id, param, val):
-        uri = self.URIs['param'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id, paramId=param)
+    def update_param(self, experiment_name, run_id, param, val):
+        uri = self.URIs['param'].format(projectId=self._project, experimentName=self.parse_string(experiment_name), runId=run_id, paramId=param)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=headers)
         raise_for_status_with_detail(r)
@@ -211,8 +212,8 @@ class ExperimentClient(_Client):
             raise Exception('Error updating run {} param {}: {}'.format(run_id, param, rs.get('error')))
         return success
 
-    def update_metric(self, experiment_name, project, run_id, metric, val):
-        uri = self.URIs['metric'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id, metricId=metric)
+    def update_metric(self, experiment_name, run_id, metric, val):
+        uri = self.URIs['metric'].format(projectId=self._project, experimentName=self.parse_string(experiment_name), runId=run_id, metricId=metric)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=headers)
         raise_for_status_with_detail(r)
@@ -223,8 +224,8 @@ class ExperimentClient(_Client):
             raise Exception('Error updating run {} metric {}: {}'.format(run_id, metric, rs.get('error')))
         return success
 
-    def update_artifact(self, experiment_name, project, run_id, artifact, stream):
-        uri = self.URIs['artifact'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id, artifactId=artifact)
+    def update_artifact(self, experiment_name, run_id, artifact, stream):
+        uri = self.URIs['artifact'].format(projectId=self._project, experimentName=self.parse_string(experiment_name), runId=run_id, artifactId=artifact)
         r = self._serviceconnector.request(method='PUT', uri=uri, body=stream)
         raise_for_status_with_detail(r)
         rs = r.json()
@@ -234,8 +235,8 @@ class ExperimentClient(_Client):
             raise Exception('Error updating run {} artifact {}: {}'.format(run_id, artifact, rs.get('error')))
         return success
 
-    def get_artifact(self, experiment_name, project, run_id, artifact):
-        uri = self.URIs['artifact'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id, artifactId=artifact)
+    def get_artifact(self, experiment_name, run_id, artifact):
+        uri = self.URIs['artifact'].format(projectId=self._project, experimentName=self.parse_string(experiment_name), runId=run_id, artifactId=artifact)
         r = self._serviceconnector.request(method='GET', uri=uri, stream=True)
         raise_for_status_with_detail(r)
 
@@ -356,7 +357,7 @@ class Experiment(CamelResource):
             self.meta = {}
 
     @staticmethod
-    def get_experiment(name, project, client: ExperimentClient, model_id=None, **kwargs):
+    def get_experiment(name, client: ExperimentClient, model_id=None, **kwargs):
         """
         Fetches or creates an experiment to work with.
 
@@ -367,12 +368,12 @@ class Experiment(CamelResource):
         :return: An experiment object.
         """
         try:
-            exp = client.get_experiment(name, project)
+            exp = client.get_experiment(name)
         except HTTPError:
             # Likely a 404, try to create a new experiment
-            exp = client.save_experiment(name, project, model_id, **kwargs)
+            exp = client.save_experiment(name, model_id, **kwargs)
 
-        return Experiment(exp, project, client)
+        return Experiment(exp, client._project, client)
 
     def start_run(self) -> Run:
         return RemoteRun.create(self, self._project, self._client)
