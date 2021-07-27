@@ -393,7 +393,7 @@ class Experiment(CamelResource):
 
     def get_run(self, run_id) -> Run:
         run = self._client.get_run(self.name, self._project, run_id)
-        return RemoteRun.from_json(run, self._project, self).to_json()
+        return RemoteRun.from_json(run, self._project, self)
 
     def last_run(self) -> Run:
         sort = {'endTime': -1}
