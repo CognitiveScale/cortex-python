@@ -60,8 +60,8 @@ class ExperimentClient(_Client):
 
         return rs.get('experiments', [])
 
-    def save_experiment(self, experiment_name, project, **kwargs):
-        body_obj = {'name': experiment_name}
+    def save_experiment(self, experiment_name, project, model_id=None, **kwargs):
+        body_obj = {'name': experiment_name, 'modelId': model_id}
 
         if kwargs:
             body_obj.update(kwargs)
@@ -356,20 +356,21 @@ class Experiment(CamelResource):
             self.meta = {}
 
     @staticmethod
-    def get_experiment(name, project, client: ExperimentClient, **kwargs):
+    def get_experiment(name, project, client: ExperimentClient, model_id=None, **kwargs):
         """
         Fetches or creates an experiment to work with.
 
         :param name: The name of the experiment to retrieve.
         :param project: The project from which the experiment is to be retrieved.
         :param client: The client instance to use.
+        :param model_id: The model reference(optional).
         :return: An experiment object.
         """
         try:
             exp = client.get_experiment(name, project)
         except HTTPError:
             # Likely a 404, try to create a new experiment
-            exp = client.save_experiment(name, project, **kwargs)
+            exp = client.save_experiment(name, project, model_id, **kwargs)
 
         return Experiment(exp, project, client)
 
@@ -397,7 +398,6 @@ class Experiment(CamelResource):
     def last_run(self) -> Run:
         sort = {'endTime': -1}
         runs = self._client.find_runs(self.name, self._project, {}, sort=sort, limit=1)
-        print(runs)
         if len(runs) == 1:
             print(self)
             return RemoteRun.from_json(runs[0], self._project, self)
