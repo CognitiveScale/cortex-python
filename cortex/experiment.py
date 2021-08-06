@@ -389,7 +389,7 @@ class Experiment(CamelResource):
 
     def runs(self) -> List[Run]:
         runs = self._client.list_runs(self.name, self._project)
-        return [RemoteRun.from_json(r, self._project, self).to_json() for r in runs]
+        return [RemoteRun.from_json(r, self._project, self) for r in runs]
 
     def get_run(self, run_id) -> Run:
         run = self._client.get_run(self.name, self._project, run_id)
@@ -405,7 +405,7 @@ class Experiment(CamelResource):
 
     def find_runs(self, filter, sort, limit: int) -> List[Run]:
         runs = self._client.find_runs(self.name, self._project, filter or {}, sort=sort, limit=limit)
-        return [RemoteRun.from_json(r, self._project, self).to_json() for r in runs]
+        return [RemoteRun.from_json(r, self._project, self) for r in runs]
 
     def load_artifact(self, run: Run, name: str):
         return dill.loads(self._client.get_artifact(self.name, self._project, run.id, name))
