@@ -3,9 +3,8 @@
 The Cortex Python module provides an API client library to easily integrate with the Cortex Cognitive Platform. 
 Refer to the Cortex documentation for details on how to use the library: 
 
-- Developer guide: https://docs.cortex.insights.ai/docs/developer-guide/overview/
-- Cortex Python references: https://docs.cortex.insights.ai/docs/developer-guide/reference-guides
-
+- Developer guide: https://cognitivescale.github.io/cortex-fabric/
+- Cortex Python references: https://cognitivescale.github.io/cortex-python/master/
 
 ## Installation
 
@@ -25,7 +24,6 @@ To install the optional components:
 ```
   > pip install cortex-python[viz]
   > pip install cortex-python[jupyter]
-  > pip install cortex-python[builders]
 ```
 
 ## Development 

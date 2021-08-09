@@ -15,12 +15,13 @@ limitations under the License.
 """
 
 import json
-import pkg_resources
 import platform
 import requests
 import sys
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
+from .__version__ import __version__, __title__
+
 from typing import Dict, Any, List, Union, Optional, Type, TypeVar
 from .utils import get_logger, get_cortex_profile, decode_JWT, verify_JWT, generate_token
 from .utils import raise_for_status_with_detail
@@ -29,7 +30,7 @@ log = get_logger(__name__)
 JSONType = Union[str, int, float, bool, None, Dict[str, Any], List[Any]]
 T = TypeVar('T', bound="_Client")
 
-userAgent = f'cortex-python/{pkg_resources.get_distribution("cortex-python").version} ({sys.platform}; {platform.architecture()[0]}; {platform.release()})'
+userAgent = f'{__title__}/{__version__} ({sys.platform}; {platform.architecture()[0]}; {platform.release()})'
 
 class ServiceConnector:
     """
