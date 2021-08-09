@@ -1,3 +1,6 @@
+"""
+Metadata for cortex-python
+"""
 __title__ = 'cortex-python'
 __description__ = 'Python module for the CognitiveScale Cortex Cognitive Platform'
 __url__ = 'https://github.com/CognitiveScale/cortex-python'

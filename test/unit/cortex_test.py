@@ -38,7 +38,7 @@ class Test_Cortex(unittest.TestCase):
                 )
         assert cortex._url == api_endpoint
         assert cortex._token._token == token
-        assert cortex._token._jwt['sub'] == john_doe_subject()
+        assert cortex._token._jwt[1]['sub'] == john_doe_subject()
 
     def test_message_constructor(self):
         token = john_doe_token()

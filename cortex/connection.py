@@ -80,7 +80,6 @@ class Connection(CamelResource):
         :param project: The project from which connection has to be retrieved.
         :return: A Connection object.
         """
-<<<<<<< HEAD
         name = kwargs.get('name')
         client = kwargs.get('client')
         # TODO not safe
@@ -92,10 +91,7 @@ class Connection(CamelResource):
                 name = args[0]
             if not client:
                 name = args[2]
-        conn_svc_url = f'{client._serviceconnector.url.replace("cortex-internal", "cortex-connections")}:4500'
-=======
         conn_svc_url = f'{client._serviceconnector.url.replace("cortex-internal", "cortex-connections")}'
->>>>>>> 26ec20f (WIP)
         uri = f'{conn_svc_url}/internal/projects/{project}/connections/{urllib.parse.quote(name, safe="")}'
         log.debug('Getting connection using URI: %s' % uri)
         r = client._serviceconnector.request('GET', uri, is_internal_url=True)

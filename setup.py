@@ -47,10 +47,10 @@ setup(
   install_requires=[
       'requests>=2.12.4,<3',
       'requests-toolbelt>=0.8.0',
-      'python-jwt==3.3.0',
+      'python-jwt>=3.3.0,<4.0',
       'pyyaml>=5.3.1,<6',
       'cuid>=0.3,<1',
-      'tenacity>=5.0.2',
+      'tenacity>=8.0,<9.0',
       'dill>=0.2.8.2'
   ],
   extras_require={
@@ -66,10 +66,8 @@ setup(
       ],
   },
   tests_require=[
-      'mocket>=2.5.0,<3',
-      'mock>=2,<3',
-      'pytest>=3.2.5,<4',
-      'pipdeptree'
+      'mocket>=3.9.0,<4.0',
+      'pytest>=3.2.5,<4'
   ],
   classifiers=[
       'Operating System :: MacOS :: MacOS X',
