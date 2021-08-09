@@ -27,9 +27,9 @@ class AuthenticationClient(_Client):
 
     def fetch_auth_token(self, config):
         """
-        Retrieves the JWT token for a given user..
+        Generates JWT token from the personal access token provided..
 
-        :param config: The ID of the tenant/account to authenticate to.
+        :param config: Personal access token
         :return: A JWT string.
         """
         token = generate_token(config, validity=1440)
