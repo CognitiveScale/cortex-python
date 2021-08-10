@@ -23,17 +23,24 @@ from mocket import mocketize
 
 from cortex.connection import ConnectionClient
 from cortex.content import ManagedContentClient
+from cortex import Cortex
+
 from .fixtures import john_doe_token
 
 TOKEN=john_doe_token()
 projectId = 'cogscale'
+url = 'http://localhost:123'
+
+# params similar to those passed from
+params = {'token': TOKEN, 'projectId': projectId, 'apiEndpoint': url}
 
 class TestConnectionClient(unittest.TestCase):
 
     def setUp(self):
-        self.cc = ConnectionClient('http://localhost:123', 4, token=TOKEN, project=projectId)
-        self.mc = ManagedContentClient('http://localhost:123', 4, token=TOKEN, project=projectId)
-
+        self.cc = ConnectionClient(url, token=TOKEN, project=projectId)
+        self.mc = ManagedContentClient(url, token=TOKEN, project=projectId)
+        self.client =  Cortex.from_message(params)
+        self.mcFromClient = ManagedContentClient(self.client)
     @mocketize
     def test_save_connection(self):
         uri = self.cc.URIs['connections'].format(projectId=projectId)
@@ -44,7 +51,6 @@ class TestConnectionClient(unittest.TestCase):
                               status = 200,
                               body = json.dumps(connection))
         r = self.cc.save_connection(connection=connection, project=projectId)
-
         self.assertEqual(r, connection)
 
     @mocketize
@@ -61,6 +67,13 @@ class TestConnectionClient(unittest.TestCase):
                                   body = json.dumps(result))
             r = self.mc.upload(key=key, stream_name='foo', stream=content, content_type='application/octet-stream', project=projectId)
             self.assertEqual(r, result)
+
+            r = self.mcFromClient.upload(key=key, stream_name='foo', stream=content, content_type='application/octet-stream')
+            self.assertEqual(r, result)
+
+            r = self.mcFromClient.upload(key, 'foo', content, 'application/octet-stream')
+            self.assertEqual(r, result)
+
 
     @mocketize
     def test_uploadStreaming(self):
