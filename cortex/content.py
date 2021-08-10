@@ -60,17 +60,31 @@ class ManagedContentClient(_Client):
         if len(args) > 0:
             if len(args) == 6:
                 retries = args[5]
-            if len(args) == 5:
+                content_type = args[4]
+                stream = args[3]
+                stream_name = args[2]
                 project = args[1]
-            if len(args) == 4:
-                if not key:
-                    key = args[0]
-                if not stream:
-                    stream = args[3]
-                if not stream_name:
-                    stream_name = args[2]
-                if not content_type:
+            if len(args) == 5:  # Assuming no retries
+                # (key, 'foo', content, 'application/octet-stream', 5)
+                if type(args[4]) == int:
+                    retries = args[4]
+                    content_type = args[3]
+                    stream = args[2]
+                    stream_name = args[1]
+                else:
                     content_type = args[4]
+                    stream = args[3]
+                    stream_name = args[2]
+                    project = args[1]
+            if not key:
+                key = args[0]
+            if len(args) == 4:
+                if not stream:
+                    stream = args[2]
+                if not stream_name:
+                    stream_name = args[1]
+                if not content_type:
+                    content_type = args[3]
 
         r = tenacity.Retrying(
                 stop = tenacity.stop_after_attempt(retries + 1),
@@ -81,6 +95,7 @@ class ManagedContentClient(_Client):
     def _upload(self, key: str, project: str, stream_name: str, stream: object, content_type: str):
         uri = self.URIs['content'].format(projectId=project)
         fields = {'key': key, 'content': (stream_name, stream, content_type)}
+        # Still using multi-part ???
         data = MultipartEncoder(fields=fields)
         headers = {'Content-Type': data.content_type}
         r = self._serviceconnector.request('POST', uri, data, headers)
