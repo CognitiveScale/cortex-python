@@ -34,17 +34,11 @@ class ConnectionClient(_Client):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = 4
 
-    def save_connection(self, *args, **kwargs):
+    def save_connection(self, connection: object, project: str = None):
         """
         Posts the connection client information.
         """
-        connection = kwargs.get('connection')
-        project = kwargs.get('project', self._serviceconnector.project)
-        if len(args) > 0:
-            if len(args) == 2:
-                project = args[0]
-            if not connection:
-                connection = args[1]
+        if project is None: project = self._serviceconnector.project
         uri = self.URIs['connections'].format(projectId=project)
         data = json.dumps(connection)
         headers = {'Content-Type': 'application/json'}
@@ -71,7 +65,7 @@ class Connection(CamelResource):
         self._connector = connector
 
     @staticmethod
-    def get_connection(*args, **kwargs):
+    def get_connection(name, project, client: ConnectionClient):
         """
         Fetches a Connection to work with.
 
@@ -80,18 +74,8 @@ class Connection(CamelResource):
         :param project: The project from which connection has to be retrieved.
         :return: A Connection object.
         """
-        name = kwargs.get('name')
-        client = kwargs.get('client')
-        # TODO not safe
-        project = kwargs.get('project', client._serviceconnector.project)
-        if len(args) > 0:
-            if len(args) == 3:
-                project = args[1]
-            if not name:
-                name = args[0]
-            if not client:
-                name = args[2]
-        conn_svc_url = f'{client._serviceconnector.url.replace("cortex-internal", "cortex-connections")}'
+        port = os.getenv('CORTEX_CONNECTIONS_SERVICE_PORT_HTTP_CORTEX_CONNECTIONS') or '4450'
+        conn_svc_url = f'{client._serviceconnector.url.replace("cortex-internal", "cortex-connections")}:{port}'
         uri = f'{conn_svc_url}/internal/projects/{project}/connections/{urllib.parse.quote(name, safe="")}'
         log.debug('Getting connection using URI: %s' % uri)
         r = client._serviceconnector.request('GET', uri, is_internal_url=True)

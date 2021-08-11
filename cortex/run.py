@@ -381,7 +381,7 @@ class RemoteRun(Run):
         Gets an artifact with the given name.  Deserializes the artifact stream using dill by default.  Deserialization
         can be disabled entirely or the deserializer function can be overridden.
         """
-        artifact_bytes = self._client.get_artifact(self._experiment.name, self._project, self.id, name)
+        artifact_bytes = self._client.get_artifact(experiment_name=self._experiment.name, project=self._project, run_id=self.id, artifact=name)
         if deserializer:
             return deserializer(artifact_bytes)
         return artifact_bytes

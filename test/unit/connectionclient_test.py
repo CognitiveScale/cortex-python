@@ -71,26 +71,6 @@ class TestConnectionClient(unittest.TestCase):
             r = self.mcFromClient.upload(key=key, stream_name='foo', stream=content, content_type='application/octet-stream')
             self.assertEqual(r, result)
 
-            # with project
-            r = self.mcFromClient.upload(key, projectId, 'foo', content, 'application/octet-stream')
-            self.assertEqual(r, result)
-
-            # without project and retries
-            r = self.mcFromClient.upload(key, 'foo', content, 'application/octet-stream')
-            self.assertEqual(r, result)
-
-            # All
-            r = self.mcFromClient.upload(key, projectId, 'foo222', content, 'application/octet-stream', 5)
-            self.assertEqual(r, result)
-
-            # # without project with retries
-            r = self.mcFromClient.upload(key, 'foo', content, 'application/octet-stream', 5)
-            self.assertEqual(r, result)
-
-            # # without project with retries
-            r = self.mcFromClient.upload(key, projectId, 'foo', content, 'application/octet-stream')
-            self.assertEqual(r, result)
-
     @mocketize
     def test_uploadStreaming(self):
         key = 'some-key'

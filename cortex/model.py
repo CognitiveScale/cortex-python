@@ -35,10 +35,14 @@ class ModelClient(_Client):
 
     }
 
-    def __init__(self, project, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = 4
-        self._project = project
+        # get project from connection b default
+        if kwargs.get('project'):
+            self._project = kwargs.get('project')
+        else:
+            self._project = self._serviceconnector.project
 
     def list_models(self):
         r = self._serviceconnector.request(method='GET', uri=self.URIs['models'].format(projectId=self._project))
@@ -55,14 +59,14 @@ class ModelClient(_Client):
         raise_for_status_with_detail(r)
         return r.json()
 
-    def get_model(self, model_name):
+    def get_model(self, model_name: str):
         uri = self.URIs['model'].format(projectId=self._project, modelName=self.parse_string(model_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
 
         return r.json()
 
-    def delete_model(self, model_name):
+    def delete_model(self, model_name: str):
         uri = self.URIs['model'].format(projectId=self._project, modelName=self.parse_string(model_name))
         r = self._serviceconnector.request(method='DELETE', uri=uri)
         raise_for_status_with_detail(r)
@@ -70,7 +74,7 @@ class ModelClient(_Client):
 
         return rs.get('success', False)
 
-    def parse_string(self, string):
+    def parse_string(self, string: str):
         # Replaces special characters like / with %2F
         return urllib.parse.quote(string, safe='')
 

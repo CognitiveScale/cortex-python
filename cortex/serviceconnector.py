@@ -189,6 +189,7 @@ class _Client:
         token = kwargs.get("token")
         config = kwargs.get("config")
         verify_ssl_cert = kwargs.get("verify_ssl_cert")
+        project = kwargs.get("project")
         # If all kwargs or first arg is a string create a Connector
         if len(args) == 0 or (len(args) > 0 and type(args[0]) == str):
             if len(args) > 0:
@@ -201,7 +202,14 @@ class _Client:
                 config = args[3]
             if len(args) > 4:
                 verify_ssl_cert = args[4]
-            self._serviceconnector = ServiceConnector(url, version, token, config, verify_ssl_cert)
+            self._serviceconnector = ServiceConnector(
+                url=url,
+                version=version,
+                token=token,
+                config=config,
+                verify_ssl_cert=verify_ssl_cert,
+                project=project,
+            )
         # if first arg not string assume Client object was passed
         else:
             self._serviceconnector = args[0].to_connector()
