@@ -74,7 +74,7 @@ Also, you can use the `action` in the builder class inside client class to build
 you can manage secrets through the Cortex Vault in the Cortex Console or via the CLI `cortex variables [command] [options]`.
 
 5. `Message.with_payload()` has been removed. This method was previously deprecated in `cortex-client` v5.5.4.
-Instead use the `Client.message()` method:
+Instead, use the `Client.message()` method:
 
 ```
 > from cortex import Cortex

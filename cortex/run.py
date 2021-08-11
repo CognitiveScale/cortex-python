@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-   http://www.apache.org/licenses/LICENSE-2.0
+   https://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -272,8 +272,8 @@ class RemoteRun(Run):
     def create(experiment, project, experiment_client):
         """
         Creates a remote run.
-
         :param experiment: The experiment to associate with this run.
+        :param project: The project to create the run in
         :param experiment_client: The client for the run.
         :return: A run.
         """
@@ -290,6 +290,7 @@ class RemoteRun(Run):
         Gets a run.
 
         :param experiment: The parent experiment of the run.
+        :param project: The project to get the run from
         :param run_id: The identifier for the run.
         :param experiment_client: The client for the run.
         :return: A run.
@@ -298,13 +299,13 @@ class RemoteRun(Run):
         return RemoteRun.from_json(r, project, experiment)
 
     @staticmethod
-    def from_json(json, project, experiment):
+    def from_json(json, experiment, project = None):
         """
         Builds a run from the given json.
-
-        :param jsom: json that specifies the run; acceptable values are runId,
+        :param json: json that specifies the run; acceptable values are runId,
         startTime, endTime, took, a list of params, metrics, metadata, and artifacts
         :param experiment: the parent experiment of the run
+        :param project: The project to get the run from (default: Connector's project)
         :return: a run
         """
         run = RemoteRun(experiment,project, experiment._client)

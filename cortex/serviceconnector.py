@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+  https://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -72,8 +72,9 @@ class ServiceConnector:
 
         :param method: HTTP method to send to the service.
         :param uri: Path to extend service URL.
-        :param data: Data to send as the post body to the service.
+        :param body: Data to send as the post body to the service.
         :param headers: HTTP headers for this post.
+        :param debug: Enable debug True|False (default: False)
         :param kwargs: Additional key-value pairs to pass to the request method.
         :return: :class:`Response <Response>` object
         """
@@ -100,8 +101,10 @@ class ServiceConnector:
 
         :param method: HTTP method to send to the service.
         :param uri: Path to extend service URL.
-        :param data: Data to send as the post body to the service.
+        :param body: Data to send as the post body to the service.
         :param headers: HTTP headers for this post.
+        :param debug: Enable debug True|False (default: False)
+        :param is_internal_url: Url is internal fabric URL (default: false)
         :param kwargs: Additional key-value pairs to pass to the request method.
         :return: :class:`Response <Response>` object
         """

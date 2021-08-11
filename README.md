@@ -82,7 +82,7 @@ Activate your virtual environment:
 > source _venv/bin/activate
 ```
 
-Setup your environment, if you have not done so:
+Set up your environment, if you have not done so:
 ```
 > make dev.install 
 ```
@@ -199,7 +199,7 @@ Instead use the `Client.message()` method:
 6. `LocalExperiment.set_pipeline()` has been removed. This method was previously deprecated in `cortex-client` v5.5.0.
 There is no replacement method for this functionality.
 
-7. The `cortex-python` package depends on less libraries than `cortex-client`. Users of the cortex-client that have incrementally upgraded to different versions of the cortex-client package in the same environment are likely to have downloaded the following transitive dependencies. When cortex-python is used in place of cortex-client, these transitive dependencies will no longer be included. Accordingly, users that depend on any of the transitive dependencies must explicitly install them. The list of these transitive dependencies includes:
+7. The `cortex-python` package depends on fewer libraries than `cortex-client`. Users of the cortex-client that have incrementally upgraded to different versions of the cortex-client package in the same environment are likely to have downloaded the following transitive dependencies. When cortex-python is used in place of cortex-client, these transitive dependencies will no longer be included. Accordingly, users that depend on any of the transitive dependencies must explicitly install them. The list of these transitive dependencies includes:
 
 ```
 Flask==1.0.2

@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-   http://www.apache.org/licenses/LICENSE-2.0
+   https://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -45,6 +45,10 @@ class ModelClient(_Client):
             self._project = self._serviceconnector.project
 
     def list_models(self):
+        """
+        List models in the current project
+        :return: list - models objects
+        """
         r = self._serviceconnector.request(method='GET', uri=self.URIs['models'].format(projectId=self._project))
         raise_for_status_with_detail(r)
         rs = r.json()
@@ -52,6 +56,11 @@ class ModelClient(_Client):
         return rs.get('models', [])
 
     def save_model(self, model_obj):
+        """
+        Create/Update a model in the current project
+        :param model_obj: dict: Model object
+        :return: Response message
+        """
         body = json.dumps(model_obj)
         headers = {'Content-Type': 'application/json'}
         uri = self.URIs['models'].format(projectId=self._project)
@@ -60,13 +69,22 @@ class ModelClient(_Client):
         return r.json()
 
     def get_model(self, model_name: str):
+        """
+        Fetch a model from the current project
+        :param model_name: Model name/id
+        :return: dict - Response message
+        """
         uri = self.URIs['model'].format(projectId=self._project, modelName=self.parse_string(model_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
-
         return r.json()
 
     def delete_model(self, model_name: str):
+        """
+        Delete a model
+        :param model_name:  Model name/id
+        :return: dict - Response message
+        """
         uri = self.URIs['model'].format(projectId=self._project, modelName=self.parse_string(model_name))
         r = self._serviceconnector.request(method='DELETE', uri=uri)
         raise_for_status_with_detail(r)

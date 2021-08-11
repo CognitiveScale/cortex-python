@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+  https://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -115,8 +115,7 @@ class Client(object):
         """
         if not self._token.token:
             self._token = _Token(generate_token(self._config))
-        params = {}
-        params['payload'] = payload
+        params = {'payload': payload}
         if properties:
             params['properties'] = properties
         params['apiEndpoint'] = self._url
@@ -197,10 +196,10 @@ class Cortex(object):
 
         :param msg: A message for constructing a Cortex Client.
         """
-        keys= ('apiEndpoint', 'token', 'projectId')
+        keys = ('apiEndpoint', 'token', 'projectId')
         if not all(key in msg for key in keys):
             raise Exception(f'Skill message must contain these keys: {keys}')
-        return Cortex.client(api_endpoint=msg.get('apiEndpoint'), token=msg.get('token'), project=msg.get('projectId') )
+        return Cortex.client(api_endpoint=msg.get('apiEndpoint'), token=msg.get('token'), project=msg.get('projectId'))
 
     @staticmethod
     def local(basedir=None):

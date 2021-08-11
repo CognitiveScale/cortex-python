@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-   http://www.apache.org/licenses/LICENSE-2.0
+   https://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,6 +31,7 @@ def md5sum(file_name, blocksize=65536):
     Computes md5sum on a fileself.
 
     :param file_name: The name of the file on which to compute the md5sum.
+    :param blocksize: Blocksize used to compute md5 sum (default: 65536)
     :return: Hexdigest of md5sum for file.
     """
     md5 = hashlib.md5()

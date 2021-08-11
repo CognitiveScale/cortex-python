@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-   http://www.apache.org/licenses/LICENSE-2.0
+   https://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -108,7 +108,7 @@ class SkillClient(_Client):
         :param activation: ActivationId provided in resources
         :param channel: ChannelId provided in the parameters
         :param output_name: Output name provided in the parameters or another skill output connected from this skill
-        :param payload: JSON payload to be send to the agent
+        :param message: dict - payload to be send to the agent
         :return: success or failure message
         """
         uri = self.URIs['send_message'].format(activation=activation, channel=channel, output_name=output_name)

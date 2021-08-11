@@ -6,7 +6,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-   http://www.apache.org/licenses/LICENSE-2.0
+   https://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -60,6 +60,7 @@ class ManagedContentClient(_Client):
     def _upload(self, key: str, project: str, stream_name: str, stream: object, content_type: str):
         uri = self.URIs['content'].format(projectId=project)
         fields = {'key': key, 'content': (stream_name, stream, content_type)}
+        # Still using multi-part ???
         data = MultipartEncoder(fields=fields)
         headers = {'Content-Type': data.content_type}
         r = self._serviceconnector.request('POST', uri, data, headers)
@@ -94,8 +95,13 @@ class ManagedContentClient(_Client):
         for path_dict in generated_paths:
             key = os.path.join(destination, path_dict.get('relative'))
             with open(path_dict.get('canonical'), 'rb') as stream:
-                responses.append(self.upload_streaming(key, project, stream, 'application/octet-stream', retries))
-
+                responses.append(self.upload_streaming(
+                    key = key,
+                    project=project,
+                    stream=stream,
+                    content_type='application/octet-stream',
+                    retries=retries,
+                ))
         return responses
 
     def upload_streaming(self, key: str, stream: object, content_type: str, retries: int = 1, project: str = None):
@@ -137,7 +143,7 @@ class ManagedContentClient(_Client):
             )
         return r.wraps(self._download)(key, project)
 
-    def _download(self, key: str, project):
+    def _download(self, key: str, project: str):
         uri = self._make_content_uri(key, project)
         r = self._serviceconnector.request('GET', uri, stream=True)
         raise_for_status_with_detail(r)
@@ -145,7 +151,6 @@ class ManagedContentClient(_Client):
 
     def exists(self, key: str, project: str = None) -> bool:
         """Check that a file from managed content (S3) exists.
-
         :param key: The path of the file to check.
         :param project: The project to check.
         :returns: A boolean indicating wether the file exists or not.
