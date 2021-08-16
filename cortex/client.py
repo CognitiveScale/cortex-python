@@ -162,9 +162,7 @@ class Cortex(object):
 
         :param api_endpoint: The Cortex URL.
         :param api_version: The version of the API to use with this client.
-        :param verify_ssl_cert: A boolean to indiciate if the SSL certificate needs to be validated.
-        :param token: An authentication token.
-        :param config: Cortex Personal Access Config.
+        :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE file or directory with certificates of trusted CAs (default: True)
         :param project: Cortex Project that you want to use.
         """
         env = CortexEnv(api_endpoint=api_endpoint, token=token, config=config, project=project)
@@ -190,16 +188,16 @@ class Cortex(object):
                       verify_ssl_cert=verify_ssl_cert)
 
     @staticmethod
-    def from_message(msg):
+    def from_message(msg, verify_ssl_cert=None):
         """
         Creates a Cortex client from a skill's input message, expects { api_endpoint:'..', token:'..', projectId:'..' }
-
         :param msg: A message for constructing a Cortex Client.
+        :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE file or directory with certificates of trusted CAs (default: True)
         """
         keys = ('apiEndpoint', 'token', 'projectId')
         if not all(key in msg for key in keys):
             raise Exception(f'Skill message must contain these keys: {keys}')
-        return Cortex.client(api_endpoint=msg.get('apiEndpoint'), token=msg.get('token'), project=msg.get('projectId'))
+        return Cortex.client(api_endpoint=msg.get('apiEndpoint'), token=msg.get('token'), project=msg.get('projectId'), verify_ssl_cert=verify_ssl_cert)
 
     @staticmethod
     def local(basedir=None):
