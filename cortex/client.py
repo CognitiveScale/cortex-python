@@ -106,7 +106,7 @@ class Client(object):
             return Session.start(session_client, self._project, ttl)
         return Session(session_id, session_client, self._project)
 
-    def experiment(self, name: str, version: str = '4', model_id=None):
+    def experiment(self, name: str, version: str = '4', model_id=''):
         """
         Gets an experiment with the specified name.
         """
