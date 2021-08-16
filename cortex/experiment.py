@@ -60,7 +60,7 @@ class ExperimentClient(_Client):
 
         return rs.get('experiments', [])
 
-    def save_experiment(self, experiment_name, project, model_id=None, **kwargs):
+    def save_experiment(self, experiment_name, project, model_id='', **kwargs):
         body_obj = {'name': experiment_name, 'modelId': model_id}
 
         if kwargs:
@@ -356,7 +356,7 @@ class Experiment(CamelResource):
             self.meta = {}
 
     @staticmethod
-    def get_experiment(name, project, client: ExperimentClient, model_id=None, **kwargs):
+    def get_experiment(name, project, client: ExperimentClient, model_id='', **kwargs):
         """
         Fetches or creates an experiment to work with.
 
