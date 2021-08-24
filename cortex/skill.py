@@ -16,7 +16,7 @@ limitations under the License.
 
 import json
 import urllib.parse
-
+from typing import Optional, Dict
 from .serviceconnector import _Client
 from .camel import CamelResource
 from .utils import get_logger
@@ -139,3 +139,24 @@ class Skill(CamelResource):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = 4
 
+class SkillRequest():
+    '''
+    Skill request: parameters passed in during skill invoke
+    '''
+    activationId: str
+    agentName: Optional[str] = None
+    apiEndpoint: str
+    channelId: Optional[str] = None
+    outputName: Optional[str] = None
+    payload: Dict
+    properties: Dict
+    sessionId: Optional[str] = None
+    skillName: Optional[str] = None
+    token: Optional[str] = None
+
+class SkillResponse():
+    '''
+    Skill response: skill output
+    '''
+    outputName: Optional[str] = None
+    payload: Dict
