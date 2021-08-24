@@ -1,12 +1,11 @@
-
 """
-Copyright 2019 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-   http://www.apache.org/licenses/LICENSE-2.0
+   https://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +15,6 @@ limitations under the License.
 """
 
 import json
-import os
 import urllib.parse
 from .serviceconnector import _Client, ServiceConnector
 from .camel import CamelResource
@@ -36,10 +34,12 @@ class ConnectionClient(_Client):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = 4
 
-    def save_connection(self, project: str, connection: object):
+    def save_connection(self, connection: object, project: str = None):
         """
         Posts the connection client information.
         """
+        if project is None:
+            project = self._serviceconnector.project
         uri = self.URIs['connections'].format(projectId=project)
         data = json.dumps(connection)
         headers = {'Content-Type': 'application/json'}
@@ -50,14 +50,13 @@ class ConnectionClient(_Client):
     ## Private ##
 
     def _bootstrap(self):
-        uri  = self.URIs['connections'] + '/_/bootstrap'
+        uri = self.URIs['connections'] + '/_/bootstrap'
         r = self._serviceconnector.request('GET', uri)
         raise_for_status_with_detail(r)
         return r.json()
 
 
 class Connection(CamelResource):
-
     """
     Defines the connection for a dataset.
     """
@@ -65,7 +64,6 @@ class Connection(CamelResource):
     def __init__(self, connection, connector: ServiceConnector):
         super().__init__(connection, True)
         self._connector = connector
-
 
     @staticmethod
     def get_connection(name, project, client: ConnectionClient):

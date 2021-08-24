@@ -1,11 +1,11 @@
 """
-Copyright 2019 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+  https://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,9 +27,9 @@ class AuthenticationClient(_Client):
 
     def fetch_auth_token(self, config):
         """
-        Retrieves the JWT token for a given user..
+        Generates JWT token from the personal access token provided..
 
-        :param config: The ID of the tenant/account to authenticate to.
+        :param config: Personal access token
         :return: A JWT string.
         """
         token = generate_token(config, validity=1440)
