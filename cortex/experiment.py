@@ -74,12 +74,14 @@ class ExperimentClient(_Client):
         Create or update an experiment
         :param experiment_name: Experiment name/id
         :param project: Project name (default: Connection's project)
-        :param model_id: Mode to associate this experiment to (default: None)
+        :param model_id: Model to associate this experiment to (default: None)
         :param kwargs:
         :return: response JSON
         :raise HTTPError: Non 2xx response
         """
         if project is None: project = self._serviceconnector.project
+        if model_id is None: model_id = ""
+        
         body_obj = {'name': experiment_name, 'modelId': model_id}
 
         if kwargs:
@@ -544,7 +546,7 @@ class Experiment(CamelResource):
 
     def runs(self) -> List[Run]:
         runs = self._client.list_runs(self.name, self._project)
-        return [RemoteRun.from_json(r, self._project, self).to_json() for r in runs]
+        return [RemoteRun.from_json(r, self._project, self) for r in runs]
 
     def get_run(self, run_id) -> Run:
         run = self._client.get_run(self.name, self._project, run_id)
@@ -560,7 +562,7 @@ class Experiment(CamelResource):
 
     def find_runs(self, filter, sort, limit: int) -> List[Run]:
         runs = self._client.find_runs(self.name, self._project, filter or {}, sort=sort, limit=limit)
-        return [RemoteRun.from_json(r, self._project, self).to_json() for r in runs]
+        return [RemoteRun.from_json(r, self._project, self) for r in runs]
 
     def load_artifact(self, run: Run, name: str):
         return dill.loads(self._client.get_artifact(experiment_name=self.name, project=self._project,run_id= run.id, artifact=name))
