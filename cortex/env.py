@@ -1,11 +1,11 @@
 """
-Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2019 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-  https://www.apache.org/licenses/LICENSE-2.0
+  http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,9 @@ import os
 import json
 from .utils import get_cortex_profile
 from .exceptions import BadTokenException
+
+DEFAULT_API_ENDPOINT = 'https://api.cortex.insights.ai'
+
 
 class CortexEnv:
     """
@@ -43,6 +46,8 @@ class CortexEnv:
         """
         gets the token from either the cortex_token env variable or the profile's token.
         if cortex_token and both cortex_profile are falsey, then cortexToken will be None
+
+        :param profile: configured cortex profile from the local machine
         """
         cortexToken = CortexEnv.get_cortex_token() or CortexEnv.get_cortex_profile().get('token')
         return cortexToken

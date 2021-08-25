@@ -58,23 +58,23 @@ Cortex magics can be used only when the optional `builders` dependency is instal
 ```
 ## Deprecations and Removals from cortex-client
 
-1. The `InputMessage` and `OutputMessage` classes have been deprecated. Instead, use the `Message` class:
+1. The `InputMessage` and `OutputMessage` classes have been deprecated. Instead use the `Message` class:
 
 ```
 > from cortex import Message
 ```
 
-2. `ModelClient`, `ModelProcess`, and `ModelRouter` have been deprecated. Instead, use the `experiment` API in the `Client`
+2. `ModelClient`, `ModelProcess` and `ModelRouter` have been deprecated. Instead use the `experiment` API in the `Client`
 class to run experiments, save and retrieve your models.
 
-3. `JobsClient` has been deprecated. Instead, use the `action` API in `Client` class to save or retrieve actions.
+3. `JobsClient` has been deprecated. Instead use the `action` API in `Client` class to save or retrieve actions.
 Also, you can use the `action` in the builder class inside client class to build your actions. (Can be used only when optional dependency of builders is installed)
 
 4. `SecretsClient` has been deprecated. There is no equivalent replacement functionality in the python library, but
 you can manage secrets through the Cortex Vault in the Cortex Console or via the CLI `cortex variables [command] [options]`.
 
 5. `Message.with_payload()` has been removed. This method was previously deprecated in `cortex-client` v5.5.4.
-Instead, use the `Client.message()` method:
+Instead use the `Client.message()` method:
 
 ```
 > from cortex import Cortex

@@ -1,11 +1,11 @@
 """
-Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2019 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-  https://www.apache.org/licenses/LICENSE-2.0
+  http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,6 +24,7 @@ from .message import Message
 from .connection import Connection, ConnectionClient
 from .secrets import SecretsClient, Secret
 from .session import Session, SessionClient
+from .skill import Skill
 from .utils import decode_JWT, get_logger, generate_token
 
 _DEFAULT_API_VERSION = 4
@@ -42,7 +43,7 @@ class _Token(object):
         self._token = token
         self._jwt = None
         if token:
-            self._jwt = decode_JWT(self._token)
+            self._jwt = decode_JWT(self._token, verify=False)
 
     def is_expired(self):
         current_time = time.time()
@@ -67,6 +68,14 @@ class Client(object):
         self._url = url
         self._version = version
         self._verify_ssl_cert = verify_ssl_cert
+
+    def skill(self, name: str) -> Skill:
+        """
+        Gets a skill with the specified name.
+        """
+        if not self._token.token:
+            self._token = _Token(generate_token(self._config))
+        return Skill.get_skill(name, self._project, self._mk_connector())
 
     def get_connection(self, name: str, version: str = '4'):
         """
@@ -115,7 +124,8 @@ class Client(object):
         """
         if not self._token.token:
             self._token = _Token(generate_token(self._config))
-        params = {'payload': payload}
+        params = {}
+        params['payload'] = payload
         if properties:
             params['properties'] = properties
         params['apiEndpoint'] = self._url
@@ -123,9 +133,7 @@ class Client(object):
         return Message(params)
 
     def _mk_connector(self):
-        return ServiceConnector(self._url, self._version,
-                                self._token.token, self._config,
-                                self._verify_ssl_cert, self._project)
+        return ServiceConnector(self._url, self._version, self._token.token, self._config, self._verify_ssl_cert)
 
     # expose this to allow developer to pass client instance into Connectors
     def to_connector(self):
@@ -162,7 +170,9 @@ class Cortex(object):
 
         :param api_endpoint: The Cortex URL.
         :param api_version: The version of the API to use with this client.
-        :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE file or directory with certificates of trusted CAs (default: True)
+        :param verify_ssl_cert: A boolean to indiciate if the SSL certificate needs to be validated.
+        :param token: An authentication token.
+        :param config: Cortex Personal Access Config.
         :param project: Cortex Project that you want to use.
         """
         env = CortexEnv(api_endpoint=api_endpoint, token=token, config=config, project=project)
@@ -188,16 +198,13 @@ class Cortex(object):
                       verify_ssl_cert=verify_ssl_cert)
 
     @staticmethod
-    def from_message(msg, verify_ssl_cert=None):
+    def from_message(msg):
         """
-        Creates a Cortex client from a skill's input message, expects { api_endpoint:'..', token:'..', projectId:'..' }
+        Creates a Cortex client from a message that must incluide an API endpoint and a token.
+
         :param msg: A message for constructing a Cortex Client.
-        :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE file or directory with certificates of trusted CAs (default: True)
         """
-        keys = ('apiEndpoint', 'token', 'projectId')
-        if not all(key in msg for key in keys):
-            raise Exception(f'Skill message must contain these keys: {keys}')
-        return Cortex.client(api_endpoint=msg.get('apiEndpoint'), token=msg.get('token'), project=msg.get('projectId'), verify_ssl_cert=verify_ssl_cert)
+        return Cortex.client(api_endpoint=msg.apiEndpoint, token=msg.token)
 
     @staticmethod
     def local(basedir=None):
