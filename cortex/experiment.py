@@ -29,8 +29,9 @@ from typing import Dict, List
 from requests.exceptions import HTTPError
 from .exceptions import APIException, ConfigurationException
 from .serviceconnector import _Client
-from .utils import raise_for_status_with_detail
+from .utils import raise_for_status_with_detail, get_logger
 
+log = get_logger(__name__)
 
 class ExperimentClient(_Client):
 
@@ -402,7 +403,7 @@ class Experiment(CamelResource):
         sort = {'endTime': -1}
         runs = self._client.find_runs(self.name, self._project, {}, sort=sort, limit=1)
         if len(runs) == 1:
-            print(self)
+            log.debug(self)
             return RemoteRun.from_json(runs[0], self._project, self)
         raise APIException('Last run for experiment {} not found'.format(self.name))
 
