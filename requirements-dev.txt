@@ -1,9 +1,11 @@
 setuptools
-tox>=3.0,<4.0
-twine>=3.0,<4.0
+tox>=2.9.1,<3
+twine>=1.12.1,<2
 wheel
-mocket>=3.9.0,<4.0
+mocket>=2.5.0,<3
 pipdeptree
 pylint>=2.3.0,<3
 pytest-cov==2.5.1
-mitmproxy
+pytest>=3.2.5,<4
+mock>=2,<3
+pyjwt

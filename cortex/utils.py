@@ -1,11 +1,11 @@
 """
-Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2019 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-   https://www.apache.org/licenses/LICENSE-2.0
+   http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,7 @@ limitations under the License.
 """
 
 import json
+import jwt
 import base64
 import hashlib
 import logging
@@ -31,7 +32,6 @@ def md5sum(file_name, blocksize=65536):
     Computes md5sum on a fileself.
 
     :param file_name: The name of the file on which to compute the md5sum.
-    :param blocksize: Blocksize used to compute md5 sum (default: 65536)
     :return: Hexdigest of md5sum for file.
     """
     md5 = hashlib.md5()
@@ -107,38 +107,48 @@ def named_dict(obj):
         return obj
 
 
-def decode_JWT(*args):
+def decode_JWT(*args, verify):
     """
     thin wrapper around jwt.decode. This function exists for better error handling of the
     jwt exceptions.
     """
     invalidTokenMsg = 'Your Cortex Token is invalid. For more information, go to Cortex Docs > Cortex Tools > Access'
-    # expiredTokenMsg = 'Your Cortex Token has expired. For more information, go to Cortex Docs > Cortex Tools > Access'
+    expiredTokenMsg = 'Your Cortex Token has expired. For more information, go to Cortex Docs > Cortex Tools > Access'
     try:
-        (header, payload) = decodedJWT = py_jwt.process_jwt(*args)
+        decodedJWT = jwt.decode(*args, verify=verify)
         # there are places in the sdk where we try to decode 'any ol token' before sending the token to kong to get verified
         # therefore, here we have some reasonable checks to make sure that this is a cortex token by checking the JWT keys exist
-        if not payload.get('aud') or not payload.get('sub') or not payload.get('exp'):
+        if not decodedJWT.get('aud') or not decodedJWT.get('sub') or not decodedJWT.get('exp'):
             raise BadTokenException(invalidTokenMsg)
-        # if datetime.datetime.today().timestamp() > decodedJWT['exp']:
-        #     raise jwt.ExpiredSignatureError
+        if datetime.datetime.today().timestamp() > decodedJWT['exp']:
+            raise jwt.ExpiredSignatureError
         return decodedJWT
-    # except jwt.ExpiredSignatureError:
-    #     raise BadTokenException(expiredTokenMsg)
-    except py_jwt._JWTError:
+    except jwt.ExpiredSignatureError:
+        raise BadTokenException(expiredTokenMsg)
+    except jwt.exceptions.InvalidTokenError:
         raise BadTokenException(invalidTokenMsg)
 
 
-def verify_JWT(token, config):
+def verify_JWT(token, config, verify):
     """
     thin wrapper around jwt.decode. This function exists for better error handling of the
     jwt exceptions.
     """
+    invalidTokenMsg = 'Your Cortex Token is invalid. For more information, go to Cortex Docs > Cortex Tools > Access'
     try:
-        decode_JWT(token)
-        return token
-    except py_jwt._JWTError:
+        decodedJWT = jwt.decode(token, verify=verify)
+        # there are places in the sdk where we try to decode 'any ol token' before sending the token to kong to get verified
+        # therefore, here we have some reasonable checks to make sure that this is a cortex token by checking the JWT keys exist
+        if not decodedJWT.get('aud') or not decodedJWT.get('sub') or not decodedJWT.get('exp'):
+            raise BadTokenException(invalidTokenMsg)
+        if datetime.datetime.today().timestamp() > decodedJWT['exp']:
+            return generate_token(config)
+        else:
+            return token
+    except jwt.ExpiredSignatureError:
         return generate_token(config)
+    except jwt.exceptions.InvalidTokenError:
+        raise BadTokenException(invalidTokenMsg)
 
 
 def generate_token(config, validity=2):
@@ -164,7 +174,6 @@ def get_cortex_profile(profile_name=None):
     """
     Gets the current cortex profile or the profile that matches the optionaly given name.
     """
-
     cortex_config_path = Path.home() / '.cortex/config'
 
     if cortex_config_path.exists():
@@ -221,10 +230,8 @@ def raise_for_status_with_detail(resp):
         resp.raise_for_status()
     except HTTPError as http_exception:
         try:
-            log_message(msg=resp.text, log=get_logger('http_status'), level=logging.ERROR)
+            log_message(msg=resp.json(), log=get_logger('http_status'), level=logging.ERROR)
         except Exception as e:
             pass  # resp.json() failed
         finally:
             raise http_exception
-    if resp.status_code == 302:
-        raise Exception(f'Authentication error: {resp.headers.get("X-Auth-Error")}')

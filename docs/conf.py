@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-   https://www.apache.org/licenses/LICENSE-2.0
+   http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -45,7 +45,7 @@ sys.path.insert(0, os.path.abspath('..'))
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-# extensions = ['sphinx.ext.autodoc', 'sphinxcontrib.restbuilder']
+#extensions = ['sphinx.ext.autodoc', 'sphinxcontrib.restbuilder']
 extensions = ['sphinx.ext.autodoc',
               "sphinx_rtd_theme",
               "sphinx_multiversion",

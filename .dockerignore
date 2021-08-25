@@ -1,7 +1,0 @@
-docs/
-venv/
-.pytest_cache/
-.tox/
-cortex_python.egg-info
-test/
-local/

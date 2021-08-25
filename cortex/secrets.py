@@ -1,12 +1,12 @@
 
 """
-Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2019 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-   https://www.apache.org/licenses/LICENSE-2.0
+   http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import json
 from .serviceconnector import _Client, ServiceConnector
 from .camel import CamelResource
 from .utils import get_logger
@@ -27,6 +28,9 @@ class SecretsClient(_Client):
     """
     A client for the Cortex Actions API.
     """
+
+    URIs = {
+    }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -57,9 +61,9 @@ class Secret(CamelResource):
         :param project: The project from which connection has to be retrieved.
         :return: A Connection object.
         """
-        uri = '/internal/projects/{projectId}/secrets/{name}'.format(projectId=project, name=name)
+        uri = 'projects/{projectId}/secrets/{name}'.format(projectId=project, name=name)
         log.debug('Getting Secret using URI: %s' % uri)
-        r = client._serviceconnector.request('GET', uri, is_internal_url=True)
+        r = client._serviceconnector.request('GET', uri)
         raise_for_status_with_detail(r)
 
         return r.json()

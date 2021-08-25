@@ -1,11 +1,11 @@
 """
-Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2019 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-   https://www.apache.org/licenses/LICENSE-2.0
+   http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,7 +37,6 @@ class ExperimentClient(_Client):
     """
     A client for the Cortex experiment and model management API.
     """
-    headers = {'Content-Type': 'application/json'}
 
     URIs = {
         'experiments': 'projects/{projectId}/experiments',
@@ -54,35 +53,18 @@ class ExperimentClient(_Client):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = 4
 
-    def list_experiments(self, project: str = None):
-        """
-        List all experiments in the specified projectN
-        :param project: Project name (default: Connection's project)
-        :return: list of experiments
-        :raise HTTPError: Non 2xx response
-        """
-        if project is None: project = self._serviceconnector.project
-        # TODO add limit/skip/...
+    def list_experiments(self, project):
         r = self._serviceconnector.request(method='GET', uri=self.URIs['experiments'].format(projectId=project))
         raise_for_status_with_detail(r)
         rs = r.json()
 
         return rs.get('experiments', [])
 
-    def save_experiment(self, experiment_name: str, project: str = None, model_id: str = None, **kwargs):
-        """
-        Create or update an experiment
-        :param experiment_name: Experiment name/id
-        :param project: Project name (default: Connection's project)
-        :param model_id: Model to associate this experiment to (default: None)
-        :param kwargs:
-        :return: response JSON
-        :raise HTTPError: Non 2xx response
-        """
-        if project is None: project = self._serviceconnector.project
-        if model_id is None: model_id = ""
-        
-        body_obj = {'name': experiment_name, 'modelId': model_id}
+    def save_experiment(self, experiment_name, project, model_id=None, **kwargs):
+        if model_id:
+            body_obj = {'name': experiment_name, 'modelId': model_id}
+        else:
+            body_obj = {'name': experiment_name}
 
         if kwargs:
             body_obj.update(kwargs)
@@ -94,15 +76,7 @@ class ExperimentClient(_Client):
         raise_for_status_with_detail(r)
         return r.json()
 
-    def delete_experiment(self, experiment_name: str, project: str = None):
-        """
-        Delete experiment
-        :param experiment_name: Experiment name/id
-        :param project: Project name (default: Connection's project)
-        :return: boolean - success
-        :raise HTTPError: Non 2xx response
-        """
-        if project is None: project = self._serviceconnector.project
+    def delete_experiment(self, experiment_name, project):
         uri = self.URIs['experiment'].format(projectId=project, experimentName=self.parse_string(experiment_name))
         r = self._serviceconnector.request(method='DELETE', uri=uri)
         raise_for_status_with_detail(r)
@@ -110,30 +84,14 @@ class ExperimentClient(_Client):
 
         return rs.get('success', False)
 
-    def get_experiment(self, experiment_name: str, project = None):
-        """
-        Fetch experiment by name
-        :param experiment_name: Experiment name/id
-        :param project: Project name (default: Connection's project)
-        :return: experiment JSON
-        :raise HTTPError: Non 2xx response
-        """
-        if project is None: project = self._serviceconnector.project
+    def get_experiment(self, experiment_name, project):
         uri = self.URIs['experiment'].format(projectId=project, experimentName=self.parse_string(experiment_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
 
         return r.json()
 
-    def list_runs(self, experiment_name: str, project: str = None):
-        """
-        List runs for experiment
-        :param experiment_name: Experiment name/id
-        :param project: Project name (default: Connection's project)
-        :return: list of runs
-        :raise HTTPError: Non 2xx response
-        """
-        if project is None: project = self._serviceconnector.project
+    def list_runs(self, experiment_name, project):
         uri = self.URIs['runs'].format(projectId=project, experimentName=self.parse_string(experiment_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
@@ -141,18 +99,7 @@ class ExperimentClient(_Client):
 
         return rs.get('runs', [])
 
-    def find_runs(self, experiment_name: str, project: str = None, filter: str = None, sort: str =None, limit: int =25):
-        """
-        Find runs within an experiments
-        :param experiment_name: Experiment name/id
-        :param project: Project name (default: Connection's project)
-        :param filter: key/value of attribute and values to filter by ex. '{"name" : "somename" }'
-        :param sort: key/value of attributes and sort order ascending 1, descending 0 ex. '{ "name": 1 }'
-        :param limit: limit number of results (default: 25)
-        :return: list of runs
-        :raise HTTPError: Non 2xx response
-        """
-        if project is None: project = self._serviceconnector.project
+    def find_runs(self, experiment_name, project, filter, sort=None, limit=25):
         uri = self.URIs['runs'].format(projectId=project, experimentName=self.parse_string(experiment_name))
 
         # filter and limit are required query params
@@ -171,18 +118,7 @@ class ExperimentClient(_Client):
 
         return rs.get('runs', [])
 
-    def delete_runs(self, experiment_name: str, project: str = None, filter: str = None, sort: str = None, limit: int = None):
-        """
-        Delete runs from an experiment
-        :param experiment_name: Experiment name/id
-        :param project: Project name (default: Connection's project)
-        :param filter: key/value of attribute and values to filter by ex. '{"name" : "somename" }'
-        :param sort: key/value of attributes and sort order ascending 1, descending 0 ex. '{ "name": 1 }'
-        :param limit: limit number of results (default: 25)
-        :return: response message
-        :raise HTTPError: Non 2xx response
-        """
-        if project is None: project = self._serviceconnector.project
+    def delete_runs(self, experiment_name, project, filter=None, sort=None, limit=None):
         uri = self.URIs['runs'].format(projectId=project, experimentName=self.parse_string(experiment_name))
 
         params = {}
@@ -205,17 +141,8 @@ class ExperimentClient(_Client):
 
         return rs.get('message')
 
-    def create_run(self, experiment_name: str, project: str = None, **kwargs):
-        """
-        Add a run to an experiment
-        :param experiment_name: Experiment name/id
-        :param project: Project name (default: Connection's project)
-        :param kwargs: Properties to set on the run ex. '{"runId": "run1"}'
-        :return: dict - response message
-        :raise HTTPError: Non 2xx response
-        """
+    def create_run(self, experiment_name, project, **kwargs):
         body_obj = {}
-        if project is None: project = self._serviceconnector.project
 
         if kwargs:
             body_obj.update(kwargs)
@@ -227,34 +154,15 @@ class ExperimentClient(_Client):
         raise_for_status_with_detail(r)
         return r.json()
 
-    def get_run(self, experiment_name: str, run_id: str, project: str = None):
-        """
-        Fetch a run from an experiment
-        :param experiment_name: Experiment name/id
-        :param run_id: Run id to fetch
-        :param project: Project name (default: Connection's project)
-        :return: dict - run object
-        :raise HTTPError: Non 2xx response, 404 not found
-        """
-        if project is None: project = self._serviceconnector.project
+    def get_run(self, experiment_name, project, run_id):
         uri = self.URIs['run'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id)
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
 
         return r.json()
 
-    def update_run(self, experiment_name: str, run_id: str, project: str = None, **kwargs):
-        """
-        Update an existing run
-        :param experiment_name: Experiment name/id
-        :param run_id: Run id to fetch
-        :param project: Project name (default: Connection's project)
-        :param kwargs: Properties to set on the run ex. '{"att1": "vall1"}'
-        :return: response message
-        :raise HTTPError: Non 2xx response, 404 not found
-        """
+    def update_run(self, experiment_name, project, run_id, **kwargs):
         body_obj = {}
-        if project is None: project = self._serviceconnector.project
 
         if kwargs:
             body_obj.update(kwargs)
@@ -271,16 +179,7 @@ class ExperimentClient(_Client):
             raise Exception('Error updating run {}: {}'.format(run_id, rs.get('error')))
         return success
 
-    def delete_run(self, experiment_name: str, run_id: str, project: str = None):
-        """
-        Delete the specified run from the experiment
-        :param experiment_name: Experiment name/id
-        :param run_id: Run id to fetch
-        :param project: Project name (default: Connection's project)
-        :return: response message
-        :raise HTTPError: Non 2xx response, 404 not found
-        """
-        if project is None: project = self._serviceconnector.project
+    def delete_run(self, experiment_name, project, run_id):
         uri = self.URIs['run'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id)
         r = self._serviceconnector.request(method='DELETE', uri=uri)
         raise_for_status_with_detail(r)
@@ -291,18 +190,7 @@ class ExperimentClient(_Client):
             raise Exception('Error deleting run {}: {}'.format(run_id, rs.get('error')))
         return success
 
-    def update_meta(self, experiment_name: str, run_id: str, meta, val, project: str = None):
-        """
-        Update metadata key/value on a experiment's run
-        :param experiment_name: Experiment name/id
-        :param run_id: Run id to fetch
-        :param meta: Metadata name
-        :param val: Metadata value
-        :param project: Project name (default: Connection's project)
-        :return: dict - response message
-        :raise HTTPError: Non 2xx response
-        """
-        if project is None: project = self._serviceconnector.project
+    def update_meta(self, experiment_name, project, run_id, meta, val):
         uri = self.URIs['meta'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id, metaId=meta)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=headers)
@@ -314,18 +202,7 @@ class ExperimentClient(_Client):
             raise Exception('Error updating run {} meta property {}: {}'.format(run_id, meta, rs.get('error')))
         return success
 
-    def update_param(self, experiment_name: str, run_id: str, param, val, project: str = None):
-        """
-        Update param key/value on a experiment's run
-        :param experiment_name: Experiment name/id
-        :param run_id: Run id to fetch
-        :param param: Metadata name
-        :param val: Metadata value
-        :param project: Project name (default: Connection's project)
-        :return: dict - response message
-        :raise HTTPError: Non 2xx response
-        """
-        if project is None: project = self._serviceconnector.project
+    def update_param(self, experiment_name, project, run_id, param, val):
         uri = self.URIs['param'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id, paramId=param)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=headers)
@@ -337,18 +214,7 @@ class ExperimentClient(_Client):
             raise Exception('Error updating run {} param {}: {}'.format(run_id, param, rs.get('error')))
         return success
 
-    def update_metric(self, experiment_name: str, run_id: str, metric: str, val, project: str = None):
-        """
-        Update metric key/value on a experiment's run
-        :param experiment_name: Experiment name/id
-        :param run_id: Run id to fetch
-        :param metric: Metadata name
-        :param val: Metadata value
-        :param project: Project name (default: Connection's project)
-        :return: dict - response message
-        :raise HTTPError: Non 2xx response
-        """
-        if project is None: project = self._serviceconnector.project
+    def update_metric(self, experiment_name, project, run_id, metric, val):
         uri = self.URIs['metric'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id, metricId=metric)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=headers)
@@ -360,18 +226,7 @@ class ExperimentClient(_Client):
             raise Exception('Error updating run {} metric {}: {}'.format(run_id, metric, rs.get('error')))
         return success
 
-    def update_artifact(self, experiment_name: str, run_id: str, artifact: str, stream, project: str = None):
-        """
-        Add/Update an artifact on a run
-        :param experiment_name: Experiment name/id
-        :param run_id: Run id to fetch
-        :param artifact: str - Artifact key
-        :param stream: Dictionary, list of tuples, bytes, or file-like object
-        :param project: Project name (default: Connection's project)
-        :return: dict - response message
-        :raise HTTPError: Non 2xx response
-        """
-        if project is None: project = self._serviceconnector.project
+    def update_artifact(self, experiment_name, project, run_id, artifact, stream):
         uri = self.URIs['artifact'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id, artifactId=artifact)
         r = self._serviceconnector.request(method='PUT', uri=uri, body=stream)
         raise_for_status_with_detail(r)
@@ -382,20 +237,11 @@ class ExperimentClient(_Client):
             raise Exception('Error updating run {} artifact {}: {}'.format(run_id, artifact, rs.get('error')))
         return success
 
-    def get_artifact(self, experiment_name: str, run_id: str, artifact: str, project: str = None):
-        """
-        Fetch an artifact from a run
-        :param experiment_name: Experiment name/id
-        :param run_id: Run id to fetch
-        :param artifact: str - Artifact key
-        :param project: Project name (default: Connection's project)
-        :return: bytes - artifact content
-        :raise HTTPError: Non 2xx response
-        """
-        if project is None: project = self._serviceconnector.project
+    def get_artifact(self, experiment_name, project, run_id, artifact):
         uri = self.URIs['artifact'].format(projectId=project, experimentName=self.parse_string(experiment_name), runId=run_id, artifactId=artifact)
         r = self._serviceconnector.request(method='GET', uri=uri, stream=True)
         raise_for_status_with_detail(r)
+
         return r.content
 
     def parse_string(self, string):
@@ -565,7 +411,7 @@ class Experiment(CamelResource):
         return [RemoteRun.from_json(r, self._project, self) for r in runs]
 
     def load_artifact(self, run: Run, name: str):
-        return dill.loads(self._client.get_artifact(experiment_name=self.name, project=self._project,run_id= run.id, artifact=name))
+        return dill.loads(self._client.get_artifact(self.name, self._project, run.id, name))
 
     def to_camel(self, camel='1.0.0'):
         return {
