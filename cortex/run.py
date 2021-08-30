@@ -1,11 +1,11 @@
 """
-Copyright 2019 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-   http://www.apache.org/licenses/LICENSE-2.0
+   https://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -272,8 +272,8 @@ class RemoteRun(Run):
     def create(experiment, project, experiment_client):
         """
         Creates a remote run.
-
         :param experiment: The experiment to associate with this run.
+        :param project: The project to create the run in
         :param experiment_client: The client for the run.
         :return: A run.
         """
@@ -289,6 +289,7 @@ class RemoteRun(Run):
         Gets a run.
 
         :param experiment: The parent experiment of the run.
+        :param project: The project to get the run from
         :param run_id: The identifier for the run.
         :param experiment_client: The client for the run.
         :return: A run.
@@ -300,9 +301,9 @@ class RemoteRun(Run):
     def from_json(json, project, experiment):
         """
         Builds a run from the given json.
-
-        :param jsom: json that specifies the run; acceptable values are runId,
+        :param json: json that specifies the run; acceptable values are runId,
         startTime, endTime, took, a list of params, metrics, metadata, and artifacts
+        :param project: The project to get the run from
         :param experiment: the parent experiment of the run
         :return: a run
         """
@@ -380,7 +381,7 @@ class RemoteRun(Run):
         Gets an artifact with the given name.  Deserializes the artifact stream using dill by default.  Deserialization
         can be disabled entirely or the deserializer function can be overridden.
         """
-        artifact_bytes = self._client.get_artifact(self._experiment.name, self._project, self.id, name)
+        artifact_bytes = self._client.get_artifact(experiment_name=self._experiment.name, project=self._project, run_id=self.id, artifact=name)
         if deserializer:
             return deserializer(artifact_bytes)
         return artifact_bytes
