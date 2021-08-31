@@ -277,7 +277,6 @@ class RemoteRun(Run):
         :param experiment_client: The client for the run.
         :return: A run.
         """
-        print(experiment, project)
         r = experiment_client.create_run(experiment.name, project)
         run = RemoteRun(experiment, project, experiment_client)
         run._id = r['runId']

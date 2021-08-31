@@ -24,7 +24,9 @@ import tenacity
 import time
 
 from .serviceconnector import _Client
-from .utils import raise_for_status_with_detail
+from .utils import raise_for_status_with_detail, get_logger
+
+log = get_logger(__name__)
 
 
 class ManagedContentClient(_Client):

@@ -71,7 +71,6 @@ def log_message(msg: str, log: logging.Logger, level=logging.INFO, *args, **kwar
     :param kwargs: a dictionary of keyword arguments passed to the logger
     """
     if is_notebook():
-        print(msg)
         log.debug(msg, *args, **kwargs)
     else:
         log.log(level, msg, *args, **kwargs)
