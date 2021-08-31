@@ -32,6 +32,6 @@ class AuthenticationClient(_Client):
         :param config: Personal access token
         :return: A JWT string.
         """
-        token = generate_token(config, validity=1440)
+        token = generate_token(config, validity=.5)
         return token
 

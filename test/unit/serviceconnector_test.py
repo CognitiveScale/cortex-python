@@ -20,7 +20,7 @@ from test.unit import fixtures
 from mocket import mocketize
 import pkg_resources
 import requests
-
+from cortex import __version__
 from cortex.serviceconnector import ServiceConnector
 
 URL = "http://1.2.3.4:80"
@@ -45,7 +45,7 @@ def test_request():
     path = 'models/events'
     url = sc._construct_url(path)
     body={"handle": 123}
-    userAgentFragment = f'cortex-python/{pkg_resources.get_distribution("cortex-python").version}'
+    userAgentFragment = f'cortex-python/{__version__}'
     Entry.single_register(
         Entry.POST,
         url,

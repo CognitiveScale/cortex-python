@@ -129,7 +129,7 @@ def decode_JWT(*args):
         raise BadTokenException(invalidTokenMsg)
 
 
-def verify_JWT(token, config):
+def verify_JWT(token, config = None):
     """
     thin wrapper around jwt.decode. This function exists for better error handling of the
     jwt exceptions.
@@ -152,7 +152,10 @@ def generate_token(config, validity=2):
             "aud": config.get('audience'),
             "sub": config.get('username'),
         }
-        token = py_jwt.generate_jwt(token_payload, key, 'EdDSA', datetime.timedelta(minutes=validity),
+        token = py_jwt.generate_jwt(claims=token_payload,
+                                    priv_key=key,
+                                    algorithm='EdDSA',
+                                    lifetime=datetime.timedelta(minutes=validity),
                                     other_headers={"kid": key.thumbprint()})
         return token
     except Exception:
