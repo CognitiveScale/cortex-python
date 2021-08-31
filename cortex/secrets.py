@@ -57,9 +57,9 @@ class Secret(CamelResource):
         :param project: The project from which connection has to be retrieved.
         :return: A Connection object.
         """
-        uri = '/internal/projects/{projectId}/secrets/{name}'.format(projectId=project, name=name)
+        uri = 'projects/{projectId}/secrets/{name}'.format(projectId=project, name=name)
         log.debug('Getting Secret using URI: %s' % uri)
-        r = client._serviceconnector.request('GET', uri, is_internal_url=True)
+        r = client._serviceconnector.request('GET', uri)
         raise_for_status_with_detail(r)
 
         return r.json()
