@@ -1,7 +1,7 @@
 format_version: 10
 pipelines:
   cortex-python-develop:
-    group: customPipelines
+    group: fabric6
     materials:
       cortex-python:
         git: git@github.com:CognitiveScale/cortex-python.git
@@ -18,7 +18,7 @@ pipelines:
                     git clone git@github.com:CognitiveScale/gocd-pipeline-scripts.git
                     ./gocd-pipeline-scripts/common/c12e-common.sh dev
   cortex-python-staging:
-    group: customPipelines
+    group: fabric6
     environment_variables:
       ALPHA_BUILD: "true"
       PYPI_UPLOAD: "https://upload.pypi.org/legacy/"
@@ -44,7 +44,7 @@ pipelines:
                     ./gocd-pipeline-scripts/common/c12e-common.sh staging
                     ./gocd-pipeline-scripts/cortex5/python/publish-distribution.sh -i -e
   cortex-python-master:
-    group: customPipelines
+    group: fabric6
     environment_variables:
       PYPI_UPLOAD: "https://upload.pypi.org/legacy/"
       REPO_NAME: "cognitivescale_local"
