@@ -25,7 +25,8 @@ pipelines:
       REPO_NAME: "cs_internal-local"
       REPO_USER: "cortex5"
     secure_variables:
-      REPO_PASSWORD: "AES:Kx+Mur4zHCz6eW9fbUk7Fw==:nfOnSjtKNfrDbsnaMtfPURUBhmTIkSLi6dmePUd3WPM="
+      # LastPass: Shared-devops/Pypi
+      REPO_PASSWORD: "AES:VK48nn/zr+mFTMixYa8Psg==:P+AZlJmgChiMcFRyNRmjuwYqBQwkc1hRP8zHck5L5SU="
     materials:
       cortex-python:
         git: git@github.com:CognitiveScale/cortex-python.git
@@ -49,7 +50,8 @@ pipelines:
       REPO_NAME: "cognitivescale_local"
       REPO_USER: "cortex5"
     secure_variables:
-      REPO_PASSWORD: "AES:Kx+Mur4zHCz6eW9fbUk7Fw==:nfOnSjtKNfrDbsnaMtfPURUBhmTIkSLi6dmePUd3WPM="
+      # LastPass: Shared-devops/Pypi
+      REPO_PASSWORD: "AES:VK48nn/zr+mFTMixYa8Psg==:P+AZlJmgChiMcFRyNRmjuwYqBQwkc1hRP8zHck5L5SU="
     materials:
       cortex-python-master:
         git: git@github.com:CognitiveScale/cortex-python.git
