@@ -1,0 +1,28 @@
+format_version: 10
+pipelines:
+  cortex-accounts:
+    group: customPipelines
+#    label_template: ${COUNT}
+#    lock_behavior: none
+#    display_order: -1
+    materials:
+      git-58783fb:
+        git: git@bitbucket.org:cognitivescale/cortex-accounts-service.git
+        shallow_clone: false
+        auto_update: true
+        branch: develop
+    stages:
+      - build:
+          clean_workspace: true
+          jobs:
+            Build:
+              elastic_profile_id: gocd-test-agent-dind
+              artifacts:
+                - build:
+                    source: cruise-output/buildReport*.json
+                - build:
+                    source: devBranchRevision.json
+              tasks:
+                - script: |
+                    git clone git@github.com:CognitiveScale/gocd-pipeline-scripts.git
+                    ./gocd-pipeline-scripts/common/c12e-common.sh dev
