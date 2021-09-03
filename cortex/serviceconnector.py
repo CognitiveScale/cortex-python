@@ -1,11 +1,11 @@
 """
-Copyright 2019 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+  https://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,33 +15,34 @@ limitations under the License.
 """
 
 import json
-import pkg_resources
 import platform
 import requests
 import sys
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
+from .__version__ import __version__, __title__
+
 from typing import Dict, Any, List, Union, Optional, Type, TypeVar
 from .utils import get_logger, get_cortex_profile, decode_JWT, verify_JWT, generate_token
 from .utils import raise_for_status_with_detail
-from .exceptions import BadTokenException
 log = get_logger(__name__)
 
 JSONType = Union[str, int, float, bool, None, Dict[str, Any], List[Any]]
 T = TypeVar('T', bound="_Client")
 
-userAgent = f'cortex-python/{pkg_resources.get_distribution("cortex-python").version} ({sys.platform}; {platform.architecture()[0]}; {platform.release()})'
+userAgent = f'{__title__}/{__version__} ({sys.platform}; {platform.architecture()[0]}; {platform.release()})'
 
 class ServiceConnector:
     """
     Defines the settings and security credentials required to access a service.
     """
-    def __init__(self, url, version=4, token=None, config=None, verify_ssl_cert=True):
+    def __init__(self, url, version=4, token=None, config=None, verify_ssl_cert=True, project=''):
         self.url = url
         self.version = version
         self.token = token
         self._config = config
         self.verify_ssl_cert = verify_ssl_cert
+        self.project=project
 
     ## properties ##
 
@@ -62,7 +63,7 @@ class ServiceConnector:
         """
         headersToSend = self._construct_headers(headers)
         url = self._construct_url(uri)
-        return requests.post(url, files=files, data=data, headers=headersToSend,
+        return requests.post(url, files=files, data=data, headers=headersToSend, allow_redirects=False,
                              verify=self.verify_ssl_cert)
 
     def request_with_retry(self, method, uri, body=None, headers=None, debug=False, **kwargs):
@@ -71,8 +72,9 @@ class ServiceConnector:
 
         :param method: HTTP method to send to the service.
         :param uri: Path to extend service URL.
-        :param data: Data to send as the post body to the service.
+        :param body: Data to send as the post body to the service.
         :param headers: HTTP headers for this post.
+        :param debug: Enable debug True|False (default: False)
         :param kwargs: Additional key-value pairs to pass to the request method.
         :return: :class:`Response <Response>` object
         """
@@ -84,6 +86,7 @@ class ServiceConnector:
             method,
             url,
             data=body,
+            allow_redirects=False,
             headers=headersToSend,
             verify=self.verify_ssl_cert,
             **kwargs
@@ -98,8 +101,10 @@ class ServiceConnector:
 
         :param method: HTTP method to send to the service.
         :param uri: Path to extend service URL.
-        :param data: Data to send as the post body to the service.
+        :param body: Data to send as the post body to the service.
         :param headers: HTTP headers for this post.
+        :param debug: Enable debug True|False (default: False)
+        :param is_internal_url: Url is internal fabric URL (default: false)
         :param kwargs: Additional key-value pairs to pass to the request method.
         :return: :class:`Response <Response>` object
         """
@@ -160,8 +165,7 @@ class ServiceConnector:
         headersToSend = { 'User-Agent': userAgent }
 
         if hasattr(self, "token") and self.token:
-            self.token = verify_JWT(self.token, self._config, verify=False)
-            decode_JWT(self.token, verify=False)
+            self.token = verify_JWT(self.token, self._config)
             auth = 'Bearer {}'.format(self.token)
             headersToSend[u'Authorization'] = auth
         else:
@@ -188,6 +192,7 @@ class _Client:
         token = kwargs.get("token")
         config = kwargs.get("config")
         verify_ssl_cert = kwargs.get("verify_ssl_cert")
+        project = kwargs.get("project")
         # If all kwargs or first arg is a string create a Connector
         if len(args) == 0 or (len(args) > 0 and type(args[0]) == str):
             if len(args) > 0:
@@ -200,7 +205,14 @@ class _Client:
                 config = args[3]
             if len(args) > 4:
                 verify_ssl_cert = args[4]
-            self._serviceconnector = ServiceConnector(url, version, token, config, verify_ssl_cert)
+            self._serviceconnector = ServiceConnector(
+                url=url,
+                version=version,
+                token=token,
+                config=config,
+                verify_ssl_cert=verify_ssl_cert,
+                project=project,
+            )
         # if first arg not string assume Client object was passed
         else:
             self._serviceconnector = args[0].to_connector()

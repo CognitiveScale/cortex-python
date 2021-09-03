@@ -1,11 +1,11 @@
 """
-Copyright 2019 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-   http://www.apache.org/licenses/LICENSE-2.0
+   https://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,10 +16,10 @@ limitations under the License.
 
 import json
 import urllib.parse
-
-from .utils import get_logger
+from typing import Optional, Dict
 from .serviceconnector import _Client
 from .camel import CamelResource
+from .utils import get_logger
 from .utils import raise_for_status_with_detail
 
 log = get_logger(__name__)
@@ -27,16 +27,16 @@ log = get_logger(__name__)
 
 class SkillClient(_Client):
     """
-    A client for the Cortex Skill management API.
+    A client used to interact with skills.
     """
-
     URIs = {
-        'skills': 'projects/{projectId}/skills',
-        'skill': 'projects/{projectId}/skills/{skillName}',
-        'logs': 'projects/{projectId}/skills/{skillName}/action/{actionName}/logs',
         'deploy': 'projects/{projectId}/skills/{skillName}/deploy',
-        'undeploy': 'projects/{projectId}/skills/{skillName}/undeploy'
-
+        'invoke': '/fabric/v4/projects/{project}/skillinvoke/{skill_name}/inputs/{input}',
+        'logs': 'projects/{projectId}/skills/{skillName}/action/{actionName}/logs',
+        'send_message': '/internal/messages/{activation}/{channel}/{output_name}',
+        'skill': 'projects/{projectId}/skills/{skillName}',
+        'skills': 'projects/{projectId}/skills',
+        'undeploy': 'projects/{projectId}/skills/{skillName}/undeploy',
     }
 
     def __init__(self, *args, **kwargs):
@@ -103,6 +103,32 @@ class SkillClient(_Client):
         # Replaces special characters like / with %2F
         return urllib.parse.quote(string, safe='')
 
+    def send_message(self, activation: str, channel: str, output_name: str, message: object):
+        """
+        Send a payload to a specific output, this can be called more than one and will replace the stdout/stderr as payload for jobs
+        :param activation: ActivationId provided in resources
+        :param channel: ChannelId provided in the parameters
+        :param output_name: Output name provided in the parameters or another skill output connected from this skill
+        :param message: dict - payload to be send to the agent
+        :return: success or failure message
+        """
+        uri = self.URIs['send_message'].format(activation=activation, channel=channel, output_name=output_name)
+        data = json.dumps(message)
+        headers = {'Content-Type': 'application/json'}
+        r = self._serviceconnector.request('POST', uri, data, headers)
+        raise_for_status_with_detail(r)
+        return r.json()
+
+
+    def invoke(self, project: str, skill_name: str, input: str, payload: object, properties: object):
+        """
+        """
+        uri = self.URIs['invoke'].format(project=project, skill_name=skill_name, input=input)
+        data = json.dumps({ payload: payload, properties: properties})
+        headers = {'Content-Type': 'application/json'}
+        r = self._serviceconnector.request('POST', uri, data, headers)
+        raise_for_status_with_detail(r)
+        return r.json()
 
 class Skill(CamelResource):
     """
@@ -114,3 +140,25 @@ class Skill(CamelResource):
         super().__init__(skill, True)
         self._client = client
         self._project = project
+
+class SkillRequest():
+    '''
+    Skill request: parameters passed in during skill invoke
+    '''
+    activationId: str
+    agentName: Optional[str] = None
+    apiEndpoint: str
+    channelId: Optional[str] = None
+    outputName: Optional[str] = None
+    payload: Dict
+    properties: Dict
+    sessionId: Optional[str] = None
+    skillName: Optional[str] = None
+    token: Optional[str] = None
+
+class SkillResponse():
+    '''
+    Skill response: skill output
+    '''
+    outputName: Optional[str] = None
+    payload: Dict
