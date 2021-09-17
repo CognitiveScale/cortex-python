@@ -111,21 +111,16 @@ def decode_JWT(*args):
     thin wrapper around jwt.decode. This function exists for better error handling of the
     jwt exceptions.
     """
-    invalidTokenMsg = 'Your Cortex Token is invalid. For more information, go to Cortex Docs > Cortex Tools > Access'
-    # expiredTokenMsg = 'Your Cortex Token has expired. For more information, go to Cortex Docs > Cortex Tools > Access'
+    invalidTokenMsg = 'Your Cortex Token is invalid: '
     try:
         (header, payload) = decodedJWT = py_jwt.process_jwt(*args)
         # there are places in the sdk where we try to decode 'any ol token' before sending the token to kong to get verified
         # therefore, here we have some reasonable checks to make sure that this is a cortex token by checking the JWT keys exist
         if not payload.get('aud') or not payload.get('sub') or not payload.get('exp'):
             raise BadTokenException(invalidTokenMsg)
-        # if datetime.datetime.today().timestamp() > decodedJWT['exp']:
-        #     raise jwt.ExpiredSignatureError
         return decodedJWT
-    # except jwt.ExpiredSignatureError:
-    #     raise BadTokenException(expiredTokenMsg)
-    except py_jwt._JWTError:
-        raise BadTokenException(invalidTokenMsg)
+    except py_jwt._JWTError as err:
+        raise BadTokenException(invalidTokenMsg.format(err))
 
 
 def verify_JWT(token, config = None):
@@ -157,9 +152,9 @@ def generate_token(config, validity=2):
                                     lifetime=datetime.timedelta(minutes=validity),
                                     other_headers={"kid": key.thumbprint()})
         return token
-    except Exception:
-        noTokenmsg = 'Please Provide Your Cortex Token. For more information, go to Cortex Docs > Cortex Tools > Access'
-        raise BadTokenException(noTokenmsg)
+    except Exception as err:
+        genTokenmsg = "Unable to generate a JWT token, check PAT config or cortex profile:".format(err)
+        raise BadTokenException(genTokenmsg)
 
 
 def get_cortex_profile(profile_name=None):
