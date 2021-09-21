@@ -31,7 +31,7 @@ class CortexEnv:
         cortexConfig = config or json.loads(os.getenv('CORTEX_PERSONAL_ACCESS_CONFIG', json.dumps(profile)))
         if not cortexToken and not cortexConfig:
             raise BadTokenException(
-                'Your Cortex credentials cannot be retrieved. For more information, go to Cortex Docs > Cortex Tools > Access')
+                'Your Cortex credentials cannot be retrieved. Check your profile settings with `cortex configure`.')
 
         self.api_endpoint = api_endpoint or cortexConfig.get('url')
         self.token = cortexToken
