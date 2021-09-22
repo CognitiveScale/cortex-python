@@ -33,7 +33,7 @@ class SkillClient(_Client):
         'deploy': 'projects/{projectId}/skills/{skillName}/deploy',
         'invoke': '/fabric/v4/projects/{project}/skillinvoke/{skill_name}/inputs/{input}',
         'logs': 'projects/{projectId}/skills/{skillName}/action/{actionName}/logs',
-        'send_message': '/internal/messages/{activation}/{channel}/{output_name}',
+        'send_message': '{url}/internal/messages/{activation}/{channel}/{output_name}',
         'skill': 'projects/{projectId}/skills/{skillName}',
         'skills': 'projects/{projectId}/skills',
         'undeploy': 'projects/{projectId}/skills/{skillName}/undeploy',
@@ -96,7 +96,6 @@ class SkillClient(_Client):
         uri = self.URIs['undeploy'].format(projectId=self._project, skillName=self.parse_string(skill_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
-
         return r.json()
 
     def parse_string(self, string):
@@ -112,11 +111,12 @@ class SkillClient(_Client):
         :param message: dict - payload to be send to the agent
         :return: success or failure message
         """
-        uri = self.URIs['send_message'].format(activation=activation, channel=channel, output_name=output_name)
+        uri = self.URIs['send_message'].format(url=self._serviceconnector.url, activation=activation, channel=channel, output_name=output_name)
         data = json.dumps(message)
         headers = {'Content-Type': 'application/json'}
-        r = self._serviceconnector.request('POST', uri, data, headers)
-        raise_for_status_with_detail(r)
+        r = self._serviceconnector.request(method='POST', uri=uri, body=data, headers=headers, debug=False, is_internal_url=True)
+        if r.status_code != 200:
+            raise Exception(f'Send message failed {r.status_code}: {r.text}')
         return r.json()
 
 
