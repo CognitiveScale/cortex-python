@@ -124,7 +124,7 @@ class SkillClient(_Client):
         """
         """
         uri = self.URIs['invoke'].format(project=project, skill_name=skill_name, input=input)
-        data = json.dumps({ payload: payload, properties: properties})
+        data = json.dumps({ "payload": payload, "properties": properties})
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request('POST', uri, data, headers)
         raise_for_status_with_detail(r)
