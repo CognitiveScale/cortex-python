@@ -1,11 +1,11 @@
 """
-Copyright 2019 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-   http://www.apache.org/licenses/LICENSE-2.0
+   https://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,14 +29,16 @@ from typing import Dict, List
 from requests.exceptions import HTTPError
 from .exceptions import APIException, ConfigurationException
 from .serviceconnector import _Client
-from .utils import raise_for_status_with_detail
+from .utils import raise_for_status_with_detail, get_logger
 
+log = get_logger(__name__)
 
 class ExperimentClient(_Client):
 
     """
     A client for the Cortex experiment and model management API.
     """
+    headers = {'Content-Type': 'application/json'}
 
     URIs = {
         'experiments': 'projects/{projectId}/experiments',
@@ -60,8 +62,11 @@ class ExperimentClient(_Client):
 
         return rs.get('experiments', [])
 
-    def save_experiment(self, experiment_name, project, **kwargs):
-        body_obj = {'name': experiment_name}
+    def save_experiment(self, experiment_name, project, model_id=None, **kwargs):
+        if model_id:
+            body_obj = {'name': experiment_name, 'modelId': model_id}
+        else:
+            body_obj = {'name': experiment_name}
 
         if kwargs:
             body_obj.update(kwargs)
@@ -356,20 +361,21 @@ class Experiment(CamelResource):
             self.meta = {}
 
     @staticmethod
-    def get_experiment(name, project, client: ExperimentClient, **kwargs):
+    def get_experiment(name, project, client: ExperimentClient, model_id=None, **kwargs):
         """
         Fetches or creates an experiment to work with.
 
         :param name: The name of the experiment to retrieve.
         :param project: The project from which the experiment is to be retrieved.
         :param client: The client instance to use.
+        :param model_id: The model reference(optional).
         :return: An experiment object.
         """
         try:
             exp = client.get_experiment(name, project)
         except HTTPError:
             # Likely a 404, try to create a new experiment
-            exp = client.save_experiment(name, project, **kwargs)
+            exp = client.save_experiment(name, project, model_id, **kwargs)
 
         return Experiment(exp, project, client)
 
@@ -388,7 +394,7 @@ class Experiment(CamelResource):
 
     def runs(self) -> List[Run]:
         runs = self._client.list_runs(self.name, self._project)
-        return [RemoteRun.from_json(r, self._project, self).to_json() for r in runs]
+        return [RemoteRun.from_json(r, self._project, self) for r in runs]
 
     def get_run(self, run_id) -> Run:
         run = self._client.get_run(self.name, self._project, run_id)
@@ -397,15 +403,14 @@ class Experiment(CamelResource):
     def last_run(self) -> Run:
         sort = {'endTime': -1}
         runs = self._client.find_runs(self.name, self._project, {}, sort=sort, limit=1)
-        print(runs)
         if len(runs) == 1:
-            print(self)
+            log.debug(self)
             return RemoteRun.from_json(runs[0], self._project, self)
         raise APIException('Last run for experiment {} not found'.format(self.name))
 
     def find_runs(self, filter, sort, limit: int) -> List[Run]:
         runs = self._client.find_runs(self.name, self._project, filter or {}, sort=sort, limit=limit)
-        return [RemoteRun.from_json(r, self._project, self).to_json() for r in runs]
+        return [RemoteRun.from_json(r, self._project, self) for r in runs]
 
     def load_artifact(self, run: Run, name: str):
         return dill.loads(self._client.get_artifact(self.name, self._project, run.id, name))
