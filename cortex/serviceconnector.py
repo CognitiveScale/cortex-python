@@ -111,7 +111,7 @@ class ServiceConnector:
         headersToSend = self._construct_headers(headers)
         url = uri if is_internal_url else self._construct_url(uri)
         if debug:
-            log.debug("START {} {}".format('GET', uri))
+            log.debug("START {} {}".format(method, uri))
         r = requests.request(
             method,
             url,
@@ -122,7 +122,7 @@ class ServiceConnector:
             **kwargs
         )
         if debug:
-            log.debug("  END {} {}".format('GET', uri))
+            log.debug("  END {} {}".format(method, uri))
         return r
 
     @staticmethod
