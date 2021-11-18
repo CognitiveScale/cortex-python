@@ -1,12 +1,12 @@
 
 """
-Copyright 2019 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-   http://www.apache.org/licenses/LICENSE-2.0
+   https://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,7 +24,9 @@ import tenacity
 import time
 
 from .serviceconnector import _Client
-from .utils import raise_for_status_with_detail
+from .utils import raise_for_status_with_detail, get_logger
+
+log = get_logger(__name__)
 
 
 class ManagedContentClient(_Client):
@@ -148,6 +150,18 @@ class ManagedContentClient(_Client):
         uri = self._make_content_uri(key, project)
         r = self._serviceconnector.request('HEAD', uri)
         return r.status_code == 200
+
+    def delete(self, key: str, project):
+        """Delete a file from managed content (S3) .
+
+        :param project: The project to which to get file from.
+        :param key: The path of the file to check.
+        :returns: A boolean indicating wether the file exists or not.
+        """
+        uri = self._make_content_uri(key, project)
+        r = self._serviceconnector.request('DELETE', uri)
+        raise_for_status_with_detail(r)
+        return r.json()
 
     ## Private ##
 

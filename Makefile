@@ -18,6 +18,8 @@ build: build.alpha
 else
 build: build.release
 endif
+docker:
+	docker build -t c12e/cortex-python .
 
 build.alpha: clean
 	python setup.py egg_info --tag-build a$(shell \

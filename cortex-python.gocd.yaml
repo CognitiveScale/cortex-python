@@ -1,0 +1,90 @@
+format_version: 10
+pipelines:
+  cortex-python-develop:
+    group: fabric6
+    materials:
+      cortex-python:
+        git: git@github.com:CognitiveScale/cortex-python.git
+        branch: develop
+    stages:
+      - build:
+          clean_workspace: true
+          jobs:
+            build:
+              elastic_profile_id: gocd-test-agent-dind
+              tasks:
+                - script: |
+                    set -eux
+                    git clone git@github.com:CognitiveScale/gocd-pipeline-scripts.git
+                    ./gocd-pipeline-scripts/common/c12e-common.sh dev
+  cortex-python-staging:
+    group: fabric6
+    environment_variables:
+      ALPHA_BUILD: "true"
+      PYPI_UPLOAD: "https://upload.pypi.org/legacy/"
+      REPO_NAME: "cs_internal-local"
+      REPO_USER: "cortex5"
+    secure_variables:
+      # LastPass: Shared-devops/Pypi
+      REPO_PASSWORD: "AES:VK48nn/zr+mFTMixYa8Psg==:P+AZlJmgChiMcFRyNRmjuwYqBQwkc1hRP8zHck5L5SU="
+    materials:
+      cortex-python:
+        git: git@github.com:CognitiveScale/cortex-python.git
+        branch: staging
+    stages:
+      - build:
+          clean_workspace: true
+          jobs:
+            build:
+              elastic_profile_id: gocd-test-agent-dind
+              tasks:
+                - script: |
+                    set -eux
+                    git clone git@github.com:CognitiveScale/gocd-pipeline-scripts.git
+                    ./gocd-pipeline-scripts/common/c12e-common.sh staging
+                    ./gocd-pipeline-scripts/cortex5/python/publish-distribution.sh -i -e
+  cortex-python-master:
+    group: fabric6
+    environment_variables:
+      PYPI_UPLOAD: "https://upload.pypi.org/legacy/"
+      REPO_NAME: "cognitivescale_local"
+      REPO_USER: "cortex5"
+    secure_variables:
+      # LastPass: Shared-devops/Pypi
+      REPO_PASSWORD: "AES:VK48nn/zr+mFTMixYa8Psg==:P+AZlJmgChiMcFRyNRmjuwYqBQwkc1hRP8zHck5L5SU="
+    materials:
+      cortex-python-master:
+        git: git@github.com:CognitiveScale/cortex-python.git
+        branch: master
+    stages:
+      - build:
+          clean_workspace: yes
+          jobs:
+            build:
+              elastic_profile_id: gocd-test-agent-dind
+              artifacts:
+                - build:
+                    source: cortex-python.docs.tgz
+              tasks:
+                - script: |
+                    set -eux
+                    git clone git@github.com:CognitiveScale/gocd-pipeline-scripts.git
+                    ./gocd-pipeline-scripts/common/c12e-common.sh master
+                    ./gocd-pipeline-scripts/cortex5/python/publish-distribution.sh -i -e
+      - publish:
+          approval:
+            type: manual
+          clean_workspace: true
+          jobs:
+            publishJob:
+              elastic_profile_id: gocd-test-agent-dind
+              tasks:
+                - fetch:
+                    pipeline: cortex-python-master
+                    stage: build
+                    job: build
+                    source: cortex-python.docs.tgz
+                    is_file: yes
+                - script: |
+                    git clone git@github.com:CognitiveScale/gocd-pipeline-scripts.git
+                    ./gocd-pipeline-scripts/common/publish-gh-pages.sh -d cortex-python.docs.tgz -r git@github.com:CognitiveScale/cortex-python.git -b ${GH_PAGES_BRANCH} -k .nojekyll

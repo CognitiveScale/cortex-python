@@ -1,7 +1,7 @@
 builder:
-  image: python:3.6-slim
+  image: python:3.7-buster
   command: bash -cx 'apt-get update
-    && apt-get install -y tar git curl jq libmagic-dev gcc make
+    && apt-get install -y jq
     && make dev.install
     && make test
     && make build
