@@ -55,7 +55,7 @@ pipelines:
     materials:
       cortex-python-master:
         git: git@github.com:CognitiveScale/cortex-python.git
-        branch: master
+        branch: main
     stages:
       - build:
           clean_workspace: yes
