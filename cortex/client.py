@@ -98,7 +98,7 @@ class Client(object):
             project = self._project
         if not self._token.token:
             self._token = _Token(generate_token(self._config))
-        conn_client = ConnectionClient(self._url, version, self._token.token, self._config)
+        conn_client = ConnectionClient(self._url, version, self._token.token, self._config, self._verify_ssl_cert)
         return Connection.get_connection(name=name, project=project, client=conn_client)
 
     def get_secret(self, name: str, version: str = '4', project: str = None) -> Secret:
@@ -113,7 +113,7 @@ class Client(object):
             project = self._project
         if not self._token.token:
             self._token = _Token(generate_token(self._config))
-        sec_client = SecretsClient(self._url, version, self._token.token, self._config)
+        sec_client = SecretsClient(self._url, version, self._token.token, self._config, self._verify_ssl_cert)
         return Secret.get_secret(name=name, project=project, client=sec_client)
 
     def session(self, session_id: str = None, ttl: int = None, project: str = None) -> Session:
@@ -128,7 +128,7 @@ class Client(object):
             project = self._project
         if not self._token.token:
             self._token = _Token(generate_token(self._config))
-        session_client = SessionClient(self._url, self._version, self._token.token, self._config)
+        session_client = SessionClient(self._url, self._version, self._token.token, self._config, self._verify_ssl_cert)
         if not session_id:
             return Session.start(client=session_client, project=project, ttl=ttl)
         return Session(session_id=session_id, client=session_client, project=project)
@@ -146,7 +146,7 @@ class Client(object):
             project = self._project
         if not self._token.token:
             self._token = _Token(generate_token(self._config))
-        exp_client = ExperimentClient(self._url, version, self._token.token, self._config)
+        exp_client = ExperimentClient(self._url, version, self._token.token, self._config, self._verify_ssl_cert)
         return Experiment.get_experiment(name=name, project=project, client=exp_client, model_id=model_id)
 
     def message(self, payload: dict, properties: dict = None) -> Message:
@@ -213,6 +213,8 @@ class Cortex(object):
         :param api_version: The version of the API to use with this client.
         :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE file or directory with certificates of trusted CAs (default: True)
         :param project: Cortex Project that you want to use.
+        :param token: (optional) Use JWT token for authenticating requests, will default to settings in ~/.cortex/config if not provided
+        :param config: (optional) Use Cortex personal access token config file to generate JWT tokens.
         """
         env = CortexEnv(api_endpoint=api_endpoint, token=token, config=config, project=project)
 
