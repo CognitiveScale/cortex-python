@@ -67,8 +67,8 @@ def request(flow: http.HTTPFlow) -> None:
                             else:
                                 missing_secrets.append(param["value"].split("#SECURE.")[-1])
 
-                    params = dict(map(lambda kv: (kv["name"], kv["value"]), conn['params']))
-                    conn['params'] = params
+                    # params = dict(map(lambda kv: (kv["name"], kv["value"]), conn['params']))
+                    # conn['params'] = params
 
                     if missing_secrets:
                         flow.response = http.HTTPResponse.make(
@@ -88,6 +88,21 @@ def request(flow: http.HTTPFlow) -> None:
                         json.dumps({"error": str(e)}),
                         {"Content-Type": "application/json"}
                     )
+            elif '/secrets/' in flow.request.pretty_url:
+                secret_name = flow.request.pretty_url.split('/secrets/')[-1]
+                secret_value = secrets[secret_name]
+                if secret_value:
+                    flow.response = http.HTTPResponse.make(
+                        200,
+                        json.dumps({'value': secret_value}),
+                        {"Content-Type": "application/json"}
+                    )
+                else:
+                    flow.response = http.HTTPResponse.make(
+                        404,
+                        json.dumps({'error': f'{secret_name} not found in file {secrets_env_filepath}'}),
+                        {"Content-Type": "application/json"}
+                    )
         else:
-            flow.request.pretty_url = flow.request.pretty_url.replace('http://cortex-internal.cortex.svc.cluster.local',
+            flow.request.url = flow.request.pretty_url.replace('http://cortex-internal.cortex.svc.cluster.local',
                                                                       cortex_endpoint)
