@@ -31,7 +31,7 @@ class SkillClient(_Client):
     """
     URIs = {
         'deploy': 'projects/{projectId}/skills/{skillName}/deploy',
-        'invoke': '/fabric/v4/projects/{project}/skillinvoke/{skill_name}/inputs/{input}',
+        'invoke': 'projects/{project}/skillinvoke/{skill_name}/inputs/{input}',
         'logs': 'projects/{projectId}/skills/{skillName}/action/{actionName}/logs',
         'send_message': '{url}/internal/messages/{activation}/{channel}/{output_name}',
         'skill': 'projects/{projectId}/skills/{skillName}',
