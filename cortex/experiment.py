@@ -33,6 +33,7 @@ from .utils import raise_for_status_with_detail, get_logger
 
 log = get_logger(__name__)
 
+
 class ExperimentClient(_Client):
 
     """
@@ -250,6 +251,7 @@ class ExperimentClient(_Client):
         # Replaces special characters like / with %2F
         return urllib.parse.quote(string, safe='')
 
+
 def _to_html(exp):
     try:
         import maya
@@ -347,6 +349,7 @@ def _to_html(exp):
             num_metrics=num_metrics, 
             metric_names=sorted(list(metric_names))
             )
+
 
 class Experiment(CamelResource):
     """
