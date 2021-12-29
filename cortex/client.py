@@ -24,7 +24,6 @@ from .message import Message
 from .connection import Connection, ConnectionClient
 from .secrets import SecretsClient, Secret
 from .session import Session, SessionClient
-from .skill import Skill
 from .utils import decode_JWT, get_logger, generate_token
 
 _DEFAULT_API_VERSION = 4
@@ -78,17 +77,9 @@ class Client(object):
         self._version = version
         self._verify_ssl_cert = verify_ssl_cert
 
-    def skill(self, name: str) -> Skill:
-        """
-        Gets a skill with the specified name.
-        """
-        if not self._token.token:
-            self._token = _Token(generate_token(self._config))
-        return Skill.get_skill(name=name, project=self._project, client=self._mk_connector())
-
     def get_connection(self, name: str, version: str = '4', project=None):
         """
-        Gets an connection with the specified name.
+        Gets a connection with the specified name.
 
         :param name: Connection name to fetch
         :param version: (optional) Fabric API version (default: 4)
