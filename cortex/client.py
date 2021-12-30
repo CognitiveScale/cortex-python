@@ -21,8 +21,6 @@ from .env import CortexEnv
 from .exceptions import ProjectException
 from .experiment import Experiment, LocalExperiment, ExperimentClient
 from .message import Message
-from .secrets import SecretsClient, Secret
-from .session import Session, SessionClient
 from .utils import decode_JWT, get_logger, generate_token
 
 _DEFAULT_API_VERSION = 4
@@ -75,23 +73,6 @@ class Client(object):
         self._url = url
         self._version = version
         self._verify_ssl_cert = verify_ssl_cert
-
-    def session(self, session_id: str = None, ttl: int = None, project: str = None) -> Session:
-        """
-        Gets a session with the specified identifier.
-
-        :param session_id: Session id to fetch
-        :param ttl: (optional) Session expiration in seconds (default: -1)
-        :param project: (optional) Project name, defaults to client's project
-        """
-        if project is None:
-            project = self._project
-        if not self._token.token:
-            self._token = _Token(generate_token(self._config))
-        session_client = SessionClient(self._url, self._version, self._token.token, self._config, self._verify_ssl_cert)
-        if not session_id:
-            return Session.start(client=session_client, project=project, ttl=ttl)
-        return Session(session_id=session_id, client=session_client, project=project)
 
     def experiment(self, name: str, version: str = '4', model_id: str = None, project: str = None) -> Experiment:
         """
