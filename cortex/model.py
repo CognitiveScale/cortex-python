@@ -19,8 +19,7 @@ import json
 from .camel import CamelResource
 from typing import Dict
 from .serviceconnector import _Client
-from .utils import raise_for_status_with_detail
-from .utils import parse_string
+from .utils import raise_for_status_with_detail, parse_string, Constants
 
 
 class ModelClient(_Client):
@@ -37,7 +36,7 @@ class ModelClient(_Client):
 
     def __init__(self, project: str, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._serviceconnector.version = 4
+        self._serviceconnector.version = Constants.default_api_version
         self._project = project
 
     def list_models(self):

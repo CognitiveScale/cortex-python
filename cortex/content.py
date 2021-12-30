@@ -24,7 +24,7 @@ import tenacity
 import time
 
 from .serviceconnector import _Client
-from .utils import raise_for_status_with_detail, get_logger
+from .utils import raise_for_status_with_detail, get_logger, Constants
 
 log = get_logger(__name__)
 
@@ -37,7 +37,7 @@ class ManagedContentClient(_Client):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._serviceconnector.version = 4
+        self._serviceconnector.version = Constants.default_api_version
 
     def upload(self, key: str, project: str, stream_name: str, stream: object, content_type: str, retries: int = 1):
         """Store `stream` file in S3.

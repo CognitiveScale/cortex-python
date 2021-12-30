@@ -14,10 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from .utils import get_logger
 from .serviceconnector import _Client
 from typing import Dict
-from .utils import parse_string
+from .utils import get_logger, parse_string, Constants
 
 log = get_logger(__name__)
 
@@ -36,7 +35,7 @@ class SessionClient(_Client):
 
     def __init__(self, project: str, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._serviceconnector.version = 4
+        self._serviceconnector.version = Constants.default_api_version
         self._project = project
 
     def start_session(self, ttl=None, description='No description given') -> str:

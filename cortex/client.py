@@ -21,12 +21,12 @@ from .env import CortexEnv
 from .exceptions import ProjectException
 from .experiment import Experiment, LocalExperiment, ExperimentClient
 from .message import Message
-from .utils import decode_JWT, get_logger, generate_token
+from .utils import decode_JWT, get_logger, generate_token, Constants
 
-_DEFAULT_API_VERSION = 4
 
 _msg_token_exp_no_creds = """
-Your Cortex token is expired, and the required credentials for auto-refresh have not been provided. Supply these credentials; account, username,
+Your Cortex token is expired, and the required credentials for auto-refresh have not been provided. Supply these 
+credentials; account, username,
 and password.  Please login again to retrieve a valid token.
 """
 
@@ -61,7 +61,8 @@ class Client(object):
         Create an instance of the Cortex Fabric client
 
         :param url: Cortex fabric url
-        :param token: (optional) Use JWT token for authenticate requests, will default to settings in ~/.cortex/config if not provided
+        :param token: (optional) Use JWT token for authenticate requests, will default to settings in ~/.cortex/config
+        if not provided
         :param config: (optional) Use Cortex personal access token config file to generate JWT tokens
         :param project: (optional) Project name, must specify project for each request
         :param version: (optional) Fabric API version (default: 4)
@@ -140,10 +141,11 @@ class Cortex(object):
     """
 
     @staticmethod
-    def client(api_endpoint: str = None, api_version: int = _DEFAULT_API_VERSION, verify_ssl_cert=None,
+    def client(api_endpoint: str = None, api_version: int = Constants.default_api_version, verify_ssl_cert=None,
                token: str = None, config: dict = None, project: str = None):
         """
-        Gets a client with the provided parameters. All parameters are optional and default to environment variable values if not specified.
+        Gets a client with the provided parameters. All parameters are optional and default to environment variable
+        values if not specified.
 
         **Example**
 
@@ -152,9 +154,12 @@ class Cortex(object):
 
         :param api_endpoint: The Cortex URL.
         :param api_version: The version of the API to use with this client.
-        :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE file or directory with certificates of trusted CAs (default: True)
+        :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE file or directory
+        with certificates of trusted CAs (default: True)
         :param project: Cortex Project that you want to use.
-        :param token: (optional) Use JWT token for authenticating requests, will default to settings in ~/.cortex/config if not provided
+        :param token: (optional) Use JWT token for authenticating requests, will default to settings in
+        ~/.cortex/config
+        if not provided
         :param config: (optional) Use Cortex personal access token config file to generate JWT tokens.
         """
         env = CortexEnv(api_endpoint=api_endpoint, token=token, config=config, project=project)
@@ -182,9 +187,10 @@ class Cortex(object):
     @staticmethod
     def from_message(msg, verify_ssl_cert=None):
         """
-        Creates a Cortex client from a skill's input message, expects { api_endpoint:'..', token:'..', projectId:'..' }
+        Creates a Cortex client from a skill's input message, expects { api_endpoint:'..', token:'..', projectId:'..'}
         :param msg: A message for constructing a Cortex Client.
-        :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE file or directory with certificates of trusted CAs (default: True)
+        :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE file or directory
+        with certificates of trusted CAs (default: True)
         """
         keys = ('apiEndpoint', 'token', 'projectId')
         if not all(key in msg for key in keys):

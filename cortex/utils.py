@@ -27,6 +27,14 @@ from collections import namedtuple
 from .exceptions import BadTokenException
 
 
+class Constants:
+    default_api_version = 4
+
+    @property
+    def default_api_version(self):
+        return self.default_api_version
+
+
 def md5sum(file_name, blocksize=65536):
     """
     Computes md5sum on a fileself.
