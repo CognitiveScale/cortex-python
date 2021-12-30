@@ -31,11 +31,10 @@ class ConnectionClient(_Client):
     """
     URIs = {'connections': 'projects/{projectId}/connections'}
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, project: str, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = 4
-        if "project" in kwargs:
-            self._project = kwargs.get("project")
+        self._project = project
 
     def save_connection(self, connection: object):
         """
@@ -71,13 +70,17 @@ class ConnectionClient(_Client):
         raise_for_status_with_detail(r)
         return r.json()
 
+    @property
+    def project(self):
+        return self._project
+
 
 class Connection(CamelResource):
     """
     Defines the connection for a dataset.
     """
 
-    def __init__(self, connection, project: str, client: ConnectionClient):
+    def __init__(self, connection, client: ConnectionClient):
         super().__init__(connection, True)
         self._client = client
-        self._project = project
+        self._project = client.project

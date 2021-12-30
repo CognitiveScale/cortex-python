@@ -35,7 +35,7 @@ class ModelClient(_Client):
 
     }
 
-    def __init__(self, project, *args, **kwargs):
+    def __init__(self, project: str, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = 4
         self._project = project
@@ -74,15 +74,19 @@ class ModelClient(_Client):
         # Replaces special characters like / with %2F
         return urllib.parse.quote(string, safe='')
 
+    @property
+    def project(self):
+        return self._project
+
 
 class Model(CamelResource):
     """
     Tracks associated parameters of models.
     """
 
-    def __init__(self, document: Dict, project: str, client: ModelClient):
+    def __init__(self, document: Dict, client: ModelClient):
         super().__init__(document, False)
-        self._project = project
+        self._project = client.project
         self._client = client
 
     def to_camel(self, camel='1.0.0'):
