@@ -21,7 +21,6 @@ from .env import CortexEnv
 from .exceptions import ProjectException
 from .experiment import Experiment, LocalExperiment, ExperimentClient
 from .message import Message
-from .connection import Connection, ConnectionClient
 from .secrets import SecretsClient, Secret
 from .session import Session, SessionClient
 from .utils import decode_JWT, get_logger, generate_token
@@ -76,21 +75,6 @@ class Client(object):
         self._url = url
         self._version = version
         self._verify_ssl_cert = verify_ssl_cert
-
-    def get_connection(self, name: str, version: str = '4', project=None):
-        """
-        Gets a connection with the specified name.
-
-        :param name: Connection name to fetch
-        :param version: (optional) Fabric API version (default: 4)
-        :param project: (optional) Project name, defaults to client's project
-        """
-        if project is None:
-            project = self._project
-        if not self._token.token:
-            self._token = _Token(generate_token(self._config))
-        conn_client = ConnectionClient(self._url, version, self._token.token, self._config, self._verify_ssl_cert)
-        return Connection.get_connection(name=name, project=project, client=conn_client)
 
     def get_secret(self, name: str, version: str = '4', project: str = None) -> Secret:
         """
