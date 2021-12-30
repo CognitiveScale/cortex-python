@@ -17,9 +17,7 @@ import urllib.parse
 
 from .serviceconnector import _Client
 from .camel import CamelResource
-from .utils import get_logger
-from .utils import raise_for_status_with_detail
-from .utils import parse_string
+from .utils import get_logger, raise_for_status_with_detail, parse_string, Constants
 
 log = get_logger(__name__)
 
@@ -32,7 +30,7 @@ class SecretsClient(_Client):
 
     def __init__(self, project: str, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._serviceconnector.version = 4
+        self._serviceconnector.version = Constants.default_api_version
         self._project = project
 
     def post_secret(self):

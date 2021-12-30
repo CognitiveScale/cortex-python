@@ -29,7 +29,7 @@ from typing import Dict, List
 from requests.exceptions import HTTPError
 from .exceptions import APIException, ConfigurationException
 from .serviceconnector import _Client
-from .utils import raise_for_status_with_detail, get_logger
+from .utils import raise_for_status_with_detail, get_logger, Constants
 
 log = get_logger(__name__)
 
@@ -54,7 +54,7 @@ class ExperimentClient(_Client):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._serviceconnector.version = 4
+        self._serviceconnector.version = Constants.default_api_version
 
     def list_experiments(self, project):
         r = self._serviceconnector.request(method='GET', uri=self.URIs['experiments'].format(projectId=project))

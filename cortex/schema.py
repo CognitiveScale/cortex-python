@@ -18,7 +18,7 @@ import urllib.parse
 from cortex.serviceconnector import _Client, ServiceConnector
 from cortex.utils import get_logger
 from .camel import CamelResource
-from .utils import raise_for_status_with_detail
+from .utils import raise_for_status_with_detail, Constants
 
 log = get_logger(__name__)
 
@@ -33,7 +33,7 @@ class SchemaClient(_Client):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._serviceconnector.version = 4
+        self._serviceconnector.version = Constants.default_api_version
 
     def save_schema(self):
         raise NotImplementedError()
