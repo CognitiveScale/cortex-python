@@ -52,7 +52,7 @@ class TestConnectionClient(unittest.TestCase):
                               url,
                               status=200,
                               body=json.dumps(connection))
-        r = self.cc.save_connection(connection=connection, project=projectId)
+        r = self.cc.save_connection(connection=connection)
         self.assertEqual(r, connection)
 
     @mocketize
@@ -67,7 +67,7 @@ class TestConnectionClient(unittest.TestCase):
                                   url,
                                   status=200,
                                   body=json.dumps(result))
-            r = self.mc.upload(key=key, stream_name='foo', stream=content, content_type='application/octet-stream', project=projectId)
+            r = self.mc.upload(key=key, stream_name='foo', stream=content, content_type='application/octet-stream')
             self.assertEqual(r, result)
 
     @mocketize
@@ -82,7 +82,7 @@ class TestConnectionClient(unittest.TestCase):
                                   url,
                                   status = 200,
                                   body = json.dumps(result))
-            r = self.mc.upload_streaming(key=key, stream=content, content_type='application/octet-stream', project=projectId)
+            r = self.mc.upload_streaming(key=key, stream=content, content_type='application/octet-stream')
             self.assertEqual(r, result)
 
     @mocketize
@@ -96,7 +96,7 @@ class TestConnectionClient(unittest.TestCase):
                                 url,
                                 status = 200,
                                 body = content)
-            r = self.mc.download(key=key, project=projectId)
+            r = self.mc.download(key=key)
             self.assertEqual(r.read(), buf)
 
     @mocketize
@@ -110,5 +110,5 @@ class TestConnectionClient(unittest.TestCase):
                               status = 200,
                               body = json.dumps(result))
         
-        r = self.mc.exists(key=key, project=projectId)
+        r = self.mc.exists(key=key)
         self.assertTrue(r)

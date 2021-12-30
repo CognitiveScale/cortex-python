@@ -15,7 +15,7 @@ limitations under the License.
 """
 
 import urllib.parse
-from cortex.serviceconnector import _Client, ServiceConnector
+from cortex.serviceconnector import _Client
 from cortex.utils import get_logger
 from .camel import CamelResource
 from .utils import raise_for_status_with_detail, Constants
@@ -25,40 +25,44 @@ log = get_logger(__name__)
 
 class SchemaClient(_Client):
     """
-    A client for the Cortex Actions API.
+    A client for the Cortex Schema API.
     """
 
     URIs = {
+        'schema': 'projects/{projectId}/types/{name}',
     }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, project: str, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = Constants.default_api_version
+        self._project = project
 
     def save_schema(self):
         raise NotImplementedError()
 
-
-class Schema(CamelResource):
-    """
-    Represents a plan for accessing a service.
-    """
-    def __init__(self, schema, connector: ServiceConnector):
-        super().__init__(schema, True)
-        self._connector = connector
-
-    @staticmethod
-    def get_schema(name, project, client: SchemaClient):
+    def get_schema(self, name):
         """
         Fetches a schema to work with.
         :param name: The name of the schema to retrieve.
-        :param project; Project to get the schema from
-        :param client: The client instance to use.
         :return: A schema object.
         """
-        uri = 'projects/{projectId}/types/{name}'.format(projectId=project, name=urllib.parse.quote(name, safe=''))
+        uri = self.URIs['schema'].format(projectId=self._project, name=urllib.parse.quote(name, safe=''))
         log.debug('Getting schema using URI: %s' % uri)
-        r = client._serviceconnector.request('GET', uri)
+        r = self._serviceconnector.request('GET', uri)
         raise_for_status_with_detail(r)
 
-        return Schema(r.json(), client._serviceconnector)
+        return Schema(r.json(), self._serviceconnector)
+
+    @property
+    def project(self):
+        return self._project
+
+
+class Schema(CamelResource):
+    """
+    Represents a plan for accessing a schema.
+    """
+    def __init__(self, schema, client: SchemaClient):
+        super().__init__(schema, True)
+        self._client = client
+        self._project = client.project
