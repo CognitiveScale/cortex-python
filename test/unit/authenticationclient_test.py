@@ -13,12 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-import json
 import unittest
 
 from cortex.auth import AuthenticationClient
 from cortex.utils import decode_JWT, verify_JWT
-from .fixtures import mock_pat_config, build_mock_url, mock_api_endpoint
+from .fixtures import mock_pat_config, mock_api_endpoint
+
+
 class TestAuthenticationClient(unittest.TestCase):
 
     def setUp(self):
@@ -42,8 +43,8 @@ class TestAuthenticationClient(unittest.TestCase):
         # todo mock this call?..
         token = self.ac.fetch_auth_token(body)
         # test
-        decodedBody = decode_JWT(token)
-        self.assertEqual(body["issuer"], decodedBody[1]["iss"])
+        decodedbody = decode_JWT(token)
+        self.assertEqual(body["issuer"], decodedbody[1]["iss"])
 
     def test_expired_token(self):
         # Shouldn't fail to validate expired token WITHIN the python lib, this is responsibiltiy of auth proxy...

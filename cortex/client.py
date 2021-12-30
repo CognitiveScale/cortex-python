@@ -17,12 +17,12 @@ limitations under the License.
 import os
 import time
 
+from .experiment import LocalExperiment
 from .serviceconnector import ServiceConnector
 from .env import CortexEnv
 from .exceptions import ProjectException
 from .message import Message
 from .utils import decode_JWT, get_logger, generate_token, Constants
-
 
 _msg_token_exp_no_creds = """
 Your Cortex token is expired, and the required credentials for auto-refresh have not been provided. Supply these 
@@ -101,6 +101,23 @@ class Client(object):
         return self._mk_connector()
 
 
+class Local:
+    """
+    Provides local, on-disk implementations of Cortex APIs.
+    """
+
+    def __init__(self, basedir=None):
+        self._basedir = basedir
+
+    def experiment(self, name: str) -> LocalExperiment:
+        """
+        Create an experiment without connecting to Cortex fabric
+        :param name: Experiment name
+        :return: Experiment instance
+        """
+        return LocalExperiment(name, self._basedir)
+
+
 class Cortex(object):
     """
     Entry point to the Cortex API.
@@ -163,6 +180,10 @@ class Cortex(object):
             raise Exception(f'Skill message must contain these keys: {keys}')
         return Cortex.client(api_endpoint=msg.get('apiEndpoint'), token=msg.get('token'), project=msg.get('projectId'),
                              verify_ssl_cert=verify_ssl_cert)
+
+    @staticmethod
+    def local(basedir=None):
+        return Local(basedir)
 
     @staticmethod
     def login():
