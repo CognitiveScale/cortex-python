@@ -76,21 +76,6 @@ class Client(object):
         self._version = version
         self._verify_ssl_cert = verify_ssl_cert
 
-    def get_secret(self, name: str, version: str = '4', project: str = None) -> Secret:
-        """
-        Gets a secret with the specified name.
-
-        :param name: Secret name to fetch
-        :param version: (optional) Fabric API version (default: 4)
-        :param project: (optional) Project name, defaults to client's project
-        """
-        if project is None:
-            project = self._project
-        if not self._token.token:
-            self._token = _Token(generate_token(self._config))
-        sec_client = SecretsClient(self._url, version, self._token.token, self._config, self._verify_ssl_cert)
-        return Secret.get_secret(name=name, project=project, client=sec_client)
-
     def session(self, session_id: str = None, ttl: int = None, project: str = None) -> Session:
         """
         Gets a session with the specified identifier.
