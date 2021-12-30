@@ -25,6 +25,7 @@ from cortex.session import SessionClient
 
 PROJECTID = 'sesstest'
 
+
 class TestSessionClient(unittest.TestCase):
 
     def setUp(self):
@@ -38,12 +39,12 @@ class TestSessionClient(unittest.TestCase):
                               status=200,
                               body=json.dumps(body))
 
-    ## Sessions ##
+    # Sessions #
 
     @mocketize
     def test_start_sessions(self):
         uri = self.client.URIs['start'].format(projectId=PROJECTID)
-        returns = { 'sessionId': self.session_id }
+        returns = {'sessionId': self.session_id}
         self.register_entry(Entry.POST, uri, returns)
 
         r = self.client.start_session(100, 'test')

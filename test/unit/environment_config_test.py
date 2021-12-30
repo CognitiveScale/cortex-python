@@ -34,17 +34,20 @@ class TestCortexConfiguration(unittest.TestCase):
         self.assertEqual(CortexEnv.get_cortex_token(), token)
 
     def test_get_cortex_profile(self):
-        profile = { "A" : 1, "B": 2 } 
+        profile = {"A": 1, "B": 2}
         CortexEnv.get_cortex_profile = Mock(return_value=profile)
         self.assertEqual(CortexEnv.get_cortex_profile(), profile)
-    
+
     def test_get_token_with_token_and_profile(self):
         token = 'some_token'
-        profile =  {
+        profile = {
             "url": "https://api.cortex-dev.insights.ai",
             "username": "adminTenant-666",
             "account": "testtenant-666",
-            "token": "123c3MiOiJjb2duaXRpdmVzY2FsZS5jb20iLCJhdWQiOiJjb3J0ZXgiLCJzdWIiOiJhZG1pblRlbmFudC02NjYiLCJ0ZW5hbnQiOiJ0ZXN0dGVuYW50LTY2NiIsImJlYXJlciI6InB1YmxpYyIsImtleSI6Im5nM2NTa2Y0R2FlSmticU9wN1BIbVRNVHFPekh5eEc2IiwiZXhwIjoxNTU4MzY3ODEyLCJhY2wiOnsiLioiOlsiUkVBRCIsIlJVTiIsIldSSVRFIiwiREVMRVRFIl19LCJpYXQiOjE1NTcxNTgyMTJ9.VQPxm6j2i2QzqFGQGw-dMSSU8TkxQwkx_e9WN1tdHcU"
+            "token": "123c3MiOiJjb2duaXRpdmVzY2FsZS5jb20iLCJhdWQiOiJjb3J0ZXgiLCJzdWIiOiJhZG1pblRlbmFudC02NjYiLCJ0ZW5h"
+                     "bnQiOiJ0ZXN0dGVuYW50LTY2NiIsImJlYXJlciI6InB1YmxpYyIsImtleSI6Im5nM2NTa2Y0R2FlSmticU9wN1BIbVRNVHFP"
+                     "ekh5eEc2IiwiZXhwIjoxNTU4MzY3ODEyLCJhY2wiOnsiLioiOlsiUkVBRCIsIlJVTiIsIldSSVRFIiwiREVMRVRFIl19LCJp"
+                     "YXQiOjE1NTcxNTgyMTJ9.VQPxm6j2i2QzqFGQGw-dMSSU8TkxQwkx_e9WN1tdHcU"
         }
         CortexEnv.get_cortex_token = Mock(return_value=token)
         CortexEnv.get_cortex_profile = Mock(return_value=profile)
@@ -56,35 +59,41 @@ class TestCortexConfiguration(unittest.TestCase):
         CortexEnv.get_cortex_token = Mock(return_value=token)
         CortexEnv.get_cortex_profile = Mock(return_value=profile)
         self.assertEqual(CortexEnv.get_token(), token)
-    
+
     def test_get_token_with_no_token_and_profile(self):
-        profile_token = '123c3MiOiJjb2duaXRpdmVzY2FsZS5jb20iLCJhdWQiOiJjb3J0ZXgiLCJzdWIiOiJhZG1pblRlbmFudC02NjYiLCJ0ZW5hbnQiOiJ0ZXN0dGVuYW50LTY2NiIsImJlYXJlciI6InB1YmxpYyIsImtleSI6Im5nM2NTa2Y0R2FlSmticU9wN1BIbVRNVHFPekh5eEc2IiwiZXhwIjoxNTU4MzY3ODEyLCJhY2wiOnsiLioiOlsiUkVBRCIsIlJVTiIsIldSSVRFIiwiREVMRVRFIl19LCJpYXQiOjE1NTcxNTgyMTJ9.VQPxm6j2i2QzqFGQGw-dMSSU8TkxQwkx_e9WN1tdHcU'
-        profile =  {
+        profile_token = '123c3MiOiJjb2duaXRpdmVzY2FsZS5jb20iLCJhdWQiOiJjb3J0ZXgiLCJzdWIiOiJhZG1pblRlbmFudC02NjYiL' \
+                        'CJ0ZW5hbnQiOiJ0ZXN0dGVuYW50LTY2NiIsImJlYXJlciI6InB1YmxpYyIsImtleSI6Im5nM2NTa2Y0R2FlSmticU' \
+                        '9wN1BIbVRNVHFPekh5eEc2IiwiZXhwIjoxNTU4MzY3ODEyLCJhY2wiOnsiLioiOlsiUkVBRCIsIlJVTiIsIldSSVR' \
+                        'FIiwiREVMRVRFIl19LCJpYXQiOjE1NTcxNTgyMTJ9.VQPxm6j2i2QzqFGQGw-dMSSU8TkxQwkx_e9WN1tdHcU'
+        profile = {
             "url": "https://api.cortex-dev.insights.ai",
             "username": "adminTenant-666",
             "account": "testtenant-666",
             "token": profile_token
         }
-        CortexEnv.get_cortex_token = Mock(return_value=None) # notice this is None (not the profile_token)
+        CortexEnv.get_cortex_token = Mock(return_value=None)  # notice this is None (not the profile_token)
         CortexEnv.get_cortex_profile = Mock(return_value=profile)
         self.assertEqual(CortexEnv.get_token(), profile_token)
 
     def test_get_token_with_no_token_no_profile(self):
         profile_token = ''
-        profile =  {}
+        profile = {}
         CortexEnv.get_cortex_token = Mock(return_value=profile_token)
         CortexEnv.get_cortex_profile = Mock(return_value=profile)
         self.assertEqual(CortexEnv.get_token(), None)
 
     def test_get_token_with_token_and_profile2(self):
-        token = '123c3MiOiJjb2duaXRpdmVzY2FsZS5jb20iLCJhdWQiOiJjb3J0ZXgiLCJzdWIiOiJhZG1pblRlbmFudC02NjYiLCJ0ZW5hbnQiOiJ0ZXN0dGVuYW50LTY2NiIsImJlYXJlciI6InB1YmxpYyIsImtleSI6Im5nM2NTa2Y0R2FlSmticU9wN1BIbVRNVHFPekh5eEc2IiwiZXhwIjoxNTU4MzY3ODEyLCJhY2wiOnsiLioiOlsiUkVBRCIsIlJVTiIsIldSSVRFIiwiREVMRVRFIl19LCJpYXQiOjE1NTcxNTgyMTJ9.VQPxm6j2i2QzqFGQGw-dMSSU8TkxQwkx_e9WN1tdHcU'
-        profile =  {
+        token = '123c3MiOiJjb2duaXRpdmVzY2FsZS5jb20iLCJhdWQiOiJjb3J0ZXgiLCJzdWIiOiJhZG1pblRlbmFudC02NjYiLCJ0ZW5h' \
+                'bnQiOiJ0ZXN0dGVuYW50LTY2NiIsImJlYXJlciI6InB1YmxpYyIsImtleSI6Im5nM2NTa2Y0R2FlSmticU9wN1BIbVRNVHF' \
+                'Pekh5eEc2IiwiZXhwIjoxNTU4MzY3ODEyLCJhY2wiOnsiLioiOlsiUkVBRCIsIlJVTiIsIldSSVRFIiwiREVMRVRFIl19LC' \
+                'JpYXQiOjE1NTcxNTgyMTJ9.VQPxm6j2i2QzqFGQGw-dMSSU8TkxQwkx_e9WN1tdHcU'
+        profile = {
             "url": "https://api.cortex-dev.insights.ai",
             "username": "adminTenant-666",
             "account": "testtenant-666",
             "token": 'mumjobotoken'
         }
-        CortexEnv.get_cortex_token = Mock(return_value=token) # notice this is None
+        CortexEnv.get_cortex_token = Mock(return_value=token)  # notice this is None
         CortexEnv.get_cortex_profile = Mock(return_value=profile)
         self.assertEqual(CortexEnv.get_token(), token)
 
@@ -95,8 +104,8 @@ class TestCortexConfiguration(unittest.TestCase):
         CortexEnv.get_cortex_profile = Mock(return_value=profile)
         self.assertRaises(BadTokenException, CortexEnv)
 
-    # we don't want methods calls to CortexEnv to use the monkey patched methods
-    # so we revert back to the original methods.
+    # we don't want methods calls to CortexEnv to use the monkey patched methods,
+    # so we revert to the original methods.
     def tearDown(self):
         CortexEnv.get_cortex_token = self.getCortexTokenOriginal
         CortexEnv.get_cortex_profile = self.getCortexProfileOriginal
