@@ -19,6 +19,7 @@ import base64
 import hashlib
 import logging
 import python_jwt as py_jwt, jwcrypto.jwk as jwkLib
+import urllib.parse
 from requests.exceptions import HTTPError
 from pathlib import Path
 import datetime
@@ -225,3 +226,8 @@ def raise_for_status_with_detail(resp):
             raise http_exception
     if resp.status_code == 302:
         raise Exception(f'Authentication error: {resp.headers.get("X-Auth-Error")}')
+
+
+def parse_string(self, string):
+    # Replaces special characters like / with %2F
+    return urllib.parse.quote(string, safe='')

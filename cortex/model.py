@@ -15,12 +15,12 @@ limitations under the License.
 """
 
 import json
-import urllib.parse
 
 from .camel import CamelResource
 from typing import Dict
 from .serviceconnector import _Client
 from .utils import raise_for_status_with_detail
+from .utils import parse_string
 
 
 class ModelClient(_Client):
@@ -56,23 +56,19 @@ class ModelClient(_Client):
         return r.json()
 
     def get_model(self, model_name):
-        uri = self.URIs['model'].format(projectId=self._project, modelName=self.parse_string(model_name))
+        uri = self.URIs['model'].format(projectId=self._project, modelName=parse_string(model_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
 
         return r.json()
 
     def delete_model(self, model_name):
-        uri = self.URIs['model'].format(projectId=self._project, modelName=self.parse_string(model_name))
+        uri = self.URIs['model'].format(projectId=self._project, modelName=parse_string(model_name))
         r = self._serviceconnector.request(method='DELETE', uri=uri)
         raise_for_status_with_detail(r)
         rs = r.json()
 
         return rs.get('success', False)
-
-    def parse_string(self, string):
-        # Replaces special characters like / with %2F
-        return urllib.parse.quote(string, safe='')
 
     @property
     def project(self):

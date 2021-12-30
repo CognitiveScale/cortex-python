@@ -13,11 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import urllib.parse
 
 from .serviceconnector import _Client
 from .camel import CamelResource
 from .utils import get_logger
 from .utils import raise_for_status_with_detail
+from .utils import parse_string
 
 log = get_logger(__name__)
 
@@ -43,7 +45,7 @@ class SecretsClient(_Client):
         :param name: The name of the connection to retrieve.
         :return: A Connection object.
         """
-        uri = self.URIs['secret'].format(projectId=self._project, secretName=name)
+        uri = self.URIs['secret'].format(projectId=self._project, secretName=parse_string(name))
         log.debug('Getting Secret using URI: %s' % uri)
         r = self._serviceconnector.request('GET', uri)
         raise_for_status_with_detail(r)

@@ -21,6 +21,7 @@ from .serviceconnector import _Client
 from .camel import CamelResource
 from .utils import get_logger
 from .utils import raise_for_status_with_detail
+from .utils import parse_string
 
 log = get_logger(__name__)
 
@@ -74,7 +75,7 @@ class SkillClient(_Client):
         :param skill_name: Skill name
         :return: skill json
         """
-        uri = self.URIs['skill'].format(projectId=self._project, skillName=self.parse_string(skill_name))
+        uri = self.URIs['skill'].format(projectId=self._project, skillName=parse_string(skill_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
 
@@ -86,7 +87,7 @@ class SkillClient(_Client):
         :param skill_name: Skill name
         :return: status
         """
-        uri = self.URIs['skill'].format(projectId=self._project, skillName=self.parse_string(skill_name))
+        uri = self.URIs['skill'].format(projectId=self._project, skillName=parse_string(skill_name))
         r = self._serviceconnector.request(method='DELETE', uri=uri)
         raise_for_status_with_detail(r)
         rs = r.json()
@@ -100,8 +101,8 @@ class SkillClient(_Client):
         :param action_name: Action name
         :return: Logs
         """
-        uri = self.URIs['logs'].format(projectId=self._project, skillName=self.parse_string(skill_name),
-                                       actionName=self.parse_string(action_name))
+        uri = self.URIs['logs'].format(projectId=self._project, skillName=parse_string(skill_name),
+                                       actionName=parse_string(action_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
 
@@ -113,7 +114,7 @@ class SkillClient(_Client):
         :param skill_name: Skill name
         :return: status
         """
-        uri = self.URIs['deploy'].format(projectId=self._project, skillName=self.parse_string(skill_name))
+        uri = self.URIs['deploy'].format(projectId=self._project, skillName=parse_string(skill_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
 
@@ -125,14 +126,10 @@ class SkillClient(_Client):
         :param skill_name: Skill name
         :return: status
         """
-        uri = self.URIs['undeploy'].format(projectId=self._project, skillName=self.parse_string(skill_name))
+        uri = self.URIs['undeploy'].format(projectId=self._project, skillName=parse_string(skill_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
         return r.json()
-
-    def parse_string(self, string):
-        # Replaces special characters like / with %2F
-        return urllib.parse.quote(string, safe='')
 
     def send_message(self, activation: str, channel: str, output_name: str, message: object):
         """
