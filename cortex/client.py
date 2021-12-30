@@ -19,7 +19,6 @@ import time
 from .serviceconnector import ServiceConnector
 from .env import CortexEnv
 from .exceptions import ProjectException
-from .experiment import Experiment, LocalExperiment, ExperimentClient
 from .message import Message
 from .utils import decode_JWT, get_logger, generate_token, Constants
 
@@ -75,22 +74,6 @@ class Client(object):
         self._version = version
         self._verify_ssl_cert = verify_ssl_cert
 
-    def experiment(self, name: str, version: str = '4', model_id: str = None, project: str = None) -> Experiment:
-        """
-        Gets an experiment with the specified name.
-
-        :param name: Experiment name to fetch
-        :param version: (optional) Fabric API version (default: 4)
-        :param model_id: (optional) Model ID associated with the experiment (default: None)
-        :param project: (optional) Project name, defaults to client's project
-        """
-        if project is None:
-            project = self._project
-        if not self._token.token:
-            self._token = _Token(generate_token(self._config))
-        exp_client = ExperimentClient(self._url, version, self._token.token, self._config, self._verify_ssl_cert)
-        return Experiment.get_experiment(name=name, project=project, client=exp_client, model_id=model_id)
-
     def message(self, payload: dict, properties: dict = None) -> Message:
         """Constructs a Message from payload and properties if given.
 
@@ -115,24 +98,6 @@ class Client(object):
     # expose this to allow developer to pass client instance into Connectors
     def to_connector(self):
         return self._mk_connector()
-
-
-class Local:
-    """
-    Provides local, on-disk implementations of Cortex APIs.
-    """
-
-    def __init__(self, basedir=None):
-        self._basedir = basedir
-
-    def experiment(self, name: str) -> LocalExperiment:
-        """
-        Create an experiment without connecting to Cortex fabric
-
-        :param name: Experiment name
-        :return: Experiment instance
-        """
-        return LocalExperiment(name, self._basedir)
 
 
 class Cortex(object):
@@ -197,10 +162,6 @@ class Cortex(object):
             raise Exception(f'Skill message must contain these keys: {keys}')
         return Cortex.client(api_endpoint=msg.get('apiEndpoint'), token=msg.get('token'), project=msg.get('projectId'),
                              verify_ssl_cert=verify_ssl_cert)
-
-    @staticmethod
-    def local(basedir=None):
-        return Local(basedir)
 
     @staticmethod
     def login():
