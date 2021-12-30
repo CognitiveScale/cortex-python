@@ -1,4 +1,3 @@
-
 """
 Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
 
@@ -15,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from .serviceconnector import _Client, ServiceConnector
+from .serviceconnector import _Client
 from .camel import CamelResource
 from .utils import get_logger
 from .utils import raise_for_status_with_detail
@@ -25,41 +24,40 @@ log = get_logger(__name__)
 
 class SecretsClient(_Client):
     """
-    A client for the Cortex Actions API.
+    A client for the Cortex Secrets API.
     """
+    URIs = {'secret': 'projects/{projectId}/secrets/{secretName}'}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = 4
+        if "project" in kwargs:
+            self._project = kwargs.get("project")
 
     def post_secret(self):
         raise NotImplementedError()
 
-
-class Secret(CamelResource):
-
-    """
-    Defines the connection for a dataset.
-    """
-
-    def __init__(self, connection, connector: ServiceConnector):
-        super().__init__(connection, True)
-        self._connector = connector
-
-
-    @staticmethod
-    def get_secret(name, project, client: SecretsClient):
+    def get_secret(self, name: str):
         """
-        Fetches a Connection to work with.
+        Fetches a secret to work with.
 
-        :param client: The client instance to use.
         :param name: The name of the connection to retrieve.
-        :param project: The project from which connection has to be retrieved.
         :return: A Connection object.
         """
-        uri = 'projects/{projectId}/secrets/{name}'.format(projectId=project, name=name)
+        uri = self.URIs['secret'].format(projectId=self._project, secretName=name)
         log.debug('Getting Secret using URI: %s' % uri)
-        r = client._serviceconnector.request('GET', uri)
+        r = self._serviceconnector.request('GET', uri)
         raise_for_status_with_detail(r)
 
         return r.json()
+
+
+class Secret(CamelResource):
+    """
+    Defines the secret for a dataset.
+    """
+
+    def __init__(self, secret, project: str, client: SecretsClient):
+        super().__init__(secret, True)
+        self._client = client
+        self._project = project
