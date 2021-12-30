@@ -15,7 +15,6 @@ limitations under the License.
 """
 
 import json
-import urllib.parse
 from typing import Optional, Dict
 from .serviceconnector import _Client
 from .camel import CamelResource

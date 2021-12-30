@@ -46,7 +46,7 @@ class TestSessionClient(unittest.TestCase):
         returns = { 'sessionId': self.session_id }
         self.register_entry(Entry.POST, uri, returns)
 
-        r = self.client.start_session(100, 'test', PROJECTID)
+        r = self.client.start_session(100, 'test')
         self.assertEqual(r, self.session_id)
 
     @mocketize
@@ -55,7 +55,7 @@ class TestSessionClient(unittest.TestCase):
         returns = {'state': {'key1': 'value1'}}
         self.register_entry(Entry.GET, uri, returns)
 
-        r = self.client.get_session_data(self.session_id, None, PROJECTID)
+        r = self.client.get_session_data(self.session_id, None)
         self.assertEqual(r, returns['state'])
 
     @mocketize
@@ -64,7 +64,7 @@ class TestSessionClient(unittest.TestCase):
         returns = {'state': {'key1': 'value1'}}
         self.register_entry(Entry.GET, uri, returns)
 
-        r = self.client.get_session_data(self.session_id, 'key1', PROJECTID)
+        r = self.client.get_session_data(self.session_id, 'key1')
         self.assertEqual(r, returns['state'])
 
     @mocketize
@@ -73,7 +73,7 @@ class TestSessionClient(unittest.TestCase):
         returns = {}
         self.register_entry(Entry.POST, uri, returns)
 
-        r = self.client.put_session_data(self.session_id, {}, PROJECTID)
+        r = self.client.put_session_data(self.session_id, {})
         self.assertEqual(r, returns)
 
     @mocketize
@@ -82,5 +82,5 @@ class TestSessionClient(unittest.TestCase):
         returns = {}
         self.register_entry(Entry.DELETE, uri, returns)
 
-        r = self.client.delete_session(self.session_id, PROJECTID)
+        r = self.client.delete_session(self.session_id)
         self.assertEqual(r, returns)
