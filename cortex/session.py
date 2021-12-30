@@ -33,11 +33,10 @@ class SessionClient(_Client):
         'delete': 'projects/{projectId}/sessions/{session_id}'
     }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, project: str, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = 4
-        if "project" in kwargs:
-            self._project = kwargs.get("project")
+        self._project = project
 
     def start_session(self, ttl=None, description='No description given') -> str:
         """
@@ -94,16 +93,20 @@ class SessionClient(_Client):
         uri = self.URIs['delete'].format(session_id=session_id, projectId=self._project)
         return self._request_json(uri, method='DELETE')
 
+    @property
+    def project(self):
+        return self._project
+
 
 class Session:
     """
     Session Represents a state for a client interaction with Cortex.
     """
 
-    def __init__(self, session_id, project: str, client: SessionClient):
+    def __init__(self, session_id, client: SessionClient):
         self._session_id = session_id
         self._client = client
-        self._project = project
+        self._project = client.project
 
     def get(self, key=None) -> object:
         """

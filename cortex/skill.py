@@ -39,11 +39,10 @@ class SkillClient(_Client):
         'undeploy': 'projects/{projectId}/skills/{skillName}/undeploy',
     }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, project: str, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = 4
-        if "project" in kwargs:
-            self._project = kwargs.get("project")
+        self._project = project
 
     def list_skills(self):
         """
@@ -171,6 +170,10 @@ class SkillClient(_Client):
         raise_for_status_with_detail(r)
         return r.json()
 
+    @property
+    def project(self):
+        return self._project
+
 
 class Skill(CamelResource):
     """
@@ -179,10 +182,10 @@ class Skill(CamelResource):
      one or more outputs.
     """
 
-    def __init__(self, skill, project: str, client: SkillClient):
+    def __init__(self, skill, client: SkillClient):
         super().__init__(skill, True)
         self._client = client
-        self._project = project
+        self._project = client.project
 
 
 class SkillRequest:

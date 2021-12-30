@@ -28,11 +28,10 @@ class SecretsClient(_Client):
     """
     URIs = {'secret': 'projects/{projectId}/secrets/{secretName}'}
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, project: str, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = 4
-        if "project" in kwargs:
-            self._project = kwargs.get("project")
+        self._project = project
 
     def post_secret(self):
         raise NotImplementedError()
@@ -51,13 +50,17 @@ class SecretsClient(_Client):
 
         return r.json()
 
+    @property
+    def project(self):
+        return self._project
+
 
 class Secret(CamelResource):
     """
     Defines the secret for a dataset.
     """
 
-    def __init__(self, secret, project: str, client: SecretsClient):
+    def __init__(self, secret, client: SecretsClient):
         super().__init__(secret, True)
         self._client = client
-        self._project = project
+        self._project = client.project
