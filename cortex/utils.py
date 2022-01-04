@@ -236,6 +236,6 @@ def raise_for_status_with_detail(resp):
         raise Exception(f'Authentication error: {resp.headers.get("X-Auth-Error")}')
 
 
-def parse_string(self, string):
+def parse_string(string: str):
     # Replaces special characters like / with %2F
     return urllib.parse.quote(string, safe='')

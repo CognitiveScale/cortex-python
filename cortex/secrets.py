@@ -13,7 +13,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-import urllib.parse
+import os
+import json
 
 from .serviceconnector import _Client
 from .camel import CamelResource
@@ -33,19 +34,32 @@ class SecretsClient(_Client):
         self._serviceconnector.version = Constants.default_api_version
         self._project = project
 
-    def post_secret(self):
-        raise NotImplementedError()
+    def post_secret(self, name: str, value: object):
+        """
+        Posts the secret information.
+        :param name: Secret name
+        :param value: Secret value
+        :return: status
+        """
+        uri = self.URIs['secret'].format(secretName=parse_string(name), projectId=self._project)
+        data = json.dumps(value)
+        headers = {'Content-Type': 'application/json'}
+        r = self._serviceconnector.request('POST', uri, data, headers)
+        raise_for_status_with_detail(r)
+        return r.json()
 
     def get_secret(self, name: str):
         """
         Fetches a secret to work with.
 
-        :param name: The name of the connection to retrieve.
-        :return: A Connection object.
+        :param name: The name of the Secret to retrieve.
+        :return: A Secret object.
         """
-        uri = self.URIs['secret'].format(projectId=self._project, secretName=parse_string(name))
+        port = os.getenv('CORTEX_ACCOUNTS_SERVICE_PORT_HTTP_CORTEX_ACCOUNTS') or '5000'
+        conn_svc_url = f'{self._serviceconnector.url.replace("cortex-internal", "cortex-accounts")}:{port}'
+        uri = f'{conn_svc_url}/internal/projects/{self._project}/secrets/{parse_string(name)}'
         log.debug('Getting Secret using URI: %s' % uri)
-        r = self._serviceconnector.request('GET', uri)
+        r = self._serviceconnector.request('GET', uri, is_internal_url=True)
         raise_for_status_with_detail(r)
 
         return r.json()
