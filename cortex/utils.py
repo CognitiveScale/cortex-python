@@ -237,5 +237,5 @@ def raise_for_status_with_detail(resp):
 
 
 def parse_string(string: str):
-    # Replaces special characters like / with %2F
+    # Replaces special characters like / with %2F (URL encoding)
     return urllib.parse.quote(string, safe='')
