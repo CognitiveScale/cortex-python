@@ -25,7 +25,7 @@ from .message import Message
 from .utils import decode_JWT, get_logger, generate_token, Constants
 
 _msg_token_exp_no_creds = """
-Your Cortex token is expired, and the required credentials for auto-refresh have not been provided. Supply these 
+Your Cortex token has expired, and the required credentials for auto-refresh have not been provided. Supply these 
 credentials; account, username,
 and password.  Please login again to retrieve a valid token.
 """
@@ -61,7 +61,7 @@ class Client(object):
         Create an instance of the Cortex Fabric client
 
         :param url: Cortex fabric url
-        :param token: (optional) Use JWT token for authenticate requests, will default to settings in ~/.cortex/config
+        :param token: (optional) Use JWT token to authenticate requests, will default to settings in ~/.cortex/config
         if not provided
         :param config: (optional) Use Cortex personal access token config file to generate JWT tokens
         :param project: (optional) Project name, must specify project for each request
@@ -170,7 +170,7 @@ class Cortex(object):
     @staticmethod
     def from_message(msg, verify_ssl_cert=None):
         """
-        Creates a Cortex client from a skill's input message, expects { api_endpoint:'..', token:'..', projectId:'..'}
+        Creates a Cortex client from a skill's input message, expects { api_endpoint:"..", token:"..", projectId:".."}
         :param msg: A message for constructing a Cortex Client.
         :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE file or directory
         with certificates of trusted CAs (default: True)

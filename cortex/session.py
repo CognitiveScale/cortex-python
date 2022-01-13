@@ -28,9 +28,9 @@ class SessionClient(_Client):
 
     URIs = {
         'start': 'projects/{projectId}/sessions',
-        'get': 'projects/{projectId}/sessions/{session_id}',
-        'put': 'projects/{projectId}/sessions/{session_id}',
-        'delete': 'projects/{projectId}/sessions/{session_id}'
+        'get': 'projects/{projectId}/sessions/{sessionId}',
+        'put': 'projects/{projectId}/sessions/{sessionId}',
+        'delete': 'projects/{projectId}/sessions/{sessionId}'
     }
 
     def __init__(self, project: str, *args, **kwargs):
@@ -65,7 +65,7 @@ class SessionClient(_Client):
         specified.
         :return: A dict containing the requested session data
         """
-        uri = self.URIs['get'].format(session_id=parse_string(session_id), projectId=self._project)
+        uri = self.URIs['get'].format(sessionId=parse_string(session_id), projectId=self._project)
         if key:
             uri += '?key={key}'.format(key=key)
 
@@ -80,7 +80,7 @@ class SessionClient(_Client):
         :param data: Dict containing the new session keys to set.
         :return: status
         """
-        uri = self.URIs['put'].format(session_id=parse_string(session_id), projectId=self._project)
+        uri = self.URIs['put'].format(sessionId=parse_string(session_id), projectId=self._project)
         return self._post_json(uri, {'state': data})
 
     def delete_session(self, session_id):
@@ -90,7 +90,7 @@ class SessionClient(_Client):
         :param session_id: The ID of the session to delete.
         :return: status
         """
-        uri = self.URIs['delete'].format(session_id=parse_string(session_id), projectId=self._project)
+        uri = self.URIs['delete'].format(sessionId=parse_string(session_id), projectId=self._project)
         return self._request_json(uri, method='DELETE')
 
     @property

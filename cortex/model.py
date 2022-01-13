@@ -40,6 +40,10 @@ class ModelClient(_Client):
         self._project = project
 
     def list_models(self):
+        """
+        List Models
+        :return: list of models
+        """
         r = self._serviceconnector.request(method='GET', uri=self.URIs['models'].format(projectId=self._project))
         raise_for_status_with_detail(r)
         rs = r.json()
@@ -47,6 +51,11 @@ class ModelClient(_Client):
         return rs.get('models', [])
 
     def save_model(self, model_obj):
+        """
+        Save or update model object
+        :param model_obj: Model object to be saved or updated
+        :return: status
+        """
         body = json.dumps(model_obj)
         headers = {'Content-Type': 'application/json'}
         uri = self.URIs['models'].format(projectId=self._project)
@@ -55,6 +64,11 @@ class ModelClient(_Client):
         return r.json()
 
     def get_model(self, model_name):
+        """
+        Get model by model name
+        :param model_name: Model name
+        :return: model json
+        """
         uri = self.URIs['model'].format(projectId=self._project, modelName=parse_string(model_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
@@ -62,6 +76,11 @@ class ModelClient(_Client):
         return r.json()
 
     def delete_model(self, model_name):
+        """
+        Delete model by name
+        :param model_name: Model name
+        :return: status
+        """
         uri = self.URIs['model'].format(projectId=self._project, modelName=parse_string(model_name))
         r = self._serviceconnector.request(method='DELETE', uri=uri)
         raise_for_status_with_detail(r)
