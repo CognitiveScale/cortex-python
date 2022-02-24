@@ -19,11 +19,20 @@ import base64
 import hashlib
 import logging
 import python_jwt as py_jwt, jwcrypto.jwk as jwkLib
+import urllib.parse
 from requests.exceptions import HTTPError
 from pathlib import Path
 import datetime
 from collections import namedtuple
 from .exceptions import BadTokenException
+
+
+class Constants:
+    default_api_version = 4
+
+    @property
+    def default_api_version(self):
+        return self.default_api_version
 
 
 def md5sum(file_name, blocksize=65536):
@@ -225,3 +234,8 @@ def raise_for_status_with_detail(resp):
             raise http_exception
     if resp.status_code == 302:
         raise Exception(f'Authentication error: {resp.headers.get("X-Auth-Error")}')
+
+
+def parse_string(string: str):
+    # Replaces special characters like / with %2F (URL encoding)
+    return urllib.parse.quote(string, safe='')

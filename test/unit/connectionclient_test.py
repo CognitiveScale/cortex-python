@@ -52,7 +52,7 @@ class TestConnectionClient(unittest.TestCase):
                               url,
                               status=200,
                               body=json.dumps(connection))
-        r = self.cc.save_connection(connection=connection, project=projectId)
+        r = self.cc.save_connection(connection=connection)
         self.assertEqual(r, connection)
 
     @mocketize
@@ -67,22 +67,22 @@ class TestConnectionClient(unittest.TestCase):
                                   url,
                                   status=200,
                                   body=json.dumps(result))
-            r = self.mc.upload(key=key, stream_name='foo', stream=content, content_type='application/octet-stream', project=projectId)
+            r = self.mc.upload(key=key, stream_name='foo', stream=content, content_type='application/octet-stream')
             self.assertEqual(r, result)
 
     @mocketize
     def test_uploadStreaming(self):
         key = 'some-key'
-        result = { 'Key': key }
+        result = {'Key': key}
         uri = '{0}/{1}'.format(self.mc.URIs['content'].format(projectId=projectId), key)
         url = self.mc._serviceconnector._construct_url(uri)
 
         with BytesIO(b'arbitrary content') as content:
             Entry.single_register(Entry.POST,
                                   url,
-                                  status = 200,
-                                  body = json.dumps(result))
-            r = self.mc.upload_streaming(key=key, stream=content, content_type='application/octet-stream', project=projectId)
+                                  status=200,
+                                  body=json.dumps(result))
+            r = self.mc.upload_streaming(key=key, stream=content, content_type='application/octet-stream')
             self.assertEqual(r, result)
 
     @mocketize
@@ -93,22 +93,22 @@ class TestConnectionClient(unittest.TestCase):
         buf = b'arbitrary content'
         with BytesIO(buf) as content:
             Entry.single_register(Entry.GET,
-                                url,
-                                status = 200,
-                                body = content)
-            r = self.mc.download(key=key, project=projectId)
+                                  url,
+                                  status=200,
+                                  body=content)
+            r = self.mc.download(key=key)
             self.assertEqual(r.read(), buf)
 
     @mocketize
     def test_exists(self):
         key = 'some-key'
-        result = { 'Key': key }
+        result = {'Key': key}
         uri = '{0}/{1}'.format(self.mc.URIs['content'].format(projectId=projectId), key)
         url = self.cc._serviceconnector._construct_url(uri)
         Entry.single_register(Entry.HEAD,
                               url,
-                              status = 200,
-                              body = json.dumps(result))
-        
-        r = self.mc.exists(key=key, project=projectId)
+                              status=200,
+                              body=json.dumps(result))
+
+        r = self.mc.exists(key=key)
         self.assertTrue(r)

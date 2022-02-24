@@ -1,4 +1,3 @@
-
 """
 Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
 
@@ -24,7 +23,7 @@ import tenacity
 import time
 
 from .serviceconnector import _Client
-from .utils import raise_for_status_with_detail, get_logger
+from .utils import raise_for_status_with_detail, get_logger, Constants
 
 log = get_logger(__name__)
 
@@ -33,13 +32,14 @@ class ManagedContentClient(_Client):
     """
     A client used to access the Cortex managed content service (blob store).
     """
-    URIs = {'content':  'projects/{projectId}/content'}
+    URIs = {'content': 'projects/{projectId}/content'}
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, project: str, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._serviceconnector.version = 4
+        self._serviceconnector.version = Constants.default_api_version
+        self._project = project
 
-    def upload(self, key: str, project: str, stream_name: str, stream: object, content_type: str, retries: int = 1):
+    def upload(self, key: str, stream_name: str, stream: object, content_type: str, retries: int = 1):
         """Store `stream` file in S3.
 
         :param key: The path where the file will be stored.
@@ -53,13 +53,13 @@ class ManagedContentClient(_Client):
         .. seealso: uploadStreaming()
         """
         r = tenacity.Retrying(
-            stop = tenacity.stop_after_attempt(retries + 1),
-            retry = tenacity.retry_if_exception(ManagedContentClient._http_request_retry_predicate)
-            )
-        return r.wraps(self._upload)(key, project, stream_name, stream, content_type)
+            stop=tenacity.stop_after_attempt(retries + 1),
+            retry=tenacity.retry_if_exception(ManagedContentClient._http_request_retry_predicate)
+        )
+        return r.wraps(self._upload)(key, self._project, stream_name, stream, content_type)
 
-    def _upload(self, key: str, project: str, stream_name: str, stream: object, content_type: str):
-        uri = self.URIs['content'].format(projectId=project)
+    def _upload(self, key: str, stream_name: str, stream: object, content_type: str):
+        uri = self.URIs['content'].format(projectId=self._project)
         fields = {'key': key, 'content': (stream_name, stream, content_type)}
         data = MultipartEncoder(fields=fields)
         headers = {'Content-Type': data.content_type}
@@ -77,7 +77,7 @@ class ManagedContentClient(_Client):
                     'relative': path[len(source):]
                 }
 
-    def upload_directory(self, source: str, destination: str, project:str, retries: int = 1):
+    def upload_directory(self, source: str, destination: str, retries: int = 1):
         """Walk source directory and store in S3
 
         :param source: The path to the local directory.
@@ -94,71 +94,68 @@ class ManagedContentClient(_Client):
         for path_dict in generated_paths:
             key = os.path.join(destination, path_dict.get('relative'))
             with open(path_dict.get('canonical'), 'rb') as stream:
-                responses.append(self.upload_streaming(key, project, stream, 'application/octet-stream', retries))
+                responses.append(self.upload_streaming(key, self._project, stream, 'application/octet-stream', retries))
 
         return responses
 
-    def upload_streaming(self, key: str, project: str, stream: object, content_type: str, retries: int = 1):
+    def upload_streaming(self, key: str, stream: object, content_type: str, retries: int = 1):
         """Store `stream` file in S3.
 
         :param key: The path where the file will be stored.
-        :param project: The project to which file will be stored.
         :param stream: The file object.
         :param content_type: The type of the file to store (e.g., `text/csv`)
         :param retries: Number of times to retry a failed request from a retryable response.
         :return: A dict with the response to request upload.
         """
         r = tenacity.Retrying(
-            stop = tenacity.stop_after_attempt(retries + 1),
-            retry = tenacity.retry_if_exception(ManagedContentClient._http_request_retry_predicate)
-            )
-        return r.wraps(self._upload_streaming)(key, project, stream, content_type)
+            stop=tenacity.stop_after_attempt(retries + 1),
+            retry=tenacity.retry_if_exception(ManagedContentClient._http_request_retry_predicate)
+        )
+        return r.wraps(self._upload_streaming)(key, self._project, stream, content_type)
 
-    def _upload_streaming(self, key: str, project: str, stream: object, content_type: str):
-        uri = self._make_content_uri(key, project)
+    def _upload_streaming(self, key: str, stream: object, content_type: str):
+        uri = self._make_content_uri(key, self._project)
         headers = {'Content-Type': content_type}
         r = self._serviceconnector.request('POST', uri, stream, headers)
         raise_for_status_with_detail(r)
         return r.json()
 
-    def download(self, key: str, project, retries: int = 1):
+    def download(self, key: str, retries: int = 1):
         """Download a file from managed content (S3).
 
         :param key: The path of the file to retrieve.
-        :param project: The project to which to get file from.
         :param retries: Number of times to retry a failed request from a response.
         :returns: A Generator.
         """
         r = tenacity.Retrying(
-            stop = tenacity.stop_after_attempt(retries + 1),
-            retry = tenacity.retry_if_exception(ManagedContentClient._http_request_retry_predicate)
-            )
-        return r.wraps(self._download)(key, project)
+            stop=tenacity.stop_after_attempt(retries + 1),
+            retry=tenacity.retry_if_exception(ManagedContentClient._http_request_retry_predicate)
+        )
+        return r.wraps(self._download)(key, self._project)
 
-    def _download(self, key: str, project):
-        uri = self._make_content_uri(key, project)
+    def _download(self, key: str):
+        uri = self._make_content_uri(key, self._project)
         r = self._serviceconnector.request('GET', uri, stream=True)
         raise_for_status_with_detail(r)
         return r.raw
 
-    def exists(self, key: str, project) -> bool:
+    def exists(self, key: str) -> bool:
         """Check that a file from managed content (S3) exists.
 
         :param key: The path of the file to check.
         :returns: A boolean indicating wether the file exists or not.
         """
-        uri = self._make_content_uri(key, project)
+        uri = self._make_content_uri(key, self._project)
         r = self._serviceconnector.request('HEAD', uri)
         return r.status_code == 200
 
-    def delete(self, key: str, project):
+    def delete(self, key: str):
         """Delete a file from managed content (S3) .
 
-        :param project: The project to which to get file from.
         :param key: The path of the file to check.
         :returns: A boolean indicating wether the file exists or not.
         """
-        uri = self._make_content_uri(key, project)
+        uri = self._make_content_uri(key, self._project)
         r = self._serviceconnector.request('DELETE', uri)
         raise_for_status_with_detail(r)
         return r.json()
@@ -175,5 +172,5 @@ class ManagedContentClient(_Client):
                 return True
         return False
 
-    def _make_content_uri(self, key: str, project: str):
-        return self.URIs['content'].format(projectId=project) + '/' + key.lstrip('/')
+    def _make_content_uri(self, key: str):
+        return self.URIs['content'].format(projectId=self._project) + '/' + key.lstrip('/')

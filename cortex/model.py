@@ -15,12 +15,11 @@ limitations under the License.
 """
 
 import json
-import urllib.parse
 
 from .camel import CamelResource
 from typing import Dict
 from .serviceconnector import _Client
-from .utils import raise_for_status_with_detail
+from .utils import raise_for_status_with_detail, parse_string, Constants
 
 
 class ModelClient(_Client):
@@ -35,12 +34,16 @@ class ModelClient(_Client):
 
     }
 
-    def __init__(self, project, *args, **kwargs):
+    def __init__(self, project: str, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._serviceconnector.version = 4
+        self._serviceconnector.version = Constants.default_api_version
         self._project = project
 
     def list_models(self):
+        """
+        List Models
+        :return: list of models
+        """
         r = self._serviceconnector.request(method='GET', uri=self.URIs['models'].format(projectId=self._project))
         raise_for_status_with_detail(r)
         rs = r.json()
@@ -48,6 +51,11 @@ class ModelClient(_Client):
         return rs.get('models', [])
 
     def save_model(self, model_obj):
+        """
+        Save or update model object
+        :param model_obj: Model object to be saved or updated
+        :return: status
+        """
         body = json.dumps(model_obj)
         headers = {'Content-Type': 'application/json'}
         uri = self.URIs['models'].format(projectId=self._project)
@@ -56,23 +64,33 @@ class ModelClient(_Client):
         return r.json()
 
     def get_model(self, model_name):
-        uri = self.URIs['model'].format(projectId=self._project, modelName=self.parse_string(model_name))
+        """
+        Get model by model name
+        :param model_name: Model name
+        :return: model json
+        """
+        uri = self.URIs['model'].format(projectId=self._project, modelName=parse_string(model_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
 
         return r.json()
 
     def delete_model(self, model_name):
-        uri = self.URIs['model'].format(projectId=self._project, modelName=self.parse_string(model_name))
+        """
+        Delete model by name
+        :param model_name: Model name
+        :return: status
+        """
+        uri = self.URIs['model'].format(projectId=self._project, modelName=parse_string(model_name))
         r = self._serviceconnector.request(method='DELETE', uri=uri)
         raise_for_status_with_detail(r)
         rs = r.json()
 
         return rs.get('success', False)
 
-    def parse_string(self, string):
-        # Replaces special characters like / with %2F
-        return urllib.parse.quote(string, safe='')
+    @property
+    def project(self):
+        return self._project
 
 
 class Model(CamelResource):
@@ -80,9 +98,9 @@ class Model(CamelResource):
     Tracks associated parameters of models.
     """
 
-    def __init__(self, document: Dict, project: str, client: ModelClient):
+    def __init__(self, document: Dict, client: ModelClient):
         super().__init__(document, False)
-        self._project = project
+        self._project = client.project
         self._client = client
 
     def to_camel(self, camel='1.0.0'):

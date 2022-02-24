@@ -16,21 +16,17 @@ limitations under the License.
 
 import os
 import time
+
+from .experiment import LocalExperiment
 from .serviceconnector import ServiceConnector
 from .env import CortexEnv
 from .exceptions import ProjectException
-from .experiment import Experiment, LocalExperiment, ExperimentClient
 from .message import Message
-from .connection import Connection, ConnectionClient
-from .secrets import SecretsClient, Secret
-from .session import Session, SessionClient
-from .skill import Skill
-from .utils import decode_JWT, get_logger, generate_token
-
-_DEFAULT_API_VERSION = 4
+from .utils import decode_JWT, get_logger, generate_token, Constants
 
 _msg_token_exp_no_creds = """
-Your Cortex token is expired, and the required credentials for auto-refresh have not been provided. Supply these credentials; account, username,
+Your Cortex token has expired, and the required credentials for auto-refresh have not been provided. Supply these 
+credentials; account, username,
 and password.  Please login again to retrieve a valid token.
 """
 
@@ -65,7 +61,8 @@ class Client(object):
         Create an instance of the Cortex Fabric client
 
         :param url: Cortex fabric url
-        :param token: (optional) Use JWT token for authenticate requests, will default to settings in ~/.cortex/config if not provided
+        :param token: (optional) Use JWT token to authenticate requests, will default to settings in ~/.cortex/config
+        if not provided
         :param config: (optional) Use Cortex personal access token config file to generate JWT tokens
         :param project: (optional) Project name, must specify project for each request
         :param version: (optional) Fabric API version (default: 4)
@@ -77,77 +74,6 @@ class Client(object):
         self._url = url
         self._version = version
         self._verify_ssl_cert = verify_ssl_cert
-
-    def skill(self, name: str) -> Skill:
-        """
-        Gets a skill with the specified name.
-        """
-        if not self._token.token:
-            self._token = _Token(generate_token(self._config))
-        return Skill.get_skill(name=name, project=self._project, client=self._mk_connector())
-
-    def get_connection(self, name: str, version: str = '4', project=None):
-        """
-        Gets an connection with the specified name.
-
-        :param name: Connection name to fetch
-        :param version: (optional) Fabric API version (default: 4)
-        :param project: (optional) Project name, defaults to client's project
-        """
-        if project is None:
-            project = self._project
-        if not self._token.token:
-            self._token = _Token(generate_token(self._config))
-        conn_client = ConnectionClient(self._url, version, self._token.token, self._config, self._verify_ssl_cert)
-        return Connection.get_connection(name=name, project=project, client=conn_client)
-
-    def get_secret(self, name: str, version: str = '4', project: str = None) -> Secret:
-        """
-        Gets a secret with the specified name.
-
-        :param name: Secret name to fetch
-        :param version: (optional) Fabric API version (default: 4)
-        :param project: (optional) Project name, defaults to client's project
-        """
-        if project is None:
-            project = self._project
-        if not self._token.token:
-            self._token = _Token(generate_token(self._config))
-        sec_client = SecretsClient(self._url, version, self._token.token, self._config, self._verify_ssl_cert)
-        return Secret.get_secret(name=name, project=project, client=sec_client)
-
-    def session(self, session_id: str = None, ttl: int = None, project: str = None) -> Session:
-        """
-        Gets a session with the specified identifier.
-
-        :param session_id: Session id to fetch
-        :param ttl: (optional) Session expiration in seconds (default: -1)
-        :param project: (optional) Project name, defaults to client's project
-        """
-        if project is None:
-            project = self._project
-        if not self._token.token:
-            self._token = _Token(generate_token(self._config))
-        session_client = SessionClient(self._url, self._version, self._token.token, self._config, self._verify_ssl_cert)
-        if not session_id:
-            return Session.start(client=session_client, project=project, ttl=ttl)
-        return Session(session_id=session_id, client=session_client, project=project)
-
-    def experiment(self, name: str, version: str = '4', model_id: str = None, project: str = None) -> Experiment:
-        """
-        Gets an experiment with the specified name.
-
-        :param name: Experiment name to fetch
-        :param version: (optional) Fabric API version (default: 4)
-        :param model_id: (optional) Model ID associated with the experiment (default: None)
-        :param project: (optional) Project name, defaults to client's project
-        """
-        if project is None:
-            project = self._project
-        if not self._token.token:
-            self._token = _Token(generate_token(self._config))
-        exp_client = ExperimentClient(self._url, version, self._token.token, self._config, self._verify_ssl_cert)
-        return Experiment.get_experiment(name=name, project=project, client=exp_client, model_id=model_id)
 
     def message(self, payload: dict, properties: dict = None) -> Message:
         """Constructs a Message from payload and properties if given.
@@ -186,7 +112,6 @@ class Local:
     def experiment(self, name: str) -> LocalExperiment:
         """
         Create an experiment without connecting to Cortex fabric
-
         :param name: Experiment name
         :return: Experiment instance
         """
@@ -199,10 +124,11 @@ class Cortex(object):
     """
 
     @staticmethod
-    def client(api_endpoint: str = None, api_version: int = _DEFAULT_API_VERSION, verify_ssl_cert=None,
+    def client(api_endpoint: str = None, api_version: int = Constants.default_api_version, verify_ssl_cert=None,
                token: str = None, config: dict = None, project: str = None):
         """
-        Gets a client with the provided parameters. All parameters are optional and default to environment variable values if not specified.
+        Gets a client with the provided parameters. All parameters are optional and default to environment variable
+        values if not specified.
 
         **Example**
 
@@ -211,9 +137,12 @@ class Cortex(object):
 
         :param api_endpoint: The Cortex URL.
         :param api_version: The version of the API to use with this client.
-        :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE file or directory with certificates of trusted CAs (default: True)
+        :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE file or directory
+        with certificates of trusted CAs (default: True)
         :param project: Cortex Project that you want to use.
-        :param token: (optional) Use JWT token for authenticating requests, will default to settings in ~/.cortex/config if not provided
+        :param token: (optional) Use JWT token for authenticating requests, will default to settings in
+        ~/.cortex/config
+        if not provided
         :param config: (optional) Use Cortex personal access token config file to generate JWT tokens.
         """
         env = CortexEnv(api_endpoint=api_endpoint, token=token, config=config, project=project)
@@ -241,9 +170,10 @@ class Cortex(object):
     @staticmethod
     def from_message(msg, verify_ssl_cert=None):
         """
-        Creates a Cortex client from a skill's input message, expects { api_endpoint:'..', token:'..', projectId:'..' }
+        Creates a Cortex client from a skill's input message, expects { api_endpoint:"..", token:"..", projectId:".."}
         :param msg: A message for constructing a Cortex Client.
-        :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE file or directory with certificates of trusted CAs (default: True)
+        :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE file or directory
+        with certificates of trusted CAs (default: True)
         """
         keys = ('apiEndpoint', 'token', 'projectId')
         if not all(key in msg for key in keys):

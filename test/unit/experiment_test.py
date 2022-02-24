@@ -26,19 +26,20 @@ from mocket import mocketize
 from .fixtures import mock_pat_config, build_mock_url, mock_api_endpoint
 import dill
 
-
 PROJECT = 'expproj'
+
+
 class TestExperiment(unittest.TestCase):
-    '''
+    """
     Test experiment checks experiment functionality
-    '''    
+    """
     # values for testing experiments
     EXP_NAME = 'unittest-exp'
 
     def setUp(self):
+        self.cortex = Cortex.client(api_endpoint=mock_api_endpoint(), config=mock_pat_config(), project=PROJECT)
         self.local = Cortex.local()
         self.local_tmp = Cortex.local('/tmp/cortex')
-        self.cortex = Cortex.client(api_endpoint=mock_api_endpoint(), config=mock_pat_config(), project=PROJECT)
 
         # register mock for getting an experiment from the client
         uri = ExperimentClient.URIs['experiment'].format(experimentName=self.EXP_NAME, projectId=PROJECT)
@@ -66,19 +67,20 @@ class TestExperiment(unittest.TestCase):
         exp = self.cortex.experiment(self.EXP_NAME)
         # add a run & artifact
 
-        ## register mock for creating a run
+        # register mock for creating a run
         uri = ExperimentClient.URIs['runs'].format(projectId=PROJECT, experimentName=self.EXP_NAME)
         run_id = '000001'
         returns = {"runId": run_id}
         Entry.single_register(Entry.POST, build_mock_url(uri), status=200, body=json.dumps(returns))
 
         run = exp.start_run()
-        ## make an artifact
+        # make an artifact
         my_dictionary = {'a_thing': 1, 'another_thing': 2}
 
         # get the artifact & test if it is what is expected
-        ## register mock for loading an artifact
-        uri = ExperimentClient.URIs['artifact'].format(experimentName=self.EXP_NAME, runId=run_id, artifactId='my_dictionary', projectId=PROJECT)
+        # register mock for loading an artifact
+        uri = ExperimentClient.URIs['artifact'].format(experimentName=self.EXP_NAME, runId=run_id,
+                                                       artifactId='my_dictionary', projectId=PROJECT)
         Entry.single_register(Entry.GET, build_mock_url(uri), status=200, body=dill.dumps(my_dictionary))
 
         result = exp.load_artifact(run, 'my_dictionary')
@@ -116,10 +118,10 @@ class TestExperiment(unittest.TestCase):
 
     def make_run(self, exp):
         run = exp.start_run()
-        run.set_meta('meta','meta_val')
-        run.log_params({'param':'param_val'})
+        run.set_meta('meta', 'meta_val')
+        run.log_params({'param': 'param_val'})
         run.start()
         run.stop()
-        run.log_metric(name='metric_1',metric=85)
+        run.log_metric(name='metric_1', metric=85)
         exp.save_run(run)
         return run
