@@ -1,5 +1,23 @@
 format_version: 10
 pipelines:
+  cortex-python-pr:
+    group: pull-requests
+    materials:
+      cortex-python:
+        plugin_configuration:
+          id: github.pr
+          version: 1
+        options:
+          url: git@github.com:CognitiveScale/cortex-python.git
+          defaultBranch: develop
+    stages:
+      - build:
+          clean_workspace: true
+          jobs:
+            build:
+              elastic_profile_id: gocd-test-agent-dind
+              tasks:
+                - script: c12e-ci -l
   cortex-python-develop:
     group: fabric6
     materials:
