@@ -28,6 +28,9 @@ from .exceptions import BadTokenException
 
 
 class Constants:
+    """
+    Useful Constants
+    """
     default_api_version = 4
 
     @property
@@ -237,5 +240,10 @@ def raise_for_status_with_detail(resp):
 
 
 def parse_string(string: str):
+    """
+    parse a given string and apply common encoding/substitution rules
+    :param string: the string to parse
+    :return:
+    """
     # Replaces special characters like / with %2F (URL encoding)
     return urllib.parse.quote(string, safe='')
