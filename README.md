@@ -32,7 +32,7 @@ To install the optional components:
 
 When developing, it's a best practice to work in a virtual environment. Create and activate a virtual environment:
 ```
-  > virtualenv --python=python3.6 _venv
+  > virtualenv --python=python3.8 _venv
   > source _venv/bin/activate
 ```
 

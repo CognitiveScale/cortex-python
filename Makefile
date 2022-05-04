@@ -1,7 +1,7 @@
 DISTRIBUTION_NAME = $(shell python setup.py --name)
 DISTRIBUTION_VERSION = $(shell python setup.py --version)
 
-.PHONY: clean dev.install build build.alpha build.release dev.test test stage docs dev.push
+.PHONY: clean dev.install build build.alpha build.release dev.test test stage dev.push docs.dev docs.multi docs.package
 
 clean:
 	rm -rf ./build
