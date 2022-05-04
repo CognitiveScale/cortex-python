@@ -33,6 +33,8 @@ limitations under the License.
 #
 import os
 import sys
+
+# Include cortex/ in the system path
 sys.path.insert(0, os.path.abspath('..'))
 
 
@@ -196,9 +198,12 @@ html_context['display_lower_left'] = True
 
 templates_path = ['_templates']
 
-smv_branch_whitelist = 'master'
+# Regex for branches to build docs
+smv_branch_whitelist = '^(main|staging|develop)$'
+
 # tag format vX.Y.Z
 smv_tag_whitelist = r'^release/\d+\.\d+\.\d+$'
+
 # all tags are considered released
 smv_released_pattern = r'^refs/tags/.*$'
 
