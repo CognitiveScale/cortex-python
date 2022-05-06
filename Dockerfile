@@ -1,4 +1,4 @@
-FROM python:3.9.6-slim
+FROM python:3.9.11-slim
 ENV ISTIO_QUIT_API=http://localhost:15020
 ENV ENVOY_ADMIN_API=http://localhost:15000
 COPY --from=redboxoss/scuttle:latest /scuttle /bin/scuttle
