@@ -7,4 +7,4 @@ nbconvert==6.1.0
 
 ## This is a dependency from cortex-python (pre-v6.1.0) that was removed, but it must be installed in the environment
 ## to build docs for earlier versions of the library.
-pyjwt>=1.6.1,<2
+##pyjwt>=1.6.1,<2
