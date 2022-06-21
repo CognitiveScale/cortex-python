@@ -1,4 +1,4 @@
-FROM python:3.10.2-slim
+FROM python:3.10.5-slim
 ENV ISTIO_QUIT_API=http://localhost:15020
 ENV ENVOY_ADMIN_API=http://localhost:15000
 COPY --from=c12e/scuttle:latest /scuttle /bin/scuttle
