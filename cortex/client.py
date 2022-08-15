@@ -17,7 +17,7 @@ limitations under the License.
 import os
 import time
 
-from .experiment import LocalExperiment
+from .experiment.local import LocalExperiment
 from .serviceconnector import ServiceConnector
 from .env import CortexEnv
 from .exceptions import ProjectException
