@@ -22,8 +22,7 @@ from mocket.mockhttp import Entry
 from mocket import mocketize
 
 from cortex import Cortex
-from cortex.experiment import ExperimentClient
-from cortex.run import RemoteRun
+from cortex.experiment import ExperimentClient, RemoteRun
 from .fixtures import mock_pat_config, build_mock_url, mock_api_endpoint
 
 PROJECT = 'runproj'

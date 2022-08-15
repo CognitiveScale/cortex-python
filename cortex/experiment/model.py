@@ -15,15 +15,8 @@ limitations under the License.
 """
 
 import cuid
-import io
-import os
-import dill
-import tempfile
-
-from .experiment import ExperimentClient
-from .timer import Timer
-from .exceptions import ConfigurationException
-
+from ..timer import Timer
+from ..exceptions import ConfigurationException
 
 class Run:
     """
@@ -260,147 +253,100 @@ class Run:
             return np.asscalar(x)
         return x
 
+def _to_html(exp):
+    try:
+        import maya
+        from jinja2 import Template
+    except (ImportError, NameError):
+        raise ConfigurationException(
+            'The jupyter extras are required to use this, please install using "pip install cortex-python[jupyter]"')
 
-class RemoteRun(Run):
-    """
-    A run that is executed remotely, through a client.
-    """
+    runs = exp.runs()
 
-    def __init__(self, experiment, client: ExperimentClient):
-        super().__init__(experiment)
-        self._client = client
+    template = """
+                    <style>
+                        #table1 {
+                          border: solid thin;
+                          border-collapse: collapse;
+                        }
+                        #table1 caption {
+                          padding-bottom: 0.5em;
+                        }
+                        #table1 th,
+                        #table1 td {
+                          border: solid thin;
+                          padding: 0.5rem 2rem;
+                        }
+                        #table1 td {
+                          white-space: nowrap;
+                        }
+                        #table1 td {
+                          border-style: none solid;
+                          vertical-align: top;
+                        }
+                        #table1 th {
+                          padding: 0.2em;
+                          vertical-align: middle;
+                          text-align: center;
+                        }
+                        #table1 tbody td:first-child::after {
+                          content: leader(". "); '
+                        }
+                    </style>
+                    <table id="table1">
+                        <caption><b>Experiment:</b> {{name}}</caption>
+                        <thead>
+                        <tr>
+                            <th rowspan="2">ID</th>
+                            <th rowspan="2">Date</th>
+                            <th rowspan="2">Took</th>
+                            <th colspan="{{num_params}}" scope="colgroup">Params</th>
+                            <th colspan="{{num_metrics}}" scope="colgroup">Metrics</th>
+                        </tr>
+                        <tr>
+                            {% for param in param_names %}
+                            <th>{{param}}</th>
+                            {% endfor %}
+                            {% for metric in metric_names %}
+                            <th>{{metric}}</th>
+                            {% endfor %}
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for run in runs %}
+                            <tr>
+                            <td>{{run.id}}</td>
+                            <td>{{maya(run.start_time)}}</td>
+                            <td>{{'%.2f' % run.took}} s</td>
+                            {% for param in param_names %}
+                            <td>{{run.params.get(param, "&#x2011;")}}</td>
+                            {% endfor %}
+                            {% for metric in metric_names %}
+                            <td>{{'%.6f' % run.metrics.get(metric, 0.0)}}</td>
+                            {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>"""
 
-    @staticmethod
-    def create(experiment, experiment_client):
-        """
-        Creates a remote run.
-        :param experiment: The experiment to associate with this run.
-        :param experiment_client: The client for the run.
-        :return: A run.
-        """
-        r = experiment_client.create_run(experiment.name)
-        run = RemoteRun(experiment, experiment_client)
-        run._id = r['runId']
+    num_params = 0
+    num_metrics = 0
+    param_names = set()
+    metric_names = set()
+    if len(runs) > 0:
+        for one_run in runs:
+            param_names.update(one_run.params.keys())
+            num_params = len(param_names)
+            metric_names.update(one_run.metrics.keys())
+            num_metrics = len(metric_names)
 
-        return run
-
-    @staticmethod
-    def get(experiment, run_id, experiment_client):
-        """
-        Gets a run.
-
-        :param experiment: The parent experiment of the run.
-        :param run_id: The identifier for the run.
-        :param experiment_client: The client for the run.
-        :return: A run.
-        """
-        r = experiment_client.get_run(experiment.name, run_id)
-        return RemoteRun.from_json(r, experiment)
-
-    @staticmethod
-    def from_json(json, experiment):
-        """
-        Builds a run from the given json.
-        :param json: json that specifies the run; acceptable values are runId,
-        startTime, endTime, took, a list of params, metrics, metadata, and artifacts
-        :param experiment: the parent experiment of the run
-        :return: a run
-        """
-        run = RemoteRun(experiment, experiment._client)
-        run._id = json['runId']
-        run._start = json.get('startTime', json.get('start'))
-        run._end = json.get('endTime', json.get('end'))
-        run._interval = json.get('took')
-        run._params = json.get('params', {})
-        run._metrics = json.get('metrics', {})
-        run._meta = json.get('meta', {})
-        run._artifacts = json.get('artifacts', {})
-
-        return run
-
-    def log_param(self, name: str, param):
-        """
-        Updates the params for the run.
-        """
-        super().log_param(name, param)
-        self._client.update_param(self._experiment.name, self.id, name, param)
-
-    def log_metric(self, name: str, metric):
-        """
-        Updates the metrics for the run.
-        """
-        super().log_metric(name, metric)
-        self._client.update_metric(self._experiment.name, self.id, name, metric)
-
-    def set_meta(self, name: str, val):
-        """
-        Sets the metadata for the run.
-        """
-        super().set_meta(name, val)
-        self._client.update_meta(self._experiment.name, self.id, name, val)
-
-    def log_artifact(self, name: str, artifact):
-        """
-        Updates the artifacts for the run.
-        """
-        super().log_artifact(name, artifact)
-        if hasattr(artifact, 'ref'):
-            with open(artifact['ref'], 'rb') as stream:
-                self.log_artifact_stream(name, stream)
-        else:
-            stream = io.BytesIO()
-            dill.dump(artifact, stream)
-            stream.seek(0)
-            self.log_artifact_stream(name, stream)
-
-    def log_artifact_file(self, name: str, file_path):
-        """
-        Logs the artifact to the file given in the filepath.
-        """
-        super().log_artifact(name, file_path)
-        with open(file_path, 'rb') as f:
-            self.log_artifact_stream(name, f)
-
-    def log_artifact_stream(self, name: str, stream):
-        """
-        Updates the artifact with the given stream.
-        """
-        self._client.update_artifact(self._experiment.name, self.id, name, stream)
-
-    def log_keras_model(self, model, artifact_name='model'):
-        """
-        Logs a keras model as an artifact.
-        """
-        with tempfile.NamedTemporaryFile(mode='w+b') as temp:
-            model.save(filepath=temp.name)
-            self.log_artifact_file(artifact_name, temp.name)
-
-    def get_artifact(self, name: str, deserializer=dill.loads):
-        """
-        Gets an artifact with the given name.  Deserializes the artifact stream using dill by default.  Deserialization
-        can be disabled entirely or the deserializer function can be overridden.
-        """
-        artifact_bytes = self._client.get_artifact(experiment_name=self._experiment.name, run_id=self.id, artifact=name)
-        if deserializer:
-            return deserializer(artifact_bytes)
-        return artifact_bytes
-
-    def get_keras_model(self, artifact_name='model'):
-        """
-        Gets the keras model.
-        """
-        try:
-            from keras.models import load_model
-        except ImportError:
-            raise ConfigurationException('Keras needs to be installed in order to use get_keras_model')
-
-        f = tempfile.NamedTemporaryFile(delete=False)
-        f.write(self.get_artifact(artifact_name, deserializer=lambda x: x))
-        model_file = f.name
-        f.close()
-        try:
-            model = load_model(model_file)
-        finally:
-            os.remove(model_file)
-
-        return model
+    t = Template(template)
+    return t.render(
+        name=exp.name,
+        runs=runs,
+        maya=maya.MayaDT,
+        num_params=num_params,
+        param_names=sorted(list(param_names)),
+        num_metrics=num_metrics,
+        metric_names=sorted(list(metric_names))
+    )
