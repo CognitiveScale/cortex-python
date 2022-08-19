@@ -30,10 +30,9 @@ class ConnectionClient(_Client):
     """
     URIs = {'connections': 'projects/{projectId}/connections'}
 
-    def __init__(self, project: str, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = Constants.default_api_version
-        self._project = project
 
     def save_connection(self, connection: object):
         """
@@ -41,7 +40,7 @@ class ConnectionClient(_Client):
         :param connection: Connection object
         :return: status
         """
-        uri = self.URIs['connections'].format(projectId=self._project)
+        uri = self.URIs['connections'].format(projectId=self._project())
         data = json.dumps(connection)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request('POST', uri, data, headers)
@@ -56,22 +55,18 @@ class ConnectionClient(_Client):
         """
         port = os.getenv('CORTEX_CONNECTIONS_SERVICE_PORT_HTTP_CORTEX_CONNECTIONS') or '4450'
         conn_svc_url = f'{self._serviceconnector.url.replace("cortex-internal", "cortex-connections")}:{port}'
-        uri = f'{conn_svc_url}/internal/projects/{self._project}/connections/{urllib.parse.quote(name, safe="")}'
+        uri = f'{conn_svc_url}/internal/projects/{self._project()}/connections/{urllib.parse.quote(name, safe="")}'
         log.debug('Getting connection using URI: %s' % uri)
-        r = self._serviceconnector.request('GET', uri, is_internal_url=True)
+        r = self._serviceconnector.request('GET', uri=uri, is_internal_url=True)
         raise_for_status_with_detail(r)
 
         return r.json()
 
     def _bootstrap(self):
         uri = self.URIs['connections'] + '/_/bootstrap'
-        r = self._serviceconnector.request('GET', uri)
+        r = self._serviceconnector.request('GET', uri=uri)
         raise_for_status_with_detail(r)
         return r.json()
-
-    @property
-    def project(self):
-        return self._project
 
 
 class Connection(CamelResource):

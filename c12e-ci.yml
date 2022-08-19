@@ -5,7 +5,7 @@ builder:
     && make dev.install
     && make test
     && make build
-    && make docs.multi
+    && make docs.dev
     && make docs.package'
   environment:
     - ALPHA_BUILD

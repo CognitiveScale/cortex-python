@@ -6,3 +6,4 @@ mocket>=3.9.0,<4.0
 pipdeptree
 pylint>=2.3.0,<3
 pytest-cov==2.5.1
+cuid

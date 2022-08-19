@@ -15,19 +15,17 @@ limitations under the License.
 """
 
 import dill
-import os
+import io
 import json
+import os
+import tempfile
 
-from pathlib import Path
-from .run import Run, RemoteRun
-from .properties import PropertyManager
-from contextlib import closing
-from datetime import datetime
-from .camel import CamelResource
+from .model import Run, _to_html
+from ..camel import CamelResource
 from typing import Dict, List
-from .exceptions import APIException, ConfigurationException
-from .serviceconnector import _Client
-from .utils import raise_for_status_with_detail, get_logger, parse_string, Constants
+from ..exceptions import APIException, ConfigurationException
+from ..serviceconnector import _Client
+from ..utils import raise_for_status_with_detail, get_logger, parse_string, Constants
 
 log = get_logger(__name__)
 
@@ -49,13 +47,12 @@ class ExperimentClient(_Client):
         'metric': 'projects/{projectId}/experiments/{experimentName}/runs/{runId}/metrics/{metricId}'
     }
 
-    def __init__(self, project: str, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = Constants.default_api_version
-        self._project = project
 
     def list_experiments(self):
-        r = self._serviceconnector.request(method='GET', uri=self.URIs['experiments'].format(projectId=self._project))
+        r = self._serviceconnector.request(method='GET', uri=self.URIs['experiments'].format(projectId=self._project()))
         raise_for_status_with_detail(r)
         rs = r.json()
 
@@ -72,13 +69,13 @@ class ExperimentClient(_Client):
 
         body = json.dumps(body_obj)
         headers = {'Content-Type': 'application/json'}
-        uri = self.URIs['experiments'].format(projectId=self._project)
+        uri = self.URIs['experiments'].format(projectId=self._project())
         r = self._serviceconnector.request(method='POST', uri=uri, body=body, headers=headers)
         raise_for_status_with_detail(r)
         return r.json()
 
     def delete_experiment(self, experiment_name):
-        uri = self.URIs['experiment'].format(projectId=self._project, experimentName=parse_string(experiment_name))
+        uri = self.URIs['experiment'].format(projectId=self._project(), experimentName=parse_string(experiment_name))
         r = self._serviceconnector.request(method='DELETE', uri=uri)
         raise_for_status_with_detail(r)
         rs = r.json()
@@ -86,14 +83,14 @@ class ExperimentClient(_Client):
         return rs.get('success', False)
 
     def get_experiment(self, experiment_name):
-        uri = self.URIs['experiment'].format(projectId=self._project, experimentName=parse_string(experiment_name))
+        uri = self.URIs['experiment'].format(projectId=self._project(), experimentName=parse_string(experiment_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
 
         return r.json()
 
     def list_runs(self, experiment_name):
-        uri = self.URIs['runs'].format(projectId=self._project, experimentName=parse_string(experiment_name))
+        uri = self.URIs['runs'].format(projectId=self._project(), experimentName=parse_string(experiment_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
         rs = r.json()
@@ -101,7 +98,7 @@ class ExperimentClient(_Client):
         return rs.get('runs', [])
 
     def find_runs(self, experiment_name, filter, sort=None, limit=25):
-        uri = self.URIs['runs'].format(projectId=self._project, experimentName=parse_string(experiment_name))
+        uri = self.URIs['runs'].format(projectId=self._project(), experimentName=parse_string(experiment_name))
 
         # filter and limit are required query params
         params = {
@@ -120,7 +117,7 @@ class ExperimentClient(_Client):
         return rs.get('runs', [])
 
     def delete_runs(self, experiment_name, filter=None, sort=None, limit=None):
-        uri = self.URIs['runs'].format(projectId=self._project, experimentName=parse_string(experiment_name))
+        uri = self.URIs['runs'].format(projectId=self._project(), experimentName=parse_string(experiment_name))
 
         params = {}
 
@@ -155,7 +152,7 @@ class ExperimentClient(_Client):
 
         body = json.dumps(body_obj)
         headers = {'Content-Type': 'application/json'}
-        uri = self.URIs['runs'].format(projectId=self._project, experimentName=parse_string(experiment_name))
+        uri = self.URIs['runs'].format(projectId=self._project(), experimentName=parse_string(experiment_name))
         r = self._serviceconnector.request(method='POST', uri=uri, body=body, headers=headers)
         raise_for_status_with_detail(r)
         return r.json()
@@ -168,7 +165,7 @@ class ExperimentClient(_Client):
         :param run_id: The identifier for the run.
         :return: A run.
         """
-        uri = self.URIs['run'].format(projectId=self._project, experimentName=parse_string(experiment_name),
+        uri = self.URIs['run'].format(projectId=self._project(), experimentName=parse_string(experiment_name),
                                       runId=run_id)
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
@@ -189,7 +186,7 @@ class ExperimentClient(_Client):
 
         body = json.dumps(body_obj)
         headers = {'Content-Type': 'application/json'}
-        uri = self.URIs['run'].format(projectId=self._project, experimentName=parse_string(experiment_name),
+        uri = self.URIs['run'].format(projectId=self._project(), experimentName=parse_string(experiment_name),
                                       runId=run_id)
         r = self._serviceconnector.request(method='PUT', uri=uri, body=body, headers=headers)
         raise_for_status_with_detail(r)
@@ -208,7 +205,7 @@ class ExperimentClient(_Client):
         :param run_id: The identifier for the run.
         :return: status
         """
-        uri = self.URIs['run'].format(projectId=self._project, experimentName=parse_string(experiment_name),
+        uri = self.URIs['run'].format(projectId=self._project(), experimentName=parse_string(experiment_name),
                                       runId=run_id)
         r = self._serviceconnector.request(method='DELETE', uri=uri)
         raise_for_status_with_detail(r)
@@ -220,7 +217,7 @@ class ExperimentClient(_Client):
         return success
 
     def update_meta(self, experiment_name, run_id, meta, val):
-        uri = self.URIs['meta'].format(projectId=self._project, experimentName=parse_string(experiment_name),
+        uri = self.URIs['meta'].format(projectId=self._project(), experimentName=parse_string(experiment_name),
                                        runId=run_id, metaId=meta)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=headers)
@@ -233,7 +230,7 @@ class ExperimentClient(_Client):
         return success
 
     def update_param(self, experiment_name, run_id, param, val):
-        uri = self.URIs['param'].format(projectId=self._project, experimentName=parse_string(experiment_name),
+        uri = self.URIs['param'].format(projectId=self._project(), experimentName=parse_string(experiment_name),
                                         runId=run_id, paramId=param)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=headers)
@@ -246,7 +243,7 @@ class ExperimentClient(_Client):
         return success
 
     def update_metric(self, experiment_name, run_id, metric, val):
-        uri = self.URIs['metric'].format(projectId=self._project, experimentName=parse_string(experiment_name),
+        uri = self.URIs['metric'].format(projectId=self._project(), experimentName=parse_string(experiment_name),
                                          runId=run_id, metricId=metric)
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request(method='PUT', uri=uri, body=json.dumps({'value': val}), headers=headers)
@@ -259,7 +256,7 @@ class ExperimentClient(_Client):
         return success
 
     def update_artifact(self, experiment_name, run_id, artifact, stream):
-        uri = self.URIs['artifact'].format(projectId=self._project, experimentName=parse_string(experiment_name),
+        uri = self.URIs['artifact'].format(projectId=self._project(), experimentName=parse_string(experiment_name),
                                            runId=run_id, artifactId=artifact)
         r = self._serviceconnector.request(method='PUT', uri=uri, body=stream)
         raise_for_status_with_detail(r)
@@ -271,116 +268,12 @@ class ExperimentClient(_Client):
         return success
 
     def get_artifact(self, experiment_name, run_id, artifact):
-        uri = self.URIs['artifact'].format(projectId=self._project, experimentName=parse_string(experiment_name),
+        uri = self.URIs['artifact'].format(projectId=self._project(), experimentName=parse_string(experiment_name),
                                            runId=run_id, artifactId=artifact)
         r = self._serviceconnector.request(method='GET', uri=uri, stream=True)
         raise_for_status_with_detail(r)
 
         return r.content
-
-    @property
-    def project(self):
-        return self._project
-
-
-def _to_html(exp):
-    try:
-        import maya
-        from jinja2 import Template
-    except (ImportError, NameError):
-        raise ConfigurationException(
-            'The jupyter extras are required to use this, please install using "pip install cortex-python[jupyter]"')
-
-    runs = exp.runs()
-
-    template = """
-                    <style>
-                        #table1 {
-                          border: solid thin;
-                          border-collapse: collapse;
-                        }
-                        #table1 caption {
-                          padding-bottom: 0.5em;
-                        }
-                        #table1 th,
-                        #table1 td {
-                          border: solid thin;
-                          padding: 0.5rem 2rem;
-                        }
-                        #table1 td {
-                          white-space: nowrap;
-                        }
-                        #table1 td {
-                          border-style: none solid;
-                          vertical-align: top;
-                        }
-                        #table1 th {
-                          padding: 0.2em;
-                          vertical-align: middle;
-                          text-align: center;
-                        }
-                        #table1 tbody td:first-child::after {
-                          content: leader(". "); '
-                        }
-                    </style>
-                    <table id="table1">
-                        <caption><b>Experiment:</b> {{name}}</caption>
-                        <thead>
-                        <tr>
-                            <th rowspan="2">ID</th>
-                            <th rowspan="2">Date</th>
-                            <th rowspan="2">Took</th>
-                            <th colspan="{{num_params}}" scope="colgroup">Params</th>
-                            <th colspan="{{num_metrics}}" scope="colgroup">Metrics</th>
-                        </tr>
-                        <tr>
-                            {% for param in param_names %}
-                            <th>{{param}}</th>
-                            {% endfor %}
-                            {% for metric in metric_names %}
-                            <th>{{metric}}</th>
-                            {% endfor %}
-                        </tr>
-                        </thead>
-                        <tbody>
-                            {% for run in runs %}
-                            <tr>
-                            <td>{{run.id}}</td>
-                            <td>{{maya(run.start_time)}}</td>
-                            <td>{{'%.2f' % run.took}} s</td>
-                            {% for param in param_names %}
-                            <td>{{run.params.get(param, "&#x2011;")}}</td>
-                            {% endfor %}
-                            {% for metric in metric_names %}
-                            <td>{{'%.6f' % run.metrics.get(metric, 0.0)}}</td>
-                            {% endfor %}
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>"""
-
-    num_params = 0
-    num_metrics = 0
-    param_names = set()
-    metric_names = set()
-    if len(runs) > 0:
-        for one_run in runs:
-            param_names.update(one_run.params.keys())
-            num_params = len(param_names)
-            metric_names.update(one_run.metrics.keys())
-            num_metrics = len(metric_names)
-
-    t = Template(template)
-    return t.render(
-        name=exp.name,
-        runs=runs,
-        maya=maya.MayaDT,
-        num_params=num_params,
-        param_names=sorted(list(param_names)),
-        num_metrics=num_metrics,
-        metric_names=sorted(list(metric_names))
-    )
-
 
 class Experiment(CamelResource):
     """
@@ -445,172 +338,150 @@ class Experiment(CamelResource):
         return _to_html(self)
 
     def display(self):
+        # Only available within a jupyter notebook
         from IPython.display import (display, HTML)
         display(HTML(self._repr_html_()))
 
-
-class LocalExperiment:
+class RemoteRun(Run):
     """
-    Runs experiment locally, not using Cortex services.
+    A run that is executed remotely, through a client.
     """
-    config_file = 'config.yml'
-    root_key = 'experiment'
-    dir_cortex = '.cortex'
-    dir_local = 'local'
-    dir_artifacts = 'artifacts'
-    dir_experiments = 'experiments'
-    runs_key = 'runs'
 
-    def __init__(self, name, basedir=None):
-        self._name = name
+    def __init__(self, experiment, client: ExperimentClient):
+        super().__init__(experiment)
+        self._client = client
 
-        if basedir:
-            self._basedir = Path(basedir)
+    @staticmethod
+    def create(experiment, experiment_client):
+        """
+        Creates a remote run.
+        :param experiment: The experiment to associate with this run.
+        :param experiment_client: The client for the run.
+        :return: A run.
+        """
+        r = experiment_client.create_run(experiment.name)
+        run = RemoteRun(experiment, experiment_client)
+        run._id = r['runId']
+
+        return run
+
+    @staticmethod
+    def get(experiment, run_id, experiment_client):
+        """
+        Gets a run.
+
+        :param experiment: The parent experiment of the run.
+        :param run_id: The identifier for the run.
+        :param experiment_client: The client for the run.
+        :return: A run.
+        """
+        r = experiment_client.get_run(experiment.name, run_id)
+        return RemoteRun.from_json(r, experiment)
+
+    @staticmethod
+    def from_json(json, experiment):
+        """
+        Builds a run from the given json.
+        :param json: json that specifies the run; acceptable values are runId,
+        startTime, endTime, took, a list of params, metrics, metadata, and artifacts
+        :param experiment: the parent experiment of the run
+        :return: a run
+        """
+        run = RemoteRun(experiment, experiment._client)
+        run._id = json['runId']
+        run._start = json.get('startTime', json.get('start'))
+        run._end = json.get('endTime', json.get('end'))
+        run._interval = json.get('took')
+        run._params = json.get('params', {})
+        run._metrics = json.get('metrics', {})
+        run._meta = json.get('meta', {})
+        run._artifacts = json.get('artifacts', {})
+
+        return run
+
+    def log_param(self, name: str, param):
+        """
+        Updates the params for the run.
+        """
+        super().log_param(name, param)
+        self._client.update_param(self._experiment.name, self.id, name, param)
+
+    def log_metric(self, name: str, metric):
+        """
+        Updates the metrics for the run.
+        """
+        super().log_metric(name, metric)
+        self._client.update_metric(self._experiment.name, self.id, name, metric)
+
+    def set_meta(self, name: str, val):
+        """
+        Sets the metadata for the run.
+        """
+        super().set_meta(name, val)
+        self._client.update_meta(self._experiment.name, self.id, name, val)
+
+    def log_artifact(self, name: str, artifact):
+        """
+        Updates the artifacts for the run.
+        """
+        super().log_artifact(name, artifact)
+        if hasattr(artifact, 'ref'):
+            with open(artifact['ref'], 'rb') as stream:
+                self.log_artifact_stream(name, stream)
         else:
-            self._basedir = Path.home() / self.dir_cortex
+            stream = io.BytesIO()
+            dill.dump(artifact, stream)
+            stream.seek(0)
+            self.log_artifact_stream(name, stream)
 
-        self._work_dir = self._basedir / self.dir_local / self.dir_experiments / self.name
-        self._work_dir.mkdir(parents=True, exist_ok=True)
-        Path(self._work_dir / self.dir_artifacts).mkdir(parents=True, exist_ok=True)
-
-        # Initialize config
-        pm = PropertyManager()
-        try:
-            pm.load(str(self._work_dir / self.config_file))
-        except FileNotFoundError:
-            pm.set('meta', {'created': str(datetime.now())})
-
-        self._config = pm
-
-    @property
-    def name(self):
+    def log_artifact_file(self, name: str, file_path):
         """
-        Name of the experiment.
+        Logs the artifact to the file given in the filepath.
         """
-        return self._name
+        super().log_artifact(name, file_path)
+        with open(file_path, 'rb') as f:
+            self.log_artifact_stream(name, f)
 
-    def start_run(self) -> Run:
+    def log_artifact_stream(self, name: str, stream):
         """
-        Creates a run for the experiment.
+        Updates the artifact with the given stream.
         """
-        return Run(self)
+        self._client.update_artifact(self._experiment.name, self.id, name, stream)
 
-    def save_run(self, run: Run):
+    def log_keras_model(self, model, artifact_name='model'):
         """
-        Saves a run.
-
-        :param run: The run you want to save.
+        Logs a keras model as an artifact.
         """
-        updated_runs = []
-        runs = self._config.get(self._config.join(self.root_key, self.runs_key)) or []
-        replaced = False
-        if len(runs) > 0:
-            for r in runs:
-                if r['id'] == run.id:
-                    updated_runs.append(run.to_json())
-                    replaced = True
-                else:
-                    updated_runs.append(r)
+        with tempfile.NamedTemporaryFile(mode='w+b') as temp:
+            model.save(filepath=temp.name)
+            self.log_artifact_file(artifact_name, temp.name)
 
-        if not replaced:
-            updated_runs.append(run.to_json())
-
-        self._config.set(self._config.join(self.root_key, self.runs_key), updated_runs)
-        self._save_config()
-
-        for name, artifact in run.artifacts.items():
-            with closing(open(self.get_artifact_path(run, name), 'wb')) as f:
-                dill.dump(artifact, f)
-
-    def reset(self):
+    def get_artifact(self, name: str, deserializer=dill.loads):
         """
-        Resets the experiment, removing all associated configuration and runs.
+        Gets an artifact with the given name.  Deserializes the artifact stream using dill by default.  Deserialization
+        can be disabled entirely or the deserializer function can be overridden.
         """
-        self._config.remove_all()
-        self.clean_dir(self._work_dir)
-        self.clean_dir(Path(self._work_dir / self.dir_artifacts))
+        artifact_bytes = self._client.get_artifact(experiment_name=self._experiment.name, run_id=self.id, artifact=name)
+        if deserializer:
+            return deserializer(artifact_bytes)
+        return artifact_bytes
 
-    def clean_dir(self, dir_to_clean):
+    def get_keras_model(self, artifact_name='model'):
         """
-        Removes only the files from the given directory
-        """
-        for f in os.listdir(dir_to_clean):
-            if os.path.isfile(os.path.join(dir_to_clean, f)):
-                os.remove(os.path.join(dir_to_clean, f))
-
-    def set_meta(self, prop, value):
-        """
-        Associates metadata properties with the experiment.
-
-        :param prop: The name of the metadata property to associate with the experiment.
-        :param value: The value of the metadata property to associate with the experiment.
-        """
-        meta = self._config.get('meta')
-        meta[prop] = value
-        self._config.set('meta', meta)
-        self._save_config()
-
-    def runs(self) -> List[Run]:
-        """
-        Returns the runs associated with the experiment.
-        """
-        props = self._config
-        runs = props.get(props.join(self.root_key, self.runs_key)) or []
-        return [Run.from_json(r, self) for r in runs]
-
-    def get_run(self, run_id: str) -> Run:
-        """
-        Gets a particular run from the runs in this experiment.
-        """
-        for r in self.runs():
-            if r.id == run_id:
-                return r
-        return None
-
-    def last_run(self) -> Run:
-        runs = self.runs()
-        if len(runs) > 0:
-            return runs[-1]
-        return None
-
-    def find_runs(self, filter, sort, limit: int) -> List[Run]:
-        raise NotImplementedError('find_runs is not supported in local mode')
-
-    def _save_config(self):
-        self._config.save(self._work_dir / self.config_file)
-
-    def load_artifact(self, run: Run, name: str, extension: str = 'pk'):
-        """
-        Returns a particular artifact created by the given run of the experiment.
-
-        :param run: The run that generated the artifact requested.
-        :param name: The name of the artifact.
-        :param extension: An optional extension (defaults to 'pk').
-        """
-        artifact_file = self.get_artifact_path(run, name, extension)
-        with closing(open(artifact_file, 'rb')) as f:
-            return dill.load(f)
-
-    def get_artifact_path(self, run: Run, name: str, extension: str = 'pk'):
-        """
-        Returns the fully qualified path to a particular artifact.
-
-        :param run: The run that generated the artifact requested.
-        :param name: The name of the artifact.
-        :param extension: An optional extension (defaults to 'pk').
-        """
-        return self._work_dir / self.dir_artifacts / "{}_{}.{}".format(name, run.id, extension)
-
-    def _repr_html_(self):
-        return _to_html(self)
-
-    def display(self):
-        """
-        Provides html output of the experiment.
+        Gets the keras model.
         """
         try:
-            from IPython.display import (display, HTML)
-            display(HTML(self._repr_html_()))
+            from keras.models import load_model
         except ImportError:
-            raise ConfigurationException(
-                'The ipython package is required, please install it using pip install cortex-python[jupyter]')
+            raise ConfigurationException('Keras needs to be installed in order to use get_keras_model')
+
+        f = tempfile.NamedTemporaryFile(delete=False)
+        f.write(self.get_artifact(artifact_name, deserializer=lambda x: x))
+        model_file = f.name
+        f.close()
+        try:
+            model = load_model(model_file)
+        finally:
+            os.remove(model_file)
+
+        return model

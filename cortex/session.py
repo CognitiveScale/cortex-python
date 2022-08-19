@@ -33,10 +33,9 @@ class SessionClient(_Client):
         'delete': 'projects/{projectId}/sessions/{sessionId}'
     }
 
-    def __init__(self, project: str, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = Constants.default_api_version
-        self._project = project
 
     def start_session(self, ttl=None, description='No description given') -> str:
         """
@@ -46,7 +45,7 @@ class SessionClient(_Client):
         :param description: An optional human-readable description for this sessions instance
         :return: The ID of the new Session.
         """
-        uri = self.URIs['start'].format(projectId=self._project)
+        uri = self.URIs['start'].format(projectId=self._project())
         params = {}
         if ttl:
             params['ttl'] = ttl
@@ -65,7 +64,7 @@ class SessionClient(_Client):
         specified.
         :return: A dict containing the requested session data
         """
-        uri = self.URIs['get'].format(sessionId=parse_string(session_id), projectId=self._project)
+        uri = self.URIs['get'].format(sessionId=parse_string(session_id), projectId=self._project())
         if key:
             uri += '?key={key}'.format(key=key)
 
@@ -80,7 +79,7 @@ class SessionClient(_Client):
         :param data: Dict containing the new session keys to set.
         :return: status
         """
-        uri = self.URIs['put'].format(sessionId=parse_string(session_id), projectId=self._project)
+        uri = self.URIs['put'].format(sessionId=parse_string(session_id), projectId=self._project())
         return self._post_json(uri, {'state': data})
 
     def delete_session(self, session_id):
@@ -90,12 +89,8 @@ class SessionClient(_Client):
         :param session_id: The ID of the session to delete.
         :return: status
         """
-        uri = self.URIs['delete'].format(sessionId=parse_string(session_id), projectId=self._project)
+        uri = self.URIs['delete'].format(sessionId=parse_string(session_id), projectId=self._project())
         return self._request_json(uri, method='DELETE')
-
-    @property
-    def project(self):
-        return self._project
 
 
 class Session:

@@ -17,7 +17,7 @@ limitations under the License.
 import os
 import time
 
-from .experiment import LocalExperiment
+from .experiment.local import LocalExperiment
 from .serviceconnector import ServiceConnector
 from .env import CortexEnv
 from .exceptions import ProjectException
@@ -76,8 +76,7 @@ class Client(object):
         self._verify_ssl_cert = verify_ssl_cert
 
     def message(self, payload: dict, properties: dict = None) -> Message:
-        """Constructs a Message from payload and properties if given.
-
+        """Constructs a Message from payload and properties if given. This is useful for testing skills, as this the message passed when skills are invoked
         :param payload: The payload to include in the Message.
         :param properties: The properties to include in the Message.
         :return: A Message object.
@@ -175,6 +174,8 @@ class Cortex(object):
         :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE file or directory
         with certificates of trusted CAs (default: True)
         """
+        if type(msg) is not dict:
+            raise Exception(f'Skill message must be a `dict` not a {type(msg)}')
         keys = ('apiEndpoint', 'token', 'projectId')
         if not all(key in msg for key in keys):
             raise Exception(f'Skill message must contain these keys: {keys}')

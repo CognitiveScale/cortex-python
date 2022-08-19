@@ -5,6 +5,7 @@ DISTRIBUTION_VERSION = $(shell python setup.py --version)
 
 clean:
 	rm -rf ./build
+	rm -rf ./docs/_build
 	rm -rf ./dist
 	rm -rf ./cortex_python.egg-info
 	rm -rf ./cortex-python.docs.tgz
@@ -58,6 +59,7 @@ stage:
 docs.dev:
 	sphinx-build -b html -v docs docs/_build/
 
+# To be removed we don't really support older versions ATM anyway..
 docs.multi:
 	MULTI_VERSION="true" sphinx-multiversion -v docs docs/_build/
 	cp docs/index.html docs/_build/

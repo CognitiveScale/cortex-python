@@ -32,10 +32,9 @@ class SchemaClient(_Client):
         'schema': 'projects/{projectId}/types/{name}',
     }
 
-    def __init__(self, project: str, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = Constants.default_api_version
-        self._project = project
 
     def save_schema(self):
         raise NotImplementedError()
@@ -46,16 +45,11 @@ class SchemaClient(_Client):
         :param name: The name of the schema to retrieve.
         :return: A schema object.
         """
-        uri = self.URIs['schema'].format(projectId=self._project, name=urllib.parse.quote(name, safe=''))
+        uri = self.URIs['schema'].format(projectId=self._project(), name=urllib.parse.quote(name, safe=''))
         log.debug('Getting schema using URI: %s' % uri)
-        r = self._serviceconnector.request('GET', uri)
+        r = self._serviceconnector.request('GET', uri=uri)
         raise_for_status_with_detail(r)
-
         return Schema(r.json(), self._serviceconnector)
-
-    @property
-    def project(self):
-        return self._project
 
 
 class Schema(CamelResource):

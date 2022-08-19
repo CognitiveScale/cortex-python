@@ -37,17 +37,16 @@ class SkillClient(_Client):
         'undeploy': 'projects/{projectId}/skills/{skillName}/undeploy',
     }
 
-    def __init__(self, project: str, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = Constants.default_api_version
-        self._project = project
 
     def list_skills(self):
         """
         Retrieve List of skills for specified project
         :return: list of skills
         """
-        r = self._serviceconnector.request(method='GET', uri=self.URIs['skills'].format(projectId=self._project))
+        r = self._serviceconnector.request(method='GET', uri=self.URIs['skills'].format(projectId=self._project()))
         raise_for_status_with_detail(r)
         rs = r.json()
 
@@ -72,7 +71,7 @@ class SkillClient(_Client):
         :param skill_name: Skill name
         :return: skill json
         """
-        uri = self.URIs['skill'].format(projectId=self._project, skillName=parse_string(skill_name))
+        uri = self.URIs['skill'].format(projectId=self._project(), skillName=parse_string(skill_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
 
@@ -84,7 +83,7 @@ class SkillClient(_Client):
         :param skill_name: Skill name
         :return: status
         """
-        uri = self.URIs['skill'].format(projectId=self._project, skillName=parse_string(skill_name))
+        uri = self.URIs['skill'].format(projectId=self._project(), skillName=parse_string(skill_name))
         r = self._serviceconnector.request(method='DELETE', uri=uri)
         raise_for_status_with_detail(r)
         rs = r.json()
@@ -98,7 +97,7 @@ class SkillClient(_Client):
         :param action_name: Action name
         :return: Logs
         """
-        uri = self.URIs['logs'].format(projectId=self._project, skillName=parse_string(skill_name),
+        uri = self.URIs['logs'].format(projectId=self._project(), skillName=parse_string(skill_name),
                                        actionName=parse_string(action_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
@@ -111,7 +110,7 @@ class SkillClient(_Client):
         :param skill_name: Skill name
         :return: status
         """
-        uri = self.URIs['deploy'].format(projectId=self._project, skillName=parse_string(skill_name))
+        uri = self.URIs['deploy'].format(projectId=self._project(), skillName=parse_string(skill_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
 
@@ -123,7 +122,7 @@ class SkillClient(_Client):
         :param skill_name: Skill name
         :return: status
         """
-        uri = self.URIs['undeploy'].format(projectId=self._project, skillName=parse_string(skill_name))
+        uri = self.URIs['undeploy'].format(projectId=self._project(), skillName=parse_string(skill_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
         return r.json()
@@ -157,7 +156,7 @@ class SkillClient(_Client):
         :param properties: Skill properties
         :return: status
         """
-        uri = self.URIs['invoke'].format(project=self._project, skill_name=skill_name, input=input)
+        uri = self.URIs['invoke'].format(project=self._project(), skill_name=skill_name, input=input)
         data = json.dumps({"payload": payload, "properties": properties})
         headers = {'Content-Type': 'application/json'}
         r = self._serviceconnector.request('POST', uri, data, headers)

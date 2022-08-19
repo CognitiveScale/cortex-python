@@ -34,10 +34,9 @@ class ManagedContentClient(_Client):
     """
     URIs = {'content': 'projects/{projectId}/content'}
 
-    def __init__(self, project: str, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = Constants.default_api_version
-        self._project = project
 
     def upload(self, key: str, stream_name: str, stream: object, content_type: str, retries: int = 1):
         """Store `stream` file in S3.
@@ -63,7 +62,7 @@ class ManagedContentClient(_Client):
         fields = {'key': key, 'content': (stream_name, stream, content_type)}
         data = MultipartEncoder(fields=fields)
         headers = {'Content-Type': data.content_type}
-        r = self._serviceconnector.request('POST', uri, data, headers)
+        r = self._serviceconnector.request('POST', uri=uri, body=data, headers=headers)
         raise_for_status_with_detail(r)
         return r.json()
 
@@ -116,7 +115,7 @@ class ManagedContentClient(_Client):
     def _upload_streaming(self, key: str, stream: object, content_type: str):
         uri = self._make_content_uri(key, self._project)
         headers = {'Content-Type': content_type}
-        r = self._serviceconnector.request('POST', uri, stream, headers)
+        r = self._serviceconnector.request('POST', uri=uri, stream=stream, headers=headers)
         raise_for_status_with_detail(r)
         return r.json()
 
@@ -135,7 +134,7 @@ class ManagedContentClient(_Client):
 
     def _download(self, key: str):
         uri = self._make_content_uri(key, self._project)
-        r = self._serviceconnector.request('GET', uri, stream=True)
+        r = self._serviceconnector.request('GET', uri=uri, stream=True)
         raise_for_status_with_detail(r)
         return r.raw
 
@@ -145,8 +144,8 @@ class ManagedContentClient(_Client):
         :param key: The path of the file to check.
         :returns: A boolean indicating wether the file exists or not.
         """
-        uri = self._make_content_uri(key, self._project)
-        r = self._serviceconnector.request('HEAD', uri)
+        uri = self._make_content_uri(key)
+        r = self._serviceconnector.request('HEAD', uri=uri)
         return r.status_code == 200
 
     def delete(self, key: str):
@@ -155,8 +154,8 @@ class ManagedContentClient(_Client):
         :param key: The path of the file to check.
         :returns: A boolean indicating wether the file exists or not.
         """
-        uri = self._make_content_uri(key, self._project)
-        r = self._serviceconnector.request('DELETE', uri)
+        uri = self._make_content_uri(key)
+        r = self._serviceconnector.request('DELETE', uri=uri)
         raise_for_status_with_detail(r)
         return r.json()
 
@@ -173,4 +172,4 @@ class ManagedContentClient(_Client):
         return False
 
     def _make_content_uri(self, key: str):
-        return self.URIs['content'].format(projectId=self._project) + '/' + key.lstrip('/')
+        return self.URIs['content'].format(projectId=self._project()) + '/' + key.lstrip('/')
