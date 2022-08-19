@@ -63,7 +63,7 @@ class ServiceConnector:
         """
         headersToSend = self._construct_headers(headers)
         url = self._construct_url(uri)
-        return requests.post(url, files=files, data=data, headers=headersToSend, allow_redirects=False,
+        return requests.post(url, files=files, body=data, headers=headersToSend, allow_redirects=False,
                              verify=self.verify_ssl_cert)
 
     def request_with_retry(self, method, uri, body=None, headers=None, debug=False, **kwargs):
@@ -216,6 +216,8 @@ class _Client:
         # if first arg not string assume Client object was passed
         else:
             self._serviceconnector = args[0].to_connector()
+            if project:
+                self._serviceconnector.project = project
             self._serviceconnector.version = version
 
     def _post_json(self, uri, obj: JSONType):
@@ -243,8 +245,11 @@ class _Client:
         r = self._serviceconnector.request('DELETE', uri, debug=debug)
         return r
 
+    def _project(self):
+        return self._serviceconnector.project
+
     def _get_json(self, uri, debug=False) -> Optional[dict]:
-        r = self._serviceconnector.request('GET', uri, debug=debug)
+        r = self._serviceconnector.request('GET', uri=uri, debug=debug)
         # If the resource is not found, return None ...
         if r.status_code == requests.codes.not_found:
             return None
@@ -252,7 +257,7 @@ class _Client:
         return r.json()
 
     def _request_json(self, uri, method='GET'):
-        r = self._serviceconnector.request(method, uri)
+        r = self._serviceconnector.request(method, uri=uri)
         raise_for_status_with_detail(r)
         return r.json()
 

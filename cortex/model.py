@@ -34,17 +34,16 @@ class ModelClient(_Client):
 
     }
 
-    def __init__(self, project: str, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = Constants.default_api_version
-        self._project = project
 
     def list_models(self):
         """
         List Models
         :return: list of models
         """
-        r = self._serviceconnector.request(method='GET', uri=self.URIs['models'].format(projectId=self._project))
+        r = self._serviceconnector.request(method='GET', uri=self.URIs['models'].format(projectId=self._project()))
         raise_for_status_with_detail(r)
         rs = r.json()
 
@@ -58,7 +57,7 @@ class ModelClient(_Client):
         """
         body = json.dumps(model_obj)
         headers = {'Content-Type': 'application/json'}
-        uri = self.URIs['models'].format(projectId=self._project)
+        uri = self.URIs['models'].format(projectId=self._project())
         r = self._serviceconnector.request(method='POST', uri=uri, body=body, headers=headers)
         raise_for_status_with_detail(r)
         return r.json()
@@ -69,7 +68,7 @@ class ModelClient(_Client):
         :param model_name: Model name
         :return: model json
         """
-        uri = self.URIs['model'].format(projectId=self._project, modelName=parse_string(model_name))
+        uri = self.URIs['model'].format(projectId=self._project(), modelName=parse_string(model_name))
         r = self._serviceconnector.request(method='GET', uri=uri)
         raise_for_status_with_detail(r)
 
@@ -81,16 +80,12 @@ class ModelClient(_Client):
         :param model_name: Model name
         :return: status
         """
-        uri = self.URIs['model'].format(projectId=self._project, modelName=parse_string(model_name))
+        uri = self.URIs['model'].format(projectId=self._project(), modelName=parse_string(model_name))
         r = self._serviceconnector.request(method='DELETE', uri=uri)
         raise_for_status_with_detail(r)
         rs = r.json()
 
         return rs.get('success', False)
-
-    @property
-    def project(self):
-        return self._project
 
 
 class Model(CamelResource):
@@ -100,7 +95,6 @@ class Model(CamelResource):
 
     def __init__(self, document: Dict, client: ModelClient):
         super().__init__(document, False)
-        self._project = client.project
         self._client = client
 
     def to_camel(self, camel='1.0.0'):

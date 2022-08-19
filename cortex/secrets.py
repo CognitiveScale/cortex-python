@@ -29,10 +29,9 @@ class SecretsClient(_Client):
     """
     URIs = {'secret': 'projects/{projectId}/secrets/{secretName}'}
 
-    def __init__(self, project: str, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._serviceconnector.version = Constants.default_api_version
-        self._project = project
 
     def post_secret(self, name: str, value: object):
         """
@@ -41,10 +40,10 @@ class SecretsClient(_Client):
         :param value: Secret value
         :return: status
         """
-        uri = self.URIs['secret'].format(secretName=parse_string(name), projectId=self._project)
+        uri = self.URIs['secret'].format(secretName=parse_string(name), projectId=self._project())
         data = json.dumps(value)
         headers = {'Content-Type': 'application/json'}
-        r = self._serviceconnector.request('POST', uri, data, headers)
+        r = self._serviceconnector.request('POST', uri=uri, body=data, headers=headers)
         raise_for_status_with_detail(r)
         return r.json()
 
@@ -57,16 +56,12 @@ class SecretsClient(_Client):
         """
         port = os.getenv('CORTEX_ACCOUNTS_SERVICE_PORT_HTTP_CORTEX_ACCOUNTS') or '5000'
         conn_svc_url = f'{self._serviceconnector.url.replace("cortex-internal", "cortex-accounts")}:{port}'
-        uri = f'{conn_svc_url}/internal/projects/{self._project}/secrets/{parse_string(name)}'
+        uri = f'{conn_svc_url}/internal/projects/{self._project()}/secrets/{parse_string(name)}'
         log.debug('Getting Secret using URI: %s' % uri)
-        r = self._serviceconnector.request('GET', uri, is_internal_url=True)
+        r = self._serviceconnector.request('GET', uri=uri, is_internal_url=True)
         raise_for_status_with_detail(r)
 
         return r.json()
-
-    @property
-    def project(self):
-        return self._project
 
 
 class Secret(CamelResource):
