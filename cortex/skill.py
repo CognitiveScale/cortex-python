@@ -39,7 +39,6 @@ class SkillClient(_Client):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._serviceconnector.version = Constants.default_api_version
 
     def list_skills(self):
         """

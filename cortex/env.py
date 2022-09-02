@@ -19,21 +19,22 @@ import json
 from .utils import get_cortex_profile
 from .exceptions import BadTokenException
 
+
 class CortexEnv:
     """
     Sets environment variables for Cortex.
     """
 
-    def __init__(self, api_endpoint=None, token=None, config=None, project=None):
-        profile = CortexEnv.get_cortex_profile()
+    def __init__(self, api_endpoint: str=None, token: str=None, config: dict=None, project: str=None, profile: str = None):
+        profile_inst = CortexEnv.get_cortex_profile(profile)
 
         cortexToken = token or os.getenv('CORTEX_TOKEN')
-        cortexConfig = config or json.loads(os.getenv('CORTEX_PERSONAL_ACCESS_CONFIG', json.dumps(profile)))
+        cortexConfig = config or json.loads(os.getenv('CORTEX_PERSONAL_ACCESS_CONFIG', json.dumps(profile_inst)))
         if not cortexToken and not cortexConfig:
             raise BadTokenException(
                 'Your Cortex credentials cannot be retrieved. Check your profile settings with `cortex configure`.')
 
-        self.api_endpoint = api_endpoint or cortexConfig.get('url')
+        self.api_endpoint = api_endpoint or os.getenv('CORTEX_URL', cortexConfig.get('url', None))
         self.token = cortexToken
         self.config = cortexConfig
         self.project = project or os.getenv('CORTEX_PROJECT', cortexConfig.get('project', None))
@@ -48,11 +49,11 @@ class CortexEnv:
         return cortexToken
 
     @staticmethod
-    def get_cortex_profile():
+    def get_cortex_profile(profile: str = None):
         """
         gets the configured cortex profile from the local machine
         """
-        return get_cortex_profile()
+        return get_cortex_profile(profile)
 
     @staticmethod
     def get_cortex_token():

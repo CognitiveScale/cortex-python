@@ -25,7 +25,7 @@ from ..camel import CamelResource
 from typing import Dict, List
 from ..exceptions import APIException, ConfigurationException
 from ..serviceconnector import _Client
-from ..utils import raise_for_status_with_detail, get_logger, parse_string, Constants
+from ..utils import raise_for_status_with_detail, get_logger, parse_string
 
 log = get_logger(__name__)
 
@@ -49,7 +49,6 @@ class ExperimentClient(_Client):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._serviceconnector.version = Constants.default_api_version
 
     def list_experiments(self):
         r = self._serviceconnector.request(method='GET', uri=self.URIs['experiments'].format(projectId=self._project()))
