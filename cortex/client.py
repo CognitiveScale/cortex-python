@@ -16,13 +16,13 @@ limitations under the License.
 
 import os
 import time
-
+import constant
 from .experiment.local import LocalExperiment
 from .serviceconnector import ServiceConnector
 from .env import CortexEnv
 from .exceptions import ProjectException
 from .message import Message
-from .utils import decode_JWT, get_logger, generate_token, Constants
+from .utils import decode_JWT, get_logger, generate_token
 
 _msg_token_exp_no_creds = """
 Your Cortex token has expired, and the required credentials for auto-refresh have not been provided. Supply these 
@@ -31,7 +31,6 @@ and password.  Please login again to retrieve a valid token.
 """
 
 log = get_logger(__name__)
-
 
 class _Token(object):
 
@@ -55,7 +54,7 @@ class Client(object):
     API client used to access agents, skills, and datasets.
     """
 
-    def __init__(self, url: str, token: _Token = None, config: dict = None, project: str = None, version: int = 4,
+    def __init__(self, url: str, token: _Token = None, config: dict = None, project: str = None, version: int = constant.VERSION,
                  verify_ssl_cert: bool = False):
         """
         Create an instance of the Cortex Fabric client
@@ -99,6 +98,10 @@ class Client(object):
     def to_connector(self):
         return self._mk_connector()
 
+    def _repr_pretty_(self, p, cycle):
+        p.text(f'{self.__str__()}')
+        p.text(f'Url: {self._url}\n')
+        p.text(f'Project: {self._project}\n')
 
 class Local:
     """
@@ -123,8 +126,8 @@ class Cortex(object):
     """
 
     @staticmethod
-    def client(api_endpoint: str = None, api_version: int = Constants.default_api_version, verify_ssl_cert=None,
-               token: str = None, config: dict = None, project: str = None):
+    def client(api_endpoint: str = None, api_version: int = 4, verify_ssl_cert=None,
+               token: str = None, config: dict = None, project: str = None, profile: str = None):
         """
         Gets a client with the provided parameters. All parameters are optional and default to environment variable
         values if not specified.
@@ -144,7 +147,7 @@ class Cortex(object):
         if not provided
         :param config: (optional) Use Cortex personal access token config file to generate JWT tokens.
         """
-        env = CortexEnv(api_endpoint=api_endpoint, token=token, config=config, project=project)
+        env = CortexEnv(api_endpoint=api_endpoint, token=token, config=config, project=project, profile=profile)
 
         if not api_endpoint:
             api_endpoint = env.api_endpoint
