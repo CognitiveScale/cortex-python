@@ -20,6 +20,8 @@ import requests
 import sys
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
+
+import constant
 from .__version__ import __version__, __title__
 
 from typing import Dict, Any, List, Union, Optional, Type, TypeVar
@@ -48,7 +50,7 @@ class ServiceConnector:
 
     @property
     def base_url(self):
-        return u'{0}/fabric/v{1}'.format(self.url, self.version)
+        return f'{self.url}/fabric/v{self.version}'
 
     ## methods ##
 
@@ -187,8 +189,9 @@ class _Client:
     URIs = {}
 
     def __init__(self,  *args, **kwargs):
+        # See kubernetes client for better handling of this ..  patch_namespaced_custom_object_with_http_info()  using locals() and checks..
         url = kwargs.get("url")
-        version = kwargs.get("version")
+        version = kwargs.get("version", constant.VERSION)
         token = kwargs.get("token")
         config = kwargs.get("config")
         verify_ssl_cert = kwargs.get("verify_ssl_cert")

@@ -35,7 +35,6 @@ class SessionClient(_Client):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._serviceconnector.version = Constants.default_api_version
 
     def start_session(self, ttl=None, description='No description given') -> str:
         """

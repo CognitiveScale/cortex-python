@@ -23,7 +23,7 @@ import tenacity
 import time
 
 from .serviceconnector import _Client
-from .utils import raise_for_status_with_detail, get_logger, Constants
+from .utils import raise_for_status_with_detail, get_logger
 
 log = get_logger(__name__)
 
@@ -36,7 +36,6 @@ class ManagedContentClient(_Client):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._serviceconnector.version = Constants.default_api_version
 
     def upload(self, key: str, stream_name: str, stream: object, content_type: str, retries: int = 1):
         """Store `stream` file in S3.
@@ -93,11 +92,11 @@ class ManagedContentClient(_Client):
         for path_dict in generated_paths:
             key = os.path.join(destination, path_dict.get('relative'))
             with open(path_dict.get('canonical'), 'rb') as stream:
-                responses.append(self.upload_streaming(key, self._project, stream, 'application/octet-stream', retries))
+                responses.append(self.upload_streaming(key, stream, 'application/octet-stream', retries))
 
         return responses
 
-    def upload_streaming(self, key: str, stream: object, content_type: str, retries: int = 1):
+    def upload_streaming(self, key: str, stream: object, content_type: str = 'application/octet-stream', retries: int = 1):
         """Store `stream` file in S3.
 
         :param key: The path where the file will be stored.
@@ -110,10 +109,10 @@ class ManagedContentClient(_Client):
             stop=tenacity.stop_after_attempt(retries + 1),
             retry=tenacity.retry_if_exception(ManagedContentClient._http_request_retry_predicate)
         )
-        return r.wraps(self._upload_streaming)(key, self._project, stream, content_type)
+        return r.wraps(self._upload_streaming)(key, stream, content_type)
 
     def _upload_streaming(self, key: str, stream: object, content_type: str):
-        uri = self._make_content_uri(key, self._project)
+        uri = self._make_content_uri(key)
         headers = {'Content-Type': content_type}
         r = self._serviceconnector.request('POST', uri=uri, stream=stream, headers=headers)
         raise_for_status_with_detail(r)
@@ -130,10 +129,10 @@ class ManagedContentClient(_Client):
             stop=tenacity.stop_after_attempt(retries + 1),
             retry=tenacity.retry_if_exception(ManagedContentClient._http_request_retry_predicate)
         )
-        return r.wraps(self._download)(key, self._project)
+        return r.wraps(self._download)(key)
 
     def _download(self, key: str):
-        uri = self._make_content_uri(key, self._project)
+        uri = self._make_content_uri(key)
         r = self._serviceconnector.request('GET', uri=uri, stream=True)
         raise_for_status_with_detail(r)
         return r.raw
@@ -156,6 +155,26 @@ class ManagedContentClient(_Client):
         """
         uri = self._make_content_uri(key)
         r = self._serviceconnector.request('DELETE', uri=uri)
+        raise_for_status_with_detail(r)
+        return r.json()
+
+    def list(self, prefix: str=None, limit: int=-1, skip: int=-1):
+        """List objects in a project
+
+        :param prefix: The key prefix to filter objects
+        :param limit: Limit the number of results returns
+        :param skip: Skip number of records
+        :returns: List of object keys
+        """
+        uri = self.URIs['content'].format(projectId=self._project())
+        query = {};
+        if prefix is not None:
+            query['filter'] = prefix
+        if limit > 0:
+            query['limit'] = limit
+        if skip > 0:
+            query['skip'] = skip
+        r = self._serviceconnector.request('GET', uri=uri, params=query)
         raise_for_status_with_detail(r)
         return r.json()
 

@@ -31,7 +31,6 @@ class SecretsClient(_Client):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._serviceconnector.version = Constants.default_api_version
 
     def post_secret(self, name: str, value: object):
         """
