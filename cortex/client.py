@@ -16,7 +16,7 @@ limitations under the License.
 
 import os
 import time
-import constant
+from  .constant import VERSION
 from .experiment.local import LocalExperiment
 from .serviceconnector import ServiceConnector
 from .env import CortexEnv
@@ -54,7 +54,7 @@ class Client(object):
     API client used to access agents, skills, and datasets.
     """
 
-    def __init__(self, url: str, token: _Token = None, config: dict = None, project: str = None, version: int = constant.VERSION,
+    def __init__(self, url: str, token: _Token = None, config: dict = None, project: str = None, version: int = VERSION,
                  verify_ssl_cert: bool = False):
         """
         Create an instance of the Cortex Fabric client

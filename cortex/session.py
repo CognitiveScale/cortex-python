@@ -16,7 +16,7 @@ limitations under the License.
 
 from .serviceconnector import _Client
 from typing import Dict
-from .utils import get_logger, parse_string, Constants
+from .utils import get_logger, parse_string
 
 log = get_logger(__name__)
 

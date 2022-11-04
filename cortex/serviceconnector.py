@@ -18,10 +18,10 @@ import json
 import platform
 import requests
 import sys
+from .constant import VERSION
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-import constant
 from .__version__ import __version__, __title__
 
 from typing import Dict, Any, List, Union, Optional, Type, TypeVar
@@ -191,7 +191,7 @@ class _Client:
     def __init__(self,  *args, **kwargs):
         # See kubernetes client for better handling of this ..  patch_namespaced_custom_object_with_http_info()  using locals() and checks..
         url = kwargs.get("url")
-        version = kwargs.get("version", constant.VERSION)
+        version = kwargs.get("version", VERSION)
         token = kwargs.get("token")
         config = kwargs.get("config")
         verify_ssl_cert = kwargs.get("verify_ssl_cert")

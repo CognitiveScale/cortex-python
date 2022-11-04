@@ -18,7 +18,7 @@ import json
 
 from .serviceconnector import _Client
 from .camel import CamelResource
-from .utils import get_logger, raise_for_status_with_detail, parse_string, Constants
+from .utils import get_logger, raise_for_status_with_detail, parse_string
 
 log = get_logger(__name__)
 
