@@ -8,4 +8,4 @@ builder:
     && make docs.dev
     && make docs.package'
   environment:
-    - ALPHA_BUILD
+    - ALPHA_BUILD="true"
