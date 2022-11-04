@@ -19,7 +19,7 @@ import os
 import urllib.parse
 from .serviceconnector import _Client
 from .camel import CamelResource
-from .utils import get_logger, raise_for_status_with_detail, Constants
+from .utils import get_logger, raise_for_status_with_detail
 
 log = get_logger(__name__)
 

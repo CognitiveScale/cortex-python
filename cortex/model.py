@@ -19,7 +19,7 @@ import json
 from .camel import CamelResource
 from typing import Dict
 from .serviceconnector import _Client
-from .utils import raise_for_status_with_detail, parse_string, Constants
+from .utils import raise_for_status_with_detail, parse_string
 
 
 class ModelClient(_Client):
