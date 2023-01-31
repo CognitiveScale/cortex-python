@@ -54,7 +54,7 @@ class ManagedContentClient(_Client):
             stop=tenacity.stop_after_attempt(retries + 1),
             retry=tenacity.retry_if_exception(ManagedContentClient._http_request_retry_predicate)
         )
-        return r.wraps(self._upload)(key, self._project, stream_name, stream, content_type)
+        return r.wraps(self._upload)(key, stream_name, stream, content_type)
 
     def _upload(self, key: str, stream_name: str, stream: object, content_type: str):
         uri = self.URIs['content'].format(projectId=self._project)
@@ -114,7 +114,7 @@ class ManagedContentClient(_Client):
     def _upload_streaming(self, key: str, stream: object, content_type: str):
         uri = self._make_content_uri(key)
         headers = {'Content-Type': content_type}
-        r = self._serviceconnector.request('POST', uri=uri, stream=stream, headers=headers)
+        r = self._serviceconnector.request('POST', uri=uri, data=stream, headers=headers)
         raise_for_status_with_detail(r)
         return r.json()
 
