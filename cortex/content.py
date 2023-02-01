@@ -57,7 +57,7 @@ class ManagedContentClient(_Client):
         return r.wraps(self._upload)(key, stream_name, stream, content_type)
 
     def _upload(self, key: str, stream_name: str, stream: object, content_type: str):
-        uri = self.URIs['content'].format(projectId=self._project())
+        uri = self.URIs['content'].format(projectId=self._project)
         fields = {'key': key, 'content': (stream_name, stream, content_type)}
         data = MultipartEncoder(fields=fields)
         headers = {'Content-Type': data.content_type}
