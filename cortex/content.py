@@ -57,7 +57,7 @@ class ManagedContentClient(_Client):
         return r.wraps(self._upload)(key, stream_name, stream, content_type)
 
     def _upload(self, key: str, stream_name: str, stream: object, content_type: str):
-        uri = self.URIs['content'].format(projectId=self._project)
+        uri = self.URIs['content'].format(projectId=self._project())
         fields = {'key': key, 'content': (stream_name, stream, content_type)}
         data = MultipartEncoder(fields=fields)
         headers = {'Content-Type': data.content_type}
@@ -114,7 +114,7 @@ class ManagedContentClient(_Client):
     def _upload_streaming(self, key: str, stream: object, content_type: str):
         uri = self._make_content_uri(key)
         headers = {'Content-Type': content_type}
-        r = self._serviceconnector.request('POST', uri=uri, data=stream, headers=headers)
+        r = self._serviceconnector.request('POST', uri=uri, body=stream, headers=headers)
         raise_for_status_with_detail(r)
         return r.json()
 
