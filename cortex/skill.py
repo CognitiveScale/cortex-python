@@ -59,7 +59,7 @@ class SkillClient(_Client):
         """
         body = json.dumps(skill_obj)
         headers = {'Content-Type': 'application/json'}
-        uri = self.URIs['skills'].format(projectId=self._project)
+        uri = self.URIs['skills'].format(projectId=self._project())
         r = self._serviceconnector.request(method='POST', uri=uri, body=body, headers=headers)
         raise_for_status_with_detail(r)
         return r.json()
