@@ -48,7 +48,7 @@ setup(
       'requests>=2.12.4,<3',
       'requests-toolbelt>=0.8.0',
       'python-jwt>=3.3.0,<4.0',
-      'pyyaml>=5.3.1,<6',
+      'pyyaml>=5.3.1',
       'cuid>=0.3,<1',
       'tenacity>=8.0,<9.0',
       'dill>=0.2.8.2'
