@@ -41,7 +41,7 @@ build.release: clean
 	python setup.py sdist bdist_wheel
 
 dev.test:
-	pytest --cache-clear test/unit
+	pytest --cache-clear --cov=cortex/ test/unit
 
 test:
 	tox -r
