@@ -7,3 +7,4 @@ pipdeptree
 pylint>=2.3.0,<3
 pytest-cov==2.5.1
 mitmproxy
+cryptography>=39.0.1 # not directly required, pinned by Snyk to avoid a vulnerability
