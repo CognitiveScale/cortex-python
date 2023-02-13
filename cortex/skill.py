@@ -177,7 +177,7 @@ class Skill(CamelResource):
     def __init__(self, skill, client: SkillClient):
         super().__init__(skill, True)
         self._client = client
-        self._project = client.project
+        self._project = client._project
 
 
 class SkillRequest:

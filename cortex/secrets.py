@@ -71,4 +71,4 @@ class Secret(CamelResource):
     def __init__(self, secret, client: SecretsClient):
         super().__init__(secret, True)
         self._client = client
-        self._project = client.project
+        self._project = client._project

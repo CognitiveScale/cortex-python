@@ -29,7 +29,7 @@ from .fixtures import john_doe_token
 
 TOKEN = john_doe_token()
 projectId = 'cogscale'
-url = 'http://localhost:123'
+url = 'http://127.0.0.1:123'
 
 # params similar to those passed from
 params = {'token': TOKEN, 'projectId': projectId, 'apiEndpoint': url}
@@ -60,11 +60,10 @@ class TestConnectionClient(unittest.TestCase):
         key = 'some-key'
         result = {'Key': key}
         uri = self.mc.URIs['content'].format(projectId=projectId)
-        url = self.mc._serviceconnector._construct_url(uri)
-
+        local_url = self.mc._serviceconnector._construct_url(uri)
         with BytesIO(b'arbitrary content') as content:
             Entry.single_register(Entry.POST,
-                                  url,
+                                  local_url,
                                   status=200,
                                   body=json.dumps(result))
             r = self.mc.upload(key=key, stream_name='foo', stream=content, content_type='application/octet-stream')
@@ -75,11 +74,11 @@ class TestConnectionClient(unittest.TestCase):
         key = 'some-key'
         result = {'Key': key}
         uri = '{0}/{1}'.format(self.mc.URIs['content'].format(projectId=projectId), key)
-        url = self.mc._serviceconnector._construct_url(uri)
+        local_url = self.mc._serviceconnector._construct_url(uri)
 
         with BytesIO(b'arbitrary content') as content:
             Entry.single_register(Entry.POST,
-                                  url,
+                                  local_url,
                                   status=200,
                                   body=json.dumps(result))
             r = self.mc.upload_streaming(key=key, stream=content, content_type='application/octet-stream')
@@ -89,11 +88,11 @@ class TestConnectionClient(unittest.TestCase):
     def test_download(self):
         key = 'some-key'
         uri = '{0}/{1}'.format(self.mc.URIs['content'].format(projectId=projectId), key)
-        url = self.mc._serviceconnector._construct_url(uri)
+        local_url = self.mc._serviceconnector._construct_url(uri)
         buf = b'arbitrary content'
         with BytesIO(buf) as content:
             Entry.single_register(Entry.GET,
-                                  url,
+                                  local_url,
                                   status=200,
                                   body=content)
             r = self.mc.download(key=key)

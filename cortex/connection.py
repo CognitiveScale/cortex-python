@@ -76,4 +76,4 @@ class Connection(CamelResource):
     def __init__(self, connection, client: ConnectionClient):
         super().__init__(connection, True)
         self._client = client
-        self._project = client.project
+        self._project = client._project

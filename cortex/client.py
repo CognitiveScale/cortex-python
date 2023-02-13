@@ -18,6 +18,7 @@ import os
 import time
 from  .constant import VERSION
 from .experiment.local import LocalExperiment
+from .experiment import Experiment, ExperimentClient
 from .serviceconnector import ServiceConnector
 from .env import CortexEnv
 from .exceptions import ProjectException
@@ -97,6 +98,21 @@ class Client(object):
     # expose this to allow developer to pass client instance into Connectors
     def to_connector(self):
         return self._mk_connector()
+    
+    def experiment(self, name: str, version: str = '4', model_id: str = None, project: str = None) -> Experiment:
+        """
+        Gets an experiment with the specified name.
+        :param name: Experiment name to fetch
+        :param version: (optional) Fabric API version (default: 4)
+        :param model_id: (optional) Model ID associated with the experiment (default: None)
+        :param project: (optional) Project name, defaults to client's project
+        """
+        if project is None:
+            project = self._project
+        if not self._token.token:
+            self._token = _Token(generate_token(self._config))
+        exp_client = ExperimentClient(self._url, version, self._token.token, self._config)
+        return Experiment.get_experiment(name=name, client=exp_client, model_id=model_id)
 
     def _repr_pretty_(self, p, cycle):
         p.text(f'{self.__str__()}')

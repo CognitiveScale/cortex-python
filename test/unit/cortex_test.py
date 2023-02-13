@@ -20,14 +20,14 @@ from unittest.mock import Mock
 from cortex import Cortex
 from cortex.message import Message
 import pytest
-from cortex.connection import ConnectionClient
+from cortex.connection import ConnectionClient, Connection
 from cortex.content import ManagedContentClient
-from cortex.experiment import ExperimentClient
-from cortex.model import ModelClient
-from cortex.secrets import SecretsClient
-from cortex.session import SessionClient
-from cortex.schema import SchemaClient
-from cortex.skill import SkillClient
+from cortex.experiment import ExperimentClient, Experiment
+from cortex.model import ModelClient, Model
+from cortex.secrets import SecretsClient, Secret
+from cortex.session import SessionClient, Session
+from cortex.schema import SchemaClient, Schema
+from cortex.skill import SkillClient, Skill
 
 from .fixtures import john_doe_subject, john_doe_token
 
@@ -139,3 +139,20 @@ class TestCortex(unittest.TestCase):
                 func(fun_args)
             uri = mock.call_args.kwargs.get('uri')
             assert project in uri
+    
+    def test_proj_camelresources(self):
+        project = 'clientProj'
+        message = {
+            'apiEndpoint': api_endpoint,
+            'token': token,
+            'projectId': project,
+        }
+        test_name = 'random_resource'
+        client = Cortex.from_message(message)
+        tests = [
+            [Connection(test_name, ConnectionClient(client)), project]
+        ]
+        for resource_inst, project in tests:
+            print(f'Testing project access for {type(resource_inst)} with {project}')
+            assert resource_inst._project() == project
+

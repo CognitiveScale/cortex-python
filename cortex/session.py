@@ -100,7 +100,7 @@ class Session:
     def __init__(self, session_id, client: SessionClient):
         self._session_id = session_id
         self._client = client
-        self._project = client.project
+        self._project = client._project
 
     def get(self, key=None) -> object:
         """

@@ -52,7 +52,7 @@ class TestSessionClient(unittest.TestCase):
 
     @mocketize
     def test_get_all(self):
-        uri = self.client.URIs['get'].format(session_id=self.session_id, projectId=PROJECTID)
+        uri = self.client.URIs['get'].format(sessionId=self.session_id, projectId=PROJECTID)
         returns = {'state': {'key1': 'value1'}}
         self.register_entry(Entry.GET, uri, returns)
 
@@ -61,7 +61,7 @@ class TestSessionClient(unittest.TestCase):
 
     @mocketize
     def test_get_by_key(self):
-        uri = self.client.URIs['get'].format(session_id=self.session_id, projectId=PROJECTID) + '?key=key1'
+        uri = self.client.URIs['get'].format(sessionId=self.session_id, projectId=PROJECTID) + '?key=key1'
         returns = {'state': {'key1': 'value1'}}
         self.register_entry(Entry.GET, uri, returns)
 
@@ -70,7 +70,7 @@ class TestSessionClient(unittest.TestCase):
 
     @mocketize
     def test_put(self):
-        uri = self.client.URIs['put'].format(session_id=self.session_id, projectId=PROJECTID)
+        uri = self.client.URIs['put'].format(sessionId=self.session_id, projectId=PROJECTID)
         returns = {}
         self.register_entry(Entry.POST, uri, returns)
 
@@ -79,7 +79,7 @@ class TestSessionClient(unittest.TestCase):
 
     @mocketize
     def test_delete(self):
-        uri = self.client.URIs['delete'].format(session_id=self.session_id, projectId=PROJECTID)
+        uri = self.client.URIs['delete'].format(sessionId=self.session_id, projectId=PROJECTID)
         returns = {}
         self.register_entry(Entry.DELETE, uri, returns)
 

@@ -29,7 +29,7 @@ def mock_api_endpoint():
     """
     the url endpoint for mocking
     """
-    return 'http://1.2.3.4:8000'
+    return 'http://127.0.0.1:8000'
 
 
 def register_entry(verb, url, body: dict):

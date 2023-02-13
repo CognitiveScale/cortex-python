@@ -19,6 +19,8 @@ import io
 import json
 import os
 import tempfile
+from requests.exceptions import HTTPError
+
 
 from .model import Run, _to_html
 from ..camel import CamelResource
@@ -281,10 +283,28 @@ class Experiment(CamelResource):
 
     def __init__(self, document: Dict, client: ExperimentClient):
         super().__init__(document, False)
-        self._project = client.project
+        self._project = client._project
         self._client = client
         if not self.meta:
             self.meta = {}
+
+    @staticmethod
+    def get_experiment(name, client: ExperimentClient, model_id=None, **kwargs):
+        """
+        Fetches or creates an experiment to work with.
+        :param name: The name of the experiment to retrieve.
+        :param project: The project from which the experiment is to be retrieved.
+        :param client: The client instance to use.
+        :param model_id: The model reference(optional).
+        :return: An experiment object.
+        """
+        try:
+            exp = client.get_experiment(name)
+        except HTTPError:
+            # Likely a 404, try to create a new experiment
+            exp = client.save_experiment(name, model_id, **kwargs)
+
+        return Experiment(exp, client)
 
     def start_run(self) -> Run:
         return RemoteRun.create(self, self._client)
