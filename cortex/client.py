@@ -111,7 +111,7 @@ class Client(object):
             project = self._project
         if not self._token.token:
             self._token = _Token(generate_token(self._config))
-        exp_client = ExperimentClient(self._url, version, self._token.token, self._config)
+        exp_client = ExperimentClient(self._url, version, self._token.token, self._config, project=project)
         return Experiment.get_experiment(name=name, client=exp_client, model_id=model_id)
 
     def _repr_pretty_(self, p, cycle):

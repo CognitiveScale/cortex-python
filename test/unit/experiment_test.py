@@ -41,7 +41,6 @@ class TestExperiment(unittest.TestCase):
     """
     # values for testing experiments
     EXP_NAME = 'unittest-exp'
-    PROJECT = 'expproj'
 
     def setUp(self):
         self.cortex = Cortex.from_message(params)
@@ -51,7 +50,7 @@ class TestExperiment(unittest.TestCase):
 
     @mocketize
     def test_make_remote_experiment(self):
-        uri = self.expc.URIs['experiment'].format(experimentName=self.EXP_NAME, projectId=self.PROJECT)
+        uri = self.expc.URIs['experiment'].format(experimentName=self.EXP_NAME, projectId=projectId)
         local_url = self.expc._serviceconnector._construct_url(uri)
 
         returns = {"name": self.EXP_NAME}
@@ -64,9 +63,9 @@ class TestExperiment(unittest.TestCase):
 
     @mocketize
     def test_make_local_experiment(self):
-        uri = ExperimentClient.URIs['experiment'].format(experimentName=self.EXP_NAME, projectId=self.PROJECT)
+        uri = ExperimentClient.URIs['experiment'].format(experimentName=self.EXP_NAME, projectId=projectId)
         returns = {"name": self.EXP_NAME}
-        Entry.single_register(Entry.GET, build_mock_url(uri), status=200, body=json.dumps(returns))
+        Entry.single_register(Entry.GET, uri, status=200, body=json.dumps(returns))
         exp = self.local.experiment(self.EXP_NAME)
         self.assertNotEqual(exp, None)
 
@@ -78,18 +77,20 @@ class TestExperiment(unittest.TestCase):
 
     @mocketize
     def test_remote_load_artifact(self):
-        uri = ExperimentClient.URIs['experiment'].format(experimentName=self.EXP_NAME, projectId=self.PROJECT)
+        uri = ExperimentClient.URIs['experiment'].format(experimentName=self.EXP_NAME, projectId=projectId)
+        local_url = self.expc._serviceconnector._construct_url(uri)
         returns = {"name": self.EXP_NAME}
-        Entry.single_register(Entry.GET, build_mock_url(uri), status=200, body=json.dumps(returns))
-        import pdb; pdb.set_trace()
+        Entry.single_register(Entry.GET, local_url, status=200, body=json.dumps(returns))
+
         exp = self.cortex.experiment(self.EXP_NAME)
         # add a run & artifact
 
         # register mock for creating a run
-        uri = ExperimentClient.URIs['runs'].format(projectId=self.PROJECT, experimentName=self.EXP_NAME)
+        uri = ExperimentClient.URIs['runs'].format(projectId=projectId, experimentName=self.EXP_NAME)
+        local_url = self.expc._serviceconnector._construct_url(uri)
         run_id = '000001'
         returns = {"runId": run_id}
-        Entry.single_register(Entry.POST, build_mock_url(uri), status=200, body=json.dumps(returns))
+        Entry.single_register(Entry.POST, local_url, status=200, body=json.dumps(returns))
 
         run = exp.start_run()
         # make an artifact
@@ -97,8 +98,10 @@ class TestExperiment(unittest.TestCase):
 
         # get the artifact & test if it is what is expected
         # register mock for loading an artifact
-        uri = ExperimentClient.URIs['artifact'].format(experimentName=self.EXP_NAME, runId=run_id, artifactId='my_dictionary', projectId=self.PROJECT)
-        Entry.single_register(Entry.GET, build_mock_url(uri), status=200, body=dill.dumps(my_dictionary))
+        uri = ExperimentClient.URIs['artifact'].format(experimentName=self.EXP_NAME, runId=run_id, artifactId='my_dictionary', projectId=projectId)
+        local_url = self.expc._serviceconnector._construct_url(uri)
+
+        Entry.single_register(Entry.GET, local_url, status=200, body=dill.dumps(my_dictionary))
 
         result = exp.load_artifact(run, 'my_dictionary')
         self.assertEqual(result, my_dictionary)

@@ -46,7 +46,6 @@ class TestSessionClient(unittest.TestCase):
 
     @mocketize
     def test_start_sessions(self):
-        import pdb; pdb.set_trace()
         uri = self.client.URIs['start'].format(projectId=projectId)
         returns = {'sessionId': self.session_id}
         self.register_entry(Entry.POST, uri, returns)
