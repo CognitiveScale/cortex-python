@@ -22,14 +22,17 @@ from mocket.mockhttp import Entry
 from mocket import mocketize
 
 from cortex.session import SessionClient
+from cortex import Cortex
 
-PROJECTID = 'sesstest'
-
+TOKEN = fixtures.john_doe_token()
+projectId = 'cogscale'
+url = 'http://127.0.0.1:123'
+params = {'token': TOKEN, 'projectId': projectId, 'apiEndpoint': url}
 
 class TestSessionClient(unittest.TestCase):
 
     def setUp(self):
-        self.client = SessionClient('http://localhost:8000', config=fixtures.mock_pat_config())
+        self.client = SessionClient(Cortex.from_message(params))
         self.session_id = str(uuid.uuid4())
 
     def register_entry(self, verb, uri, body):
@@ -43,7 +46,8 @@ class TestSessionClient(unittest.TestCase):
 
     @mocketize
     def test_start_sessions(self):
-        uri = self.client.URIs['start'].format(projectId=PROJECTID)
+        import pdb; pdb.set_trace()
+        uri = self.client.URIs['start'].format(projectId=projectId)
         returns = {'sessionId': self.session_id}
         self.register_entry(Entry.POST, uri, returns)
 
@@ -52,7 +56,7 @@ class TestSessionClient(unittest.TestCase):
 
     @mocketize
     def test_get_all(self):
-        uri = self.client.URIs['get'].format(sessionId=self.session_id, projectId=PROJECTID)
+        uri = self.client.URIs['get'].format(sessionId=self.session_id, projectId=projectId)
         returns = {'state': {'key1': 'value1'}}
         self.register_entry(Entry.GET, uri, returns)
 
@@ -61,7 +65,7 @@ class TestSessionClient(unittest.TestCase):
 
     @mocketize
     def test_get_by_key(self):
-        uri = self.client.URIs['get'].format(sessionId=self.session_id, projectId=PROJECTID) + '?key=key1'
+        uri = self.client.URIs['get'].format(sessionId=self.session_id, projectId=projectId) + '?key=key1'
         returns = {'state': {'key1': 'value1'}}
         self.register_entry(Entry.GET, uri, returns)
 
@@ -70,7 +74,7 @@ class TestSessionClient(unittest.TestCase):
 
     @mocketize
     def test_put(self):
-        uri = self.client.URIs['put'].format(sessionId=self.session_id, projectId=PROJECTID)
+        uri = self.client.URIs['put'].format(sessionId=self.session_id, projectId=projectId)
         returns = {}
         self.register_entry(Entry.POST, uri, returns)
 
@@ -79,7 +83,7 @@ class TestSessionClient(unittest.TestCase):
 
     @mocketize
     def test_delete(self):
-        uri = self.client.URIs['delete'].format(sessionId=self.session_id, projectId=PROJECTID)
+        uri = self.client.URIs['delete'].format(sessionId=self.session_id, projectId=projectId)
         returns = {}
         self.register_entry(Entry.DELETE, uri, returns)
 
