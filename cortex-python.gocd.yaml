@@ -1,8 +1,8 @@
 format_version: 10
 common:
   testreports: &testReports
-    coverage: coverage/index.html
-    test-report: coverage/test-report.html
+    coverage: testoutput/coverage/index.html
+    test-report: testoutput/coverage/test-report.html
 pipelines:
   cortex-python-pr:
     group: pull-requests
