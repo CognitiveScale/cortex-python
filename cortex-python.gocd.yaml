@@ -2,7 +2,7 @@ format_version: 10
 common:
   testreports: &testReports
     coverage: coverage/index.html
-    test-report: test/report.html
+    test-report: coverage/test-report.html
 pipelines:
   cortex-python-pr:
     group: pull-requests
@@ -19,6 +19,9 @@ pipelines:
           clean_workspace: true
           jobs:
             build:
+              artifacts:
+                - test:
+                  source: coverage
               tabs: *testReports
               elastic_profile_id: gocd-test-agent-dind
               tasks:
@@ -34,6 +37,9 @@ pipelines:
           clean_workspace: true
           jobs:
             build:
+              artifacts:
+                - test:
+                  source: coverage
               tabs: *testReports
               elastic_profile_id: gocd-test-agent-dind
               tasks:
@@ -90,6 +96,8 @@ pipelines:
               artifacts:
                 - build:
                     source: cortex-python.docs.tgz
+                - test:
+                  source: coverage
               tasks:
                 - script: |
                     set -eux

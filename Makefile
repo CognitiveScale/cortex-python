@@ -43,7 +43,7 @@ build.release: clean
 dev.test:
 	symilar --ignore-docstrings cortex/**/*.py
 	pylint --recursive=y cortex
-	pytest --cache-clear  --html=test/report.html --self-contained-html --cov=cortex/ --cov-report=html:coverage --cov-report=term test/unit
+	pytest --cache-clear  --html=coverage/test-report.html --self-contained-html --cov=cortex/ --cov-report=html:coverage --cov-report=term test/unit
 
 test:
 	tox -r # tox runs make dev.test internally
