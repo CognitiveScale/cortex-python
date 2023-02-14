@@ -21,7 +21,7 @@ pipelines:
             build:
               artifacts:
                 - test:
-                  source: coverage
+                    source: coverage
               tabs: *testReports
               elastic_profile_id: gocd-test-agent-dind
               tasks:
@@ -39,7 +39,7 @@ pipelines:
             build:
               artifacts:
                 - test:
-                  source: coverage
+                    source: coverage
               tabs: *testReports
               elastic_profile_id: gocd-test-agent-dind
               tasks:
@@ -97,7 +97,7 @@ pipelines:
                 - build:
                     source: cortex-python.docs.tgz
                 - test:
-                  source: coverage
+                    source: coverage
               tasks:
                 - script: |
                     set -eux
