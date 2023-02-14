@@ -67,7 +67,7 @@ setup(
   },
   tests_require=[
       'mocket>=3.9.0,<4.0',
-      'pytest>=3.2.5,<4'
+      'pytest>=7.2.1,<8'
   ],
   classifiers=[
       'Operating System :: MacOS :: MacOS X',
