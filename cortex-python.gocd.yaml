@@ -2,7 +2,7 @@ format_version: 10
 common:
   testreports: &testReports
     coverage: coverage/index.html
-    unit-test-report: test/report.html
+    test-report: test/report.html
 pipelines:
   cortex-python-pr:
     group: pull-requests
