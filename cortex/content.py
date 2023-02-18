@@ -17,6 +17,10 @@ limitations under the License.
 import os
 import glob
 import time
+from io import BytesIO, StringIO, FileIO
+from typing import Union, List
+from urllib3.response import HTTPResponse
+
 
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 from requests.exceptions import HTTPError
@@ -30,8 +34,12 @@ log = get_logger(__name__)
 
 class ManagedContentClient(_Client):
     """
-    A client used to access the Cortex managed content service (blob store).
-    """
+    A client used to access the `Cortex managed content service (blob store) <https://cognitivescale.github.io/cortex-fabric/docs/manage-data/managed-content>`_. You can find a pre-created instance of this class on every :py:class:`cortex.Cortex.Client` instance via the :py:attr:`Client.content` attribute.
+
+    >>> from cortex import Cortex; client = Cortex.client();
+    >>> client.content.list() # list content from the default project configured for the user
+
+    """  # pylint: disable=line-too-long
 
     URIs = {"content": "projects/{projectId}/content"}
 
@@ -39,23 +47,27 @@ class ManagedContentClient(_Client):
         self,
         key: str,
         stream_name: str,
-        stream: object,
+        stream: Union[BytesIO, StringIO, FileIO],
         content_type: str,
         retries: int = 1,
-    ):
-        """Store `stream` file in S3.
+    ) -> dict:
+        """Store `stream` file in Managed Content (S3).
 
-        :param key: The path where the file will be stored.
-        :param stream_name: The name under which to save the `stream`.
+        :param key: The path where the file will be stored in managed content
+        :type key: str
+        :param stream_name:  The name under which to save the `stream`.
+        :type stream_name: str
         :param stream: The file object.
+        :type stream: Union[BytesIO, StringIO, FileIO]
         :param content_type: the type of the file to store (e.g., `text/csv`).
-        :param retries: Number of times to retry a failed request from a retryable response.
+        :type content_type: str
+        :param retries: Number of times to retry a failed request from a retryable response, defaults to 1
+        :type retries: int, optional
         :return: a dict with the response to request upload.
-
-        .. NOTE: This method uses a multi-part form request; to upload very large files,
-        use `uploadStreaming` instead.
+        :rtype: dict
+        .. NOTE: This method uses a multi-part form request; to upload very large files, use `uploadStreaming` instead.
         .. seealso: uploadStreaming()
-        """
+        """  # pylint: disable=line-too-long
         res = tenacity.Retrying(
             stop=tenacity.stop_after_attempt(retries + 1),
             retry=tenacity.retry_if_exception(
@@ -82,13 +94,17 @@ class ManagedContentClient(_Client):
             if os.path.isfile(path):
                 yield {"canonical": path, "relative": path[len(source) :]}
 
-    def upload_directory(self, source: str, destination: str, retries: int = 1):
-        """Walk source directory and store in S3
+    def upload_directory(self, source: str, destination: str, retries: int = 1) -> dict:
+        """Walk source directory and store in Managed Content
 
         :param source: The path to the local directory.
+        :type source: str
         :param destination: Prefix to add to resulting saved directory.
-        :param retries: Number of times to retry a failed request from a retryable response.
+        :type destination: str
+        :param retries: Number of times to retry a failed request from a retryable response, defaults to 1
+        :type retries: int, optional
         :return: A dict with the response to request upload.
+        :rtype: dict
         """
         source_path = source
         if not source.endswith("/"):
@@ -113,15 +129,20 @@ class ManagedContentClient(_Client):
         stream: object,
         content_type: str = "application/octet-stream",
         retries: int = 1,
-    ):
-        """Store `stream` file in S3.
+    ) -> dict:
+        """Store `stream` file in Managed Content. Use this method to upload large files to Managed Content
 
         :param key: The path where the file will be stored.
+        :type key: str
         :param stream: The file object.
-        :param content_type: The type of the file to store (e.g., `text/csv`)
-        :param retries: Number of times to retry a failed request from a retryable response.
+        :type stream: object
+        :param content_type: The type of the file to store (e.g., `text/csv`), defaults to "application/octet-stream"
+        :type content_type: str, optional
+        :param retries: Number of times to retry a failed request from a retryable response., defaults to 1
+        :type retries: int, optional
         :return: A dict with the response to request upload.
-        """
+        :rtype: dict
+        """  # pylint: disable=line-too-long
         res = tenacity.Retrying(
             stop=tenacity.stop_after_attempt(retries + 1),
             retry=tenacity.retry_if_exception(
@@ -139,12 +160,15 @@ class ManagedContentClient(_Client):
         raise_for_status_with_detail(res)
         return res.json()
 
-    def download(self, key: str, retries: int = 1):
-        """Download a file from managed content (S3).
+    def download(self, key: str, retries: int = 1) -> HTTPResponse:
+        """Download a file from managed content (S3 like blob store).
 
         :param key: The path of the file to retrieve.
-        :param retries: Number of times to retry a failed request from a response.
-        :returns: A Generator.
+        :type key: str
+        :param retries: Number of times to retry a failed request from a response., defaults to 1
+        :type retries: int, optional
+        :return: A HTTPResponse object
+        :rtype: :py:class:`urllib3.response.HTTPResponse`
         """
         res = tenacity.Retrying(
             stop=tenacity.stop_after_attempt(retries + 1),
@@ -164,31 +188,39 @@ class ManagedContentClient(_Client):
         """Check that a file from managed content (S3) exists.
 
         :param key: The path of the file to check.
-        :returns: A boolean indicating wether the file exists or not.
+        :type key: str
+        :return: A boolean indicating whether the file exists or not.
+        :rtype: bool
         """
         uri = self._make_content_uri(key)
         res = self._serviceconnector.request("HEAD", uri=uri)
         return res.status_code == 200
 
-    def delete(self, key: str):
-        """Delete a file from managed content (S3) .
+    def delete(self, key: str) -> dict:
+        """Delete a file from managed content (S3)
 
-        :param key: The path of the file to check.
-        :returns: A boolean indicating wether the file exists or not.
+        :param key: The path of the file to delete
+        :type key: str
+        :return: A boolean indicating whether the file exists or not.
+        :rtype: dict
         """
         uri = self._make_content_uri(key)
         res = self._serviceconnector.request("DELETE", uri=uri)
         raise_for_status_with_detail(res)
         return res.json()
 
-    def list(self, prefix: str = None, limit: int = -1, skip: int = -1):
-        """List objects in a project
+    def list(self, prefix: str = None, limit: int = -1, skip: int = -1) -> List[dict]:
+        """List objects in a project's managed content store
 
-        :param prefix: The key prefix to filter objects
-        :param limit: Limit the number of results returns
-        :param skip: Skip number of records
-        :returns: List of object keys
-        """
+        :param prefix:  The key prefix to filter objects with, defaults to None
+        :type prefix: str, optional
+        :param limit: Limit the number of results returned, defaults to -1
+        :type limit: int, optional
+        :param skip: Skip number of records. Use along with limit to paginate results, defaults to -1
+        :type skip: int, optional
+        :return: List of dictionaries with each dictionary holding metadata about individual files in the project's managed content store
+        :rtype: List[dict]
+        """  # pylint: disable=line-too-long
         uri = self.URIs["content"].format(projectId=self._project())
         query = {}
         if prefix is not None:
