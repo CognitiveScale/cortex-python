@@ -21,6 +21,7 @@ class Document:
     """
     Defines document (read-only) attributes.
     """
+
     def __init__(self, document: Dict, read_only=True):
         super().__setattr__('_document', document or {})
         super().__setattr__('_read_only', read_only)
@@ -47,8 +48,6 @@ class CamelResource(Document):
     """
     Contains CAMEL attributes for a Cortex object.
     """
-    def __init__(self, document: Dict, read_only=True):
-        super().__init__(document, read_only)
 
     @property
     def name(self):

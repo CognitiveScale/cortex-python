@@ -14,9 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from .serviceconnector import _Client
 from typing import Dict
 from .utils import get_logger, parse_string
+from .serviceconnector import _Client
 
 log = get_logger(__name__)
 
@@ -33,10 +33,8 @@ class SessionClient(_Client):
         'delete': 'projects/{projectId}/sessions/{sessionId}'
     }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def start_session(self, ttl=None, description='No description given') -> str:
+    def start_session(self, ttl=None,
+                      description='No description given') -> str:
         """
         Starts a new session.
 
@@ -59,11 +57,14 @@ class SessionClient(_Client):
         Gets data for a specific session.
 
         :param session_id: The ID of the session to query.
-        :param key: An optional key in the session memory; the entire session memory is returned if a key is not
+        :param key: An optional key in the session memory; 
+        the entire session memory is returned if a key is not
         specified.
         :return: A dict containing the requested session data
         """
-        uri = self.URIs['get'].format(sessionId=parse_string(session_id), projectId=self._project())
+        uri = self.URIs['get'].format(
+            sessionId=parse_string(session_id),
+            projectId=self._project())
         if key:
             uri += '?key={key}'.format(key=key)
 
@@ -78,7 +79,9 @@ class SessionClient(_Client):
         :param data: Dict containing the new session keys to set.
         :return: status
         """
-        uri = self.URIs['put'].format(sessionId=parse_string(session_id), projectId=self._project())
+        uri = self.URIs['put'].format(
+            sessionId=parse_string(session_id),
+            projectId=self._project())
         return self._post_json(uri, {'state': data})
 
     def delete_session(self, session_id):
@@ -88,7 +91,9 @@ class SessionClient(_Client):
         :param session_id: The ID of the session to delete.
         :return: status
         """
-        uri = self.URIs['delete'].format(sessionId=parse_string(session_id), projectId=self._project())
+        uri = self.URIs['delete'].format(
+            sessionId=parse_string(session_id),
+            projectId=self._project())
         return self._request_json(uri, method='DELETE')
 
 

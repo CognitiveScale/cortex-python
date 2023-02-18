@@ -29,9 +29,6 @@ class SecretsClient(_Client):
     """
     URIs = {'secret': 'projects/{projectId}/secrets/{secretName}'}
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     def post_secret(self, name: str, value: object):
         """
         Posts the secret information.
@@ -39,12 +36,15 @@ class SecretsClient(_Client):
         :param value: Secret value
         :return: status
         """
-        uri = self.URIs['secret'].format(secretName=parse_string(name), projectId=self._project())
+        uri = self.URIs['secret'].format(
+            secretName=parse_string(name),
+            projectId=self._project())
         data = json.dumps(value)
         headers = {'Content-Type': 'application/json'}
-        r = self._serviceconnector.request('POST', uri=uri, body=data, headers=headers)
-        raise_for_status_with_detail(r)
-        return r.json()
+        res = self._serviceconnector.request(
+            'POST', uri=uri, body=data, headers=headers)
+        raise_for_status_with_detail(res)
+        return res.json()
 
     def get_secret(self, name: str):
         """
@@ -53,14 +53,16 @@ class SecretsClient(_Client):
         :param name: The name of the Secret to retrieve.
         :return: A Secret object.
         """
-        port = os.getenv('CORTEX_ACCOUNTS_SERVICE_PORT_HTTP_CORTEX_ACCOUNTS') or '5000'
-        conn_svc_url = f'{self._serviceconnector.url.replace("cortex-internal", "cortex-accounts")}:{port}'
+        port = os.getenv(
+            'CORTEX_ACCOUNTS_SERVICE_PORT_HTTP_CORTEX_ACCOUNTS') or '5000'
+        conn_svc_url = f'{self._serviceconnector.url.replace("cortex-internal", "cortex-accounts")}:{port}' #pylint: disable=line-too-long
         uri = f'{conn_svc_url}/internal/projects/{self._project()}/secrets/{parse_string(name)}'
-        log.debug('Getting Secret using URI: %s' % uri)
-        r = self._serviceconnector.request('GET', uri=uri, is_internal_url=True)
-        raise_for_status_with_detail(r)
+        log.debug('Getting Secret using URI: {}', uri)
+        res = self._serviceconnector.request(
+            'GET', uri=uri, is_internal_url=True)
+        raise_for_status_with_detail(res)
 
-        return r.json()
+        return res.json()
 
 
 class Secret(CamelResource):

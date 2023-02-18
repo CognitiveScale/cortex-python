@@ -21,6 +21,7 @@ class Timer:
     """
     Used with the run class to time actions.
     """
+
     def __init__(self):
         self.start_time = None
         self._start_clock = None

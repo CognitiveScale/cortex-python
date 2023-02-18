@@ -16,24 +16,47 @@ limitations under the License.
 
 import os
 import time
-from  .constant import VERSION
+from .constant import VERSION
 from .experiment.local import LocalExperiment
-from .experiment import Experiment, ExperimentClient
+from .connection import ConnectionClient
+from .content import ManagedContentClient
+from .model import ModelClient
+from .secrets import SecretsClient
+from .session import SessionClient
+from .skill import SkillClient
+from .types import TypeClient
+from .experiment import ExperimentClient
 from .serviceconnector import ServiceConnector
 from .env import CortexEnv
 from .exceptions import ProjectException
 from .message import Message
 from .utils import decode_JWT, get_logger, generate_token
 
-_msg_token_exp_no_creds = """
-Your Cortex token has expired, and the required credentials for auto-refresh have not been provided. Supply these 
-credentials; account, username,
-and password.  Please login again to retrieve a valid token.
-"""
-
 log = get_logger(__name__)
 
-class _Token(object):
+class InvalidMessageTypeException(Exception):
+    """_summary_
+
+    Args:
+        Exception (_type_): _description_
+    """
+
+class IncompleteMessageKeysException(Exception):
+    """_summary_
+
+    Args:
+        Exception (_type_): _description_
+
+    Raises:
+        ProjectException: _description_
+        InvalidMessageException: _description_
+        Exception: _description_
+
+    Returns:
+        _type_: _description_
+    """
+
+class _Token():
 
     def __init__(self, token: str):
         self._token = token
@@ -42,28 +65,40 @@ class _Token(object):
             self._jwt = decode_JWT(self._token)
 
     def is_expired(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         current_time = time.time()
-        return not self._jwt or (self._jwt.get('exp', current_time) < current_time)
+        return not self._jwt or (self._jwt[0].get(
+            'exp', current_time) < current_time)
 
     @property
     def token(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         return self._token
 
 
-class Client(object):
+class Client():
     """
     API client used to access agents, skills, and datasets.
     """
 
-    def __init__(self, url: str, token: _Token = None, config: dict = None, project: str = None, version: int = VERSION,
+    def __init__(self, url: str, token: _Token = None, config: dict = None,
+                 project: str = None, version: int = VERSION,
                  verify_ssl_cert: bool = False):
         """
         Create an instance of the Cortex Fabric client
 
         :param url: Cortex fabric url
-        :param token: (optional) Use JWT token to authenticate requests, will default to settings in ~/.cortex/config
-        if not provided
-        :param config: (optional) Use Cortex personal access token config file to generate JWT tokens
+        :param token: (optional) Use JWT token to authenticate requests, 
+        will default to settings in ~/.cortex/config if not provided to
+        generate JWT tokens
         :param project: (optional) Project name, must specify project for each request
         :param version: (optional) Fabric API version (default: 4)
         """
@@ -75,8 +110,20 @@ class Client(object):
         self._version = version
         self._verify_ssl_cert = verify_ssl_cert
 
+        self._service_clients = {
+            "connections": ConnectionClient(self),
+            "content": ManagedContentClient(self),
+            "experiments": ExperimentClient(self),
+            "models": ModelClient(self),
+            "secrets": SecretsClient(self),
+            "sessions": SessionClient(self),
+            "skills": SkillClient(self),
+            "types": TypeClient(self)
+        }
+
     def message(self, payload: dict, properties: dict = None) -> Message:
-        """Constructs a Message from payload and properties if given. This is useful for testing skills, as this the message passed when skills are invoked
+        """Constructs a Message from payload and properties if given. This is useful for 
+        testing skills, as this the message passed when skills are invoked
         :param payload: The payload to include in the Message.
         :param properties: The properties to include in the Message.
         :return: A Message object.
@@ -96,28 +143,215 @@ class Client(object):
                                 self._verify_ssl_cert, self._project)
 
     # expose this to allow developer to pass client instance into Connectors
-    def to_connector(self):
+    def to_connector(self) -> ServiceConnector:
+        """_summary_
+
+        Returns:
+            ServiceConnector: _description_
+        """
         return self._mk_connector()
-    
-    def experiment(self, name: str, version: str = '4', model_id: str = None, project: str = None) -> Experiment:
-        """
-        Gets an experiment with the specified name.
-        :param name: Experiment name to fetch
-        :param version: (optional) Fabric API version (default: 4)
-        :param model_id: (optional) Model ID associated with the experiment (default: None)
-        :param project: (optional) Project name, defaults to client's project
-        """
-        if project is None:
-            project = self._project
-        if not self._token.token:
-            self._token = _Token(generate_token(self._config))
-        exp_client = ExperimentClient(self._url, version, self._token.token, self._config, project=project)
-        return Experiment.get_experiment(name=name, client=exp_client, model_id=model_id)
 
     def _repr_pretty_(self, p, cycle):
-        p.text(f'{self.__str__()}')
+        # pylint: disable=unused-argument,invalid-name
+        p.text(str(self))
         p.text(f'Url: {self._url}\n')
         p.text(f'Project: {self._project}\n')
+
+    @property
+    def experiments(self) -> ExperimentClient:
+        """
+        Returns a pre-initialised ExperimentClient whose project has been set to the project 
+        configured for the Cortex.client. If you want to access experiments for a project that is
+        different from the one configured with Cortex.client, please use .experimentsClient instead
+        .. code-block::
+        ## use default .experiments client helper
+        from cortex import Cortex
+        client = Cortex.client()
+        client.experiments.list_experiments()
+        client.experiments.save_experiments()
+        client.experiments.list_runs()
+        client.experiments.delete_runs()
+
+        Refer to the documentation of :py:mod:cortex.experiment.ExperimentClient to learn more
+        about the methods available on the ExperimentClient
+
+        .. code-block::
+        ## use .experiments_client helper to access experiments from a different project
+        expc = client.experiments_client(project="another-project")
+
+        Returns:
+            ExperimentClient: An instance of this helper class that enables access to the 
+            Fabric Experiments API.
+        """
+        return self._service_clients.get("experiments")
+
+    def experiments_client(self, project: str = None) -> ExperimentClient:
+        """_summary_
+
+        Args:
+            project (str, optional): _description_. Defaults to None.
+
+        Returns:
+            ExperimentClient: _description_
+        """
+        if project is not None:
+            return ExperimentClient(project=project)
+        return self.experiments
+
+    @property
+    def connections(self) -> ConnectionClient:
+        """_summary_
+
+        Returns:
+            ConnectionClient: _description_
+        """
+        return self._service_clients.get("connections")
+
+    def connections_client(self, project: str = None) -> ConnectionClient:
+        """_summary_
+
+        Args:
+            project (str, optional): _description_. Defaults to None.
+
+        Returns:
+            ConnectionClient: _description_
+        """
+        if project is not None:
+            return ConnectionClient(project=project)
+        return self.connections
+
+    @property
+    def content(self) -> ManagedContentClient:
+        """_summary_
+
+        Returns:
+            ManagedContentClient: _description_
+        """
+        return self._service_clients.get("content")
+
+    def content_client(self, project: str = None) -> ManagedContentClient:
+        """_summary_
+
+        Args:
+            project (str, optional): _description_. Defaults to None.
+
+        Returns:
+            ManagedContentClient: _description_
+        """
+        if project is not None:
+            return ManagedContentClient(project=project)
+        return self.content
+
+    @property
+    def models(self) -> ModelClient:
+        """_summary_
+
+        Returns:
+            ModelClient: _description_
+        """
+        return self._service_clients.get("models")
+
+    def models_client(self, project: str = None) -> ModelClient:
+        """_summary_
+
+        Args:
+            project (str, optional): _description_. Defaults to None.
+
+        Returns:
+            ModelClient: _description_
+        """
+        if project is not None:
+            return ModelClient(project=project)
+        return self.models
+
+    @property
+    def secrets(self) -> SecretsClient:
+        """_summary_
+
+        Returns:
+            SecretsClient: _description_
+        """
+        return self._service_clients.get("secrets")
+
+    def secrets_client(self, project: str = None) -> SecretsClient:
+        """_summary_
+
+        Args:
+            project (str, optional): _description_. Defaults to None.
+
+        Returns:
+            SecretsClient: _description_
+        """
+        if project is not None:
+            return SecretsClient(project=project)
+        return self.secrets
+
+    @property
+    def skills(self) -> SkillClient:
+        """_summary_
+
+        Returns:
+            SkillClient: _description_
+        """
+        return self._service_clients.get("skills")
+
+    def skills_client(self, project: str = None) -> SkillClient:
+        """_summary_
+
+        Args:
+            project (str, optional): _description_. Defaults to None.
+
+        Returns:
+            SkillClient: _description_
+        """
+        if project is not None:
+            return SkillClient(project=project)
+        return self.skills
+
+    @property
+    def sessions(self) -> SessionClient:
+        """_summary_
+
+        Returns:
+            SessionClient: _description_
+        """
+        return self._service_clients.get("sessions")
+
+    def sessions_client(self, project: str = None) -> SessionClient:
+        """_summary_
+
+        Args:
+            project (str, optional): _description_. Defaults to None.
+
+        Returns:
+            SessionClient: _description_
+        """
+        if project is not None:
+            return SessionClient(project=project)
+        return self.sessions
+
+    @property
+    def types(self) -> TypeClient:
+        """_summary_
+
+        Returns:
+            TypeClient: _description_
+        """
+        return self._service_clients.get("types")
+
+    def types_client(self, project: str = None) -> TypeClient:
+        """_summary_
+
+        Args:
+            project (str, optional): _description_. Defaults to None.
+
+        Returns:
+            TypeClient: _description_
+        """
+        if project is not None:
+            return TypeClient(project=project)
+        return self.types
+
 
 class Local:
     """
@@ -133,10 +367,19 @@ class Local:
         :param name: Experiment name
         :return: Experiment instance
         """
-        return LocalExperiment(name, self._basedir)
+        return LocalExperiment(name, self.basedir)
+
+    @property
+    def basedir(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
+        return self._basedir
 
 
-class Cortex(object):
+class Cortex:
     """
     Entry point to the Cortex API.
     """
@@ -145,8 +388,8 @@ class Cortex(object):
     def client(api_endpoint: str = None, api_version: int = 4, verify_ssl_cert=None,
                token: str = None, config: dict = None, project: str = None, profile: str = None):
         """
-        Gets a client with the provided parameters. All parameters are optional and default to environment variable
-        values if not specified.
+        Gets a client with the provided parameters. All parameters are optional and default to 
+        environment variable values if not specified.
 
         **Example**
 
@@ -155,15 +398,20 @@ class Cortex(object):
 
         :param api_endpoint: The Cortex URL.
         :param api_version: The version of the API to use with this client.
-        :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE file or directory
-        with certificates of trusted CAs (default: True)
+        :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE
+        file or directory with certificates of trusted CAs (default: True)
         :param project: Cortex Project that you want to use.
-        :param token: (optional) Use JWT token for authenticating requests, will default to settings in
-        ~/.cortex/config
-        if not provided
-        :param config: (optional) Use Cortex personal access token config file to generate JWT tokens.
+        :param token: (optional) Use JWT token for authenticating requests, will default to 
+        settings in ~/.cortex/config if not provided
+        :param config: (optional) Use Cortex personal access token config file to
+        generate JWT tokens.
         """
-        env = CortexEnv(api_endpoint=api_endpoint, token=token, config=config, project=project, profile=profile)
+        env = CortexEnv(
+            api_endpoint=api_endpoint,
+            token=token,
+            config=config,
+            project=project,
+            profile=profile)
 
         if not api_endpoint:
             api_endpoint = env.api_endpoint
@@ -178,31 +426,44 @@ class Cortex(object):
             project = env.project
 
         if not project:
-            raise ProjectException('Please Provide Project Name that you want to access Cortex Assets for')
+            raise ProjectException(
+                'Please Provide Project Name that you want to access Cortex Assets for')
 
-        t = _Token(token)
+        tkn = _Token(token)
 
-        return Client(url=api_endpoint, version=api_version, token=t, config=config, project=project,
+        return Client(url=api_endpoint, version=api_version, token=tkn,
+                      config=config, project=project,
                       verify_ssl_cert=verify_ssl_cert)
 
     @staticmethod
     def from_message(msg, verify_ssl_cert=None):
         """
-        Creates a Cortex client from a skill's input message, expects { api_endpoint:"..", token:"..", projectId:".."}
+        Creates a Cortex client from a skill's input message, expects 
+        { api_endpoint:"..", token:"..", projectId:".."}
         :param msg: A message for constructing a Cortex Client.
-        :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE file or directory
-        with certificates of trusted CAs (default: True)
+        :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE
+        file or directory with certificates of trusted CAs (default: True)
         """
-        if type(msg) is not dict:
-            raise Exception(f'Skill message must be a `dict` not a {type(msg)}')
+        if not isinstance(msg, dict):
+            raise InvalidMessageTypeException(
+                f'Skill message must be a `dict` not a {type(msg)}')
         keys = ('apiEndpoint', 'token', 'projectId')
         if not all(key in msg for key in keys):
-            raise Exception(f'Skill message must contain these keys: {keys}')
-        return Cortex.client(api_endpoint=msg.get('apiEndpoint'), token=msg.get('token'), project=msg.get('projectId'),
+            raise IncompleteMessageKeysException(f'Skill message must contain these keys: {keys}')
+        return Cortex.client(api_endpoint=msg.get('apiEndpoint'),
+                             token=msg.get('token'), project=msg.get('projectId'),
                              verify_ssl_cert=verify_ssl_cert)
 
     @staticmethod
     def local(basedir=None):
+        """_summary_
+
+        Args:
+            basedir (_type_, optional): _description_. Defaults to None.
+
+        Returns:
+            _type_: _description_
+        """
         return Local(basedir)
 
     @staticmethod

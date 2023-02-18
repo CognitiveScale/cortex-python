@@ -30,19 +30,22 @@ class Message(Document):
     params:
     activationId: Request ID for the current execution
     agentName: Name of the agent invoking the skill, will be empty for skill invokes
-    apiEndpoint: URI of the API server to use when making requests to platform services in processing of this message.
+    apiEndpoint: URI of the API server to use when making requests to 
+    platform services in processing of this message.
     channelId: ID of the channel (wire) this message was sent on
     outputName: Output name defined in the agent definition, can be overridden
     payload: JSON payload passed to the skill
     projectId: Name of the project invoking this skill
     properties: Properties merged from Skill definition, Skill reference, and Agent definition.
-    sessionId: The ID of the session associated with this message, this will be the activationId unless provided externally
+    sessionId: The ID of the session associated with this message, 
+    this will be the activationId unless provided externally
     skillName: The name of the skill being invoked.
     timestamp: Timestamp of the invoke
-    token: The JWT token to be used for making authenticated requests to APIs needed to process this message.
+    token: The JWT token to be used for making authenticated requests to APIs
+    needed to process this message.
     """
 
-    def __init__(self, params:Dict = None):
+    def __init__(self, params: Dict = None):
         if params is None:
             params = {}
 
@@ -63,6 +66,11 @@ class Message(Document):
 
     @staticmethod
     def from_env(**kwargs):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         env = CortexEnv(**kwargs)
 
         params = {}

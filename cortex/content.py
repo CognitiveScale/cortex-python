@@ -16,11 +16,11 @@ limitations under the License.
 
 import os
 import glob
+import time
 
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 from requests.exceptions import HTTPError
 import tenacity
-import time
 
 from .serviceconnector import _Client
 from .utils import raise_for_status_with_detail, get_logger
@@ -34,10 +34,8 @@ class ManagedContentClient(_Client):
     """
     URIs = {'content': 'projects/{projectId}/content'}
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def upload(self, key: str, stream_name: str, stream: object, content_type: str, retries: int = 1):
+    def upload(self, key: str, stream_name: str, stream: object,
+               content_type: str, retries: int = 1):
         """Store `stream` file in S3.
 
         :param key: The path where the file will be stored.
@@ -47,23 +45,27 @@ class ManagedContentClient(_Client):
         :param retries: Number of times to retry a failed request from a retryable response.
         :return: a dict with the response to request upload.
 
-        .. NOTE: This method uses a multi-part form request; to upload very large files, use `uploadStreaming` instead.
+        .. NOTE: This method uses a multi-part form request; to upload very large files, 
+        use `uploadStreaming` instead.
         .. seealso: uploadStreaming()
         """
-        r = tenacity.Retrying(
+        res = tenacity.Retrying(
             stop=tenacity.stop_after_attempt(retries + 1),
-            retry=tenacity.retry_if_exception(ManagedContentClient._http_request_retry_predicate)
+            retry=tenacity.retry_if_exception(
+                ManagedContentClient._http_request_retry_predicate)
         )
-        return r.wraps(self._upload)(key, stream_name, stream, content_type)
+        return res.wraps(self._upload)(key, stream_name, stream, content_type)
 
-    def _upload(self, key: str, stream_name: str, stream: object, content_type: str):
+    def _upload(self, key: str, stream_name: str,
+                stream: object, content_type: str):
         uri = self.URIs['content'].format(projectId=self._project())
         fields = {'key': key, 'content': (stream_name, stream, content_type)}
         data = MultipartEncoder(fields=fields)
         headers = {'Content-Type': data.content_type}
-        r = self._serviceconnector.request('POST', uri=uri, body=data, headers=headers)
-        raise_for_status_with_detail(r)
-        return r.json()
+        res = self._serviceconnector.request(
+            'POST', uri=uri, body=data, headers=headers)
+        raise_for_status_with_detail(res)
+        return res.json()
 
     @staticmethod
     def _get_source_files(source):
@@ -75,7 +77,8 @@ class ManagedContentClient(_Client):
                     'relative': path[len(source):]
                 }
 
-    def upload_directory(self, source: str, destination: str, retries: int = 1):
+    def upload_directory(
+            self, source: str, destination: str, retries: int = 1):
         """Walk source directory and store in S3
 
         :param source: The path to the local directory.
@@ -92,11 +95,17 @@ class ManagedContentClient(_Client):
         for path_dict in generated_paths:
             key = os.path.join(destination, path_dict.get('relative'))
             with open(path_dict.get('canonical'), 'rb') as stream:
-                responses.append(self.upload_streaming(key, stream, 'application/octet-stream', retries))
+                responses.append(
+                    self.upload_streaming(
+                        key,
+                        stream,
+                        'application/octet-stream',
+                        retries))
 
         return responses
 
-    def upload_streaming(self, key: str, stream: object, content_type: str = 'application/octet-stream', retries: int = 1):
+    def upload_streaming(self, key: str, stream: object,
+                         content_type: str = 'application/octet-stream', retries: int = 1):
         """Store `stream` file in S3.
 
         :param key: The path where the file will be stored.
@@ -105,18 +114,20 @@ class ManagedContentClient(_Client):
         :param retries: Number of times to retry a failed request from a retryable response.
         :return: A dict with the response to request upload.
         """
-        r = tenacity.Retrying(
+        res = tenacity.Retrying(
             stop=tenacity.stop_after_attempt(retries + 1),
-            retry=tenacity.retry_if_exception(ManagedContentClient._http_request_retry_predicate)
+            retry=tenacity.retry_if_exception(
+                ManagedContentClient._http_request_retry_predicate)
         )
-        return r.wraps(self._upload_streaming)(key, stream, content_type)
+        return res.wraps(self._upload_streaming)(key, stream, content_type)
 
     def _upload_streaming(self, key: str, stream: object, content_type: str):
         uri = self._make_content_uri(key)
         headers = {'Content-Type': content_type}
-        r = self._serviceconnector.request('POST', uri=uri, body=stream, headers=headers)
-        raise_for_status_with_detail(r)
-        return r.json()
+        res = self._serviceconnector.request(
+            'POST', uri=uri, body=stream, headers=headers)
+        raise_for_status_with_detail(res)
+        return res.json()
 
     def download(self, key: str, retries: int = 1):
         """Download a file from managed content (S3).
@@ -125,17 +136,18 @@ class ManagedContentClient(_Client):
         :param retries: Number of times to retry a failed request from a response.
         :returns: A Generator.
         """
-        r = tenacity.Retrying(
+        res = tenacity.Retrying(
             stop=tenacity.stop_after_attempt(retries + 1),
-            retry=tenacity.retry_if_exception(ManagedContentClient._http_request_retry_predicate)
+            retry=tenacity.retry_if_exception(
+                ManagedContentClient._http_request_retry_predicate)
         )
-        return r.wraps(self._download)(key)
+        return res.wraps(self._download)(key)
 
     def _download(self, key: str):
         uri = self._make_content_uri(key)
-        r = self._serviceconnector.request('GET', uri=uri, stream=True)
-        raise_for_status_with_detail(r)
-        return r.raw
+        res = self._serviceconnector.request('GET', uri=uri, stream=True)
+        raise_for_status_with_detail(res)
+        return res.raw
 
     def exists(self, key: str) -> bool:
         """Check that a file from managed content (S3) exists.
@@ -144,8 +156,8 @@ class ManagedContentClient(_Client):
         :returns: A boolean indicating wether the file exists or not.
         """
         uri = self._make_content_uri(key)
-        r = self._serviceconnector.request('HEAD', uri=uri)
-        return r.status_code == 200
+        res = self._serviceconnector.request('HEAD', uri=uri)
+        return res.status_code == 200
 
     def delete(self, key: str):
         """Delete a file from managed content (S3) .
@@ -154,11 +166,11 @@ class ManagedContentClient(_Client):
         :returns: A boolean indicating wether the file exists or not.
         """
         uri = self._make_content_uri(key)
-        r = self._serviceconnector.request('DELETE', uri=uri)
-        raise_for_status_with_detail(r)
-        return r.json()
+        res = self._serviceconnector.request('DELETE', uri=uri)
+        raise_for_status_with_detail(res)
+        return res.json()
 
-    def list(self, prefix: str=None, limit: int=-1, skip: int=-1):
+    def list(self, prefix: str = None, limit: int = -1, skip: int = -1):
         """List objects in a project
 
         :param prefix: The key prefix to filter objects
@@ -167,16 +179,16 @@ class ManagedContentClient(_Client):
         :returns: List of object keys
         """
         uri = self.URIs['content'].format(projectId=self._project())
-        query = {};
+        query = {}
         if prefix is not None:
             query['filter'] = prefix
         if limit > 0:
             query['limit'] = limit
         if skip > 0:
             query['skip'] = skip
-        r = self._serviceconnector.request('GET', uri=uri, params=query)
-        raise_for_status_with_detail(r)
-        return r.json()
+        res = self._serviceconnector.request('GET', uri=uri, params=query)
+        raise_for_status_with_detail(res)
+        return res.json()
 
     ## Private ##
 
@@ -185,10 +197,11 @@ class ManagedContentClient(_Client):
         if isinstance(exception, HTTPError):
             retry_after = exception.response.headers.get('Retry-After')
             if retry_after:
-                ## NOTE: sleep in predicate, ugly, but how to extract this?
+                # NOTE: sleep in predicate, ugly, but how to extract this?
                 time.sleep(retry_after)
                 return True
         return False
 
     def _make_content_uri(self, key: str):
-        return self.URIs['content'].format(projectId=self._project()) + '/' + key.lstrip('/')
+        return self.URIs['content'].format(
+            projectId=self._project()) + '/' + key.lstrip('/')

@@ -95,6 +95,7 @@ class Model(CamelResource):
     def __init__(self, document: Dict, client: ModelClient):
         super().__init__(document, False)
         self._client = client
+        self._project = client._project
 
     def to_camel(self, camel='1.0.0'):
         return {

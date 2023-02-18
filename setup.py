@@ -44,33 +44,34 @@ setup(
     platforms=['any'],
     packages=find_packages(),
     include_package_data=True,
-  install_requires=[
-      'requests>=2.12.4,<3',
-      'requests-toolbelt>=0.8.0',
-      'python-jwt>=3.3.0,<4.0',
-      'pyyaml>=5.3.1,<6',
-      'cuid>=0.3,<1',
-      'tenacity>=8.0,<9.0',
-      'dill>=0.2.8.2'
-  ],
-  extras_require={
-      'viz': [
-          'matplotlib>=2.2.2,<3',
-          'seaborn>=0.9.0,<0.10',
-          'pandas'
-      ],
-      'jupyter': [
-          'ipython>=6.4.0,<7',
-          'maya>=0.5.0',
-          'jinja2'
-      ],
-  },
-  tests_require=[
-      'mocket>=3.9.0,<4.0',
-      'pytest>=7.2.1,<8'
-  ],
-  classifiers=[
-      'Operating System :: MacOS :: MacOS X',
-      'Operating System :: POSIX',
-      'Programming Language :: Python :: 3.6',
-  ])
+    install_requires=[
+        'requests>=2.12.4,<3',
+        'requests-toolbelt>=0.8.0',
+        'python-jwt>=3.3.0,<4.0',
+        'pyyaml>=5.3.1,<6',
+        'cuid>=0.3,<1',
+        'tenacity>=8.0,<9.0',
+        'dill>=0.2.8.2'
+    ],
+    extras_require={
+        'viz': [
+            'matplotlib>=2.2.2,<3',
+            'seaborn>=0.9.0,<0.10',
+            'pandas'
+        ],
+        'jupyter': [
+            'ipython>=6.4.0,<7',
+            'maya>=0.5.0',
+            'jinja2'
+        ],
+    },
+    tests_require=[
+        'mocket>=3.9.0,<4.0',
+        'pytest>=7.2.1,<8'
+    ],
+    classifiers=[
+        'Operating System :: MacOS :: MacOS X',
+        'Operating System :: POSIX',
+        'Programming Language :: Python :: 3.6',
+    ]
+)

@@ -34,4 +34,3 @@ class AuthenticationClient(_Client):
         """
         token = generate_token(config, validity=.5)
         return token
-

@@ -23,39 +23,46 @@ from .utils import raise_for_status_with_detail
 log = get_logger(__name__)
 
 
-class SchemaClient(_Client):
+class TypeClient(_Client):
     """
-    A client for the Cortex Schema API.
+    A client for the Cortex Types API.
     """
 
     URIs = {
-        'schema': 'projects/{projectId}/types/{name}',
+        'type': 'projects/{projectId}/types/{name}',
     }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def save_type(self):
+        """_summary_
 
-    def save_schema(self):
+        Raises:
+            NotImplementedError: _description_
+        """
         raise NotImplementedError()
 
-    def get_schema(self, name):
+    def get_type(self, name):
         """
-        Fetches a schema to work with.
-        :param name: The name of the schema to retrieve.
-        :return: A schema object.
+        Fetches a type to work with.
+        :param name: The name of the type to retrieve.
+        :return: A type object.
         """
-        uri = self.URIs['schema'].format(projectId=self._project(), name=urllib.parse.quote(name, safe=''))
-        log.debug('Getting schema using URI: %s' % uri)
-        r = self._serviceconnector.request('GET', uri=uri)
-        raise_for_status_with_detail(r)
-        return Schema(r.json(), self._serviceconnector)
+        uri = self.URIs['type'].format(
+            projectId=self._project(),
+            name=urllib.parse.quote(
+                name,
+                safe=''))
+        log.debug('Getting type using URI: {}', uri)
+        res = self._serviceconnector.request('GET', uri=uri)
+        raise_for_status_with_detail(res)
+        return Type(res.json(), self)
 
 
-class Schema(CamelResource):
+class Type(CamelResource):
     """
     Represents a plan for accessing a schema.
     """
-    def __init__(self, schema, client: SchemaClient):
+
+    def __init__(self, schema, client: TypeClient):
         super().__init__(schema, True)
         self._client = client
-        self._project = client.project
+        self._project = client._project

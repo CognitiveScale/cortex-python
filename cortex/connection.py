@@ -30,9 +30,6 @@ class ConnectionClient(_Client):
     """
     URIs = {'connections': 'projects/{projectId}/connections'}
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     def save_connection(self, connection: object):
         """
         Posts the connection client information.
@@ -42,9 +39,9 @@ class ConnectionClient(_Client):
         uri = self.URIs['connections'].format(projectId=self._project())
         data = json.dumps(connection)
         headers = {'Content-Type': 'application/json'}
-        r = self._serviceconnector.request('POST', uri, data, headers)
-        raise_for_status_with_detail(r)
-        return r.json()
+        res = self._serviceconnector.request('POST', uri, data, headers)
+        raise_for_status_with_detail(res)
+        return res.json()
 
     def get_connection(self, name: str):
         """
@@ -52,20 +49,22 @@ class ConnectionClient(_Client):
         :param name: The name of the connection to retrieve.
         :return: A Connection object.
         """
-        port = os.getenv('CORTEX_CONNECTIONS_SERVICE_PORT_HTTP_CORTEX_CONNECTIONS') or '4450'
-        conn_svc_url = f'{self._serviceconnector.url.replace("cortex-internal", "cortex-connections")}:{port}'
-        uri = f'{conn_svc_url}/internal/projects/{self._project()}/connections/{urllib.parse.quote(name, safe="")}'
-        log.debug('Getting connection using URI: %s' % uri)
-        r = self._serviceconnector.request('GET', uri=uri, is_internal_url=True)
-        raise_for_status_with_detail(r)
+        port = os.getenv(
+            'CORTEX_CONNECTIONS_SERVICE_PORT_HTTP_CORTEX_CONNECTIONS') or '4450'
+        conn_svc_url = f'{self._serviceconnector.url.replace("cortex-internal", "cortex-connections")}:{port}' # pylint: disable=line-too-long
+        uri = f'{conn_svc_url}/internal/projects/{self._project()}/connections/{urllib.parse.quote(name, safe="")}' # pylint: disable=line-too-long
+        log.debug('Getting connection using URI: {}', uri)
+        res = self._serviceconnector.request(
+            'GET', uri=uri, is_internal_url=True)
+        raise_for_status_with_detail(res)
 
-        return r.json()
+        return res.json()
 
     def _bootstrap(self):
         uri = self.URIs['connections'] + '/_/bootstrap'
-        r = self._serviceconnector.request('GET', uri=uri)
-        raise_for_status_with_detail(r)
-        return r.json()
+        res = self._serviceconnector.request('GET', uri=uri)
+        raise_for_status_with_detail(res)
+        return res.json()
 
 
 class Connection(CamelResource):

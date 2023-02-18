@@ -17,6 +17,9 @@ limitations under the License.
 import unittest
 
 from unittest.mock import Mock
+from mocket.mockhttp import Entry
+from mocket import mocketize
+
 from cortex import Cortex
 from cortex.message import Message
 import pytest
@@ -26,7 +29,7 @@ from cortex.experiment import ExperimentClient, Experiment
 from cortex.model import ModelClient, Model
 from cortex.secrets import SecretsClient, Secret
 from cortex.session import SessionClient, Session
-from cortex.schema import SchemaClient, Schema
+from cortex.types import TypeClient, Type
 from cortex.skill import SkillClient, Skill
 
 from .fixtures import john_doe_subject, john_doe_token
@@ -118,9 +121,9 @@ class TestCortex(unittest.TestCase):
             [SecretsClient(client), project, 'get_secret', ('secret')],
             [SecretsClient('url', project='noclient'), 'noclient', 'get_secret', ('secret')],
             [SecretsClient(client, project='withclient'), 'withclient', 'get_secret', ('secret')],
-            [SchemaClient(client), project, 'get_schema', ('schema')],
-            [SchemaClient('url', project='noclient'), 'noclient', 'get_schema', ('schema')],
-            [SchemaClient(client, project='withclient'), 'withclient', 'get_schema', ('schema')],
+            [TypeClient(client), project, 'get_type', ('type')],
+            [TypeClient('url', project='noclient'), 'noclient', 'get_type', ('type')],
+            [TypeClient(client, project='withclient'), 'withclient', 'get_type', ('type')],
             [SessionClient(client), project, 'get_session_data', ('sess')],
             [SessionClient('url', project='noclient'), 'noclient' , 'get_session_data', ('sess')],
             [SessionClient(client, project='withclient'), 'withclient', 'get_session_data', ('sess')],
@@ -150,7 +153,18 @@ class TestCortex(unittest.TestCase):
         test_name = 'random_resource'
         client = Cortex.from_message(message)
         tests = [
-            [Connection(test_name, ConnectionClient(client)), project]
+            [Connection(test_name, ConnectionClient(client)), project],
+            [Connection(test_name, ConnectionClient(client, project="other")), "other"],
+            [Experiment({"name": test_name}, ExperimentClient(client)), project],
+            [Experiment({"name": test_name}, ExperimentClient(client, project="other")), "other"],
+            [Skill({"name": test_name}, SkillClient(client, project="test")), "test"],
+            [Skill({"name": test_name}, SkillClient(client)), project],
+            [Model({"name": test_name}, ModelClient(client, project="test")), "test"],
+            [Model({"name": test_name}, ModelClient(client)), project],
+            [Secret({"name": test_name}, SecretsClient(client)), project],
+            [Secret({"name": test_name}, SecretsClient(client, project="test")), "test"],
+            [Session(test_name, SessionClient(client)), project],
+            [Session(test_name, SessionClient(client, project="test")), "test"],
         ]
         for resource_inst, project in tests:
             print(f'Testing project access for {type(resource_inst)} with {project}')

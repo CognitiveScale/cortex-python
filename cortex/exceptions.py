@@ -19,39 +19,46 @@ class CortexException(Exception):
     """
     Base exception type.
     """
-    pass
 
 
 class AuthenticationException(CortexException):
     """
     Cortex authentication exception.
     """
-    pass
 
+class SendMessageException(CortexException):
+    """_summary_
+
+    Args:
+        CortexException (_type_): _description_
+    """    
 
 class BadTokenException(CortexException):
     """
     Cortex token invalid exception.
     """
-    pass
 
 
 class ConfigurationException(CortexException):
     """
     Cortex configuration exception.
     """
-    pass
 
 
 class APIException(CortexException):
     """
     Cortex API exception.
     """
-    pass
 
 
 class ProjectException(CortexException):
     """
     Cortex Project exception.
     """
-    pass
+
+class VisualisationException(CortexException):
+    """_summary_
+
+    Args:
+        CortexException (_type_): _description_
+    """    

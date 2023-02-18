@@ -19,7 +19,7 @@ import json
 import os
 
 from cortex import Cortex
-from cortex.experiment import ExperimentClient
+from cortex.experiment import ExperimentClient, Experiment
 
 from mocket.mockhttp import Entry
 from mocket import mocketize
@@ -49,17 +49,44 @@ class TestExperiment(unittest.TestCase):
         self.local_tmp = Cortex.local('/tmp/cortex')
 
     @mocketize
-    def test_make_remote_experiment(self):
-        uri = self.expc.URIs['experiment'].format(experimentName=self.EXP_NAME, projectId=projectId)
-        local_url = self.expc._serviceconnector._construct_url(uri)
-
+    def test_get_remote_experiment(self):
+        uri = self.cortex.experiments.URIs['experiment'].format(experimentName=self.EXP_NAME, projectId=projectId)
+        local_url = self.cortex.experiments._serviceconnector._construct_url(uri)
         returns = {"name": self.EXP_NAME}
         Entry.single_register(Entry.GET, 
                               local_url, 
                               status=200, 
                               body=json.dumps(returns))
-        exp = self.cortex.experiment(self.EXP_NAME)
+
+        exp = self.cortex.experiments.get_experiment(self.EXP_NAME)
         self.assertNotEqual(exp, None)
+    
+    @mocketize
+    def test_list_remote_experiments(self):
+        uri = self.cortex.experiments.URIs['experiments'].format( projectId=projectId)
+        local_url = self.cortex.experiments._serviceconnector._construct_url(uri)
+        returns = {"experiments": [{"name": self.EXP_NAME}]}
+        Entry.single_register(Entry.GET, 
+                              local_url, 
+                              status=200, 
+                              body=json.dumps(returns))
+        exps = self.cortex.experiments.list_experiments()
+
+        self.assertNotEqual(exps, None)
+        self.assertIsInstance(exps, list)
+
+    @mocketize
+    def test_make_remote_experiment(self):
+        uri = self.cortex.experiments.URIs['experiments'].format(projectId=projectId)
+        local_url = self.cortex.experiments._serviceconnector._construct_url(uri)
+        returns = {"name": self.EXP_NAME}
+        Entry.single_register(Entry.POST, 
+                              local_url, 
+                              status=200, 
+                              body=json.dumps(returns))
+        exp = Experiment(document=self.cortex.experiments.save_experiment(self.EXP_NAME), client=self.cortex.experiments)
+        self.assertNotEqual(exp, None)
+        self.assertIsInstance(exp, Experiment)
 
     @mocketize
     def test_make_local_experiment(self):
@@ -77,12 +104,12 @@ class TestExperiment(unittest.TestCase):
 
     @mocketize
     def test_remote_load_artifact(self):
-        uri = ExperimentClient.URIs['experiment'].format(experimentName=self.EXP_NAME, projectId=projectId)
+        uri = self.cortex.experiments.URIs['experiments'].format(projectId=projectId)
         local_url = self.expc._serviceconnector._construct_url(uri)
         returns = {"name": self.EXP_NAME}
-        Entry.single_register(Entry.GET, local_url, status=200, body=json.dumps(returns))
+        Entry.single_register(Entry.POST, local_url, status=200, body=json.dumps(returns))
 
-        exp = self.cortex.experiment(self.EXP_NAME)
+        exp = Experiment(document=self.cortex.experiments.save_experiment(experiment_name=self.EXP_NAME), client=self.cortex.experiments)
         # add a run & artifact
 
         # register mock for creating a run
