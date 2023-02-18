@@ -30,10 +30,16 @@ Cortex Experiment
 .. autoclass:: cortex.experiment.Experiment
     :members:
 
-Cortex Skill
--------------
+Cortex Experiment Run
+---------------------
 
-.. autoclass:: cortex.skill.Skill
+.. autoclass:: cortex.experiment.Run
+    :members:
+
+Cortex Experiment RemoteRun
+----------------------------
+
+.. autoclass:: cortex.experiment.RemoteRun
     :members:
 
 
@@ -50,6 +56,11 @@ ConnectionClient
 .. autoclass:: cortex.connection.ConnectionClient
     :members:
 
+ExperimentClient
+----------------
+.. autoclass:: cortex.experiment.ExperimentClient
+    :members:
+
 ManagedContentClient
 --------------------
 .. autoclass:: cortex.content.ManagedContentClient
@@ -60,9 +71,10 @@ SessionClient
 .. autoclass:: cortex.session.SessionClient
     :members:
 
-Types
------
+Messages
+--------
 .. autoclass:: cortex.message.Message
+    :members:
 
 Exceptions
 ----------

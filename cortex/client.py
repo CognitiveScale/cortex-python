@@ -38,24 +38,16 @@ log = get_logger(__name__)
 class InvalidMessageTypeException(Exception):
     """_summary_
 
-    Args:
-        Exception (_type_): _description_
+    :param Exception: _description_
+    :type Exception: _type_
     """
 
 
 class IncompleteMessageKeysException(Exception):
     """_summary_
 
-    Args:
-        Exception (_type_): _description_
-
-    Raises:
-        ProjectException: _description_
-        InvalidMessageException: _description_
-        Exception: _description_
-
-    Returns:
-        _type_: _description_
+    :param Exception: _description_
+    :type Exception: _type_
     """
 
 
@@ -158,8 +150,8 @@ class Client:
     def to_connector(self) -> ServiceConnector:
         """_summary_
 
-        Returns:
-            ServiceConnector: _description_
+        :return: _description_
+        :rtype: ServiceConnector
         """
         return self._mk_connector()
 
@@ -171,107 +163,154 @@ class Client:
 
     @property
     def experiments(self) -> ExperimentClient:
-        """
-        Returns a pre-initialised ExperimentClient whose project has been set to the project
-        configured for the Cortex.client. If you want to access experiments for a project that is
-        different from the one configured with Cortex.client, please use .experimentsClient instead
-        .. code-block::
-        ## use default .experiments client helper
-        from cortex import Cortex
-        client = Cortex.client()
-        client.experiments.list_experiments()
-        client.experiments.save_experiments()
-        client.experiments.list_runs()
-        client.experiments.delete_runs()
+        """Returns a pre-initialised ExperimentClient whose project has been set to the project configured for the Cortex.client.
 
-        Refer to the documentation of :py:mod:cortex.experiment.ExperimentClient to learn more
-        about the methods available on the ExperimentClient
+        If you want to access experiments for a project that is
+        different from the one configured with Cortex.client, please use :meth:`cortex.client.Client.experiments_client` instead
 
         .. code-block::
-        ## use .experiments_client helper to access experiments from a different project
-        expc = client.experiments_client(project="another-project")
 
-        Returns:
-            ExperimentClient: An instance of this helper class that enables access to the
-            Fabric Experiments API.
-        """
+            ## use default .experiments client helper
+            from cortex import Cortex
+            client = Cortex.client()
+            client.experiments.list_experiments()
+            client.experiments.save_experiments()
+            client.experiments.list_runs()
+            client.experiments.delete_runs()
+        ::
+
+        Refer to the documentation of :mod:`cortex.experiment.ExperimentClient` to learn more about the methods available on the ExperimentClient
+
+        :returns: An instance of this helper class that enables access to the Fabric Experiments API.
+        :rtype: :class:`cortex.experiment.ExperimentClient`
+        """  # pylint: disable=line-too-long
         return self._service_clients.get("experiments")
 
     def experiments_client(self, project: str = None) -> ExperimentClient:
-        """_summary_
+        """Helper method to create a new :class:`cortex.experiment.ExperimentClient` instance that is configured to talk to another `project` than the default :attr:`cortex.client.Client._project`
 
-        Args:
-            project (str, optional): _description_. Defaults to None.
+        >>> expc = client.experiments_client(project="another-project")
 
-        Returns:
-            ExperimentClient: _description_
-        """
+        :param project: Project for which an experiments client is to be created, defaults to (the project configured with cortex.client.Client)
+        :type project: str, optional
+        :return: An experiment client
+        :rtype: :class:`cortex.experiment.ExperimentClient`
+        """  # pylint: disable=line-too-long
         if project is not None:
             return ExperimentClient(project=project)
         return self.experiments
 
     @property
     def connections(self) -> ConnectionClient:
-        """_summary_
+        """Returns a pre-initialised ConnectionClient whose project has been set to the project configured for the Cortex.client.
 
-        Returns:
-            ConnectionClient: _description_
-        """
+        If you want to access connections for a project that is
+        different from the one configured with Cortex.client, please use :meth:`cortex.client.Client.connections_client` instead
+
+        .. code-block::
+
+            ## use default .connections client helper
+            from cortex import Cortex
+            client = Cortex.client()
+            client.connections.save_connection
+            client.connections.get_connection
+        ::
+
+        Refer to the documentation of :mod:`cortex.connection.ConnectionClient` to learn more about the methods available on the ConnectionClient
+
+        :returns: An instance of this helper class that enables access to the Fabric Connections API.
+        :rtype: :class:`cortex.connection.ConnectionClient`
+        """  # pylint: disable=line-too-long
         return self._service_clients.get("connections")
 
     def connections_client(self, project: str = None) -> ConnectionClient:
-        """_summary_
+        """Helper method to create a new :class:`cortex.connection.ConnectionClient` instance that is configured to talk to another `project` than the default :attr:`cortex.client.Client._project`
 
-        Args:
-            project (str, optional): _description_. Defaults to None.
+        >>> connc = client.connections_client(project="another-project")
 
-        Returns:
-            ConnectionClient: _description_
-        """
+        :param project: Project for which a connections client is to be created, defaults to (the project configured with cortex.client.Client)
+        :type project: str, optional
+        :return: A connection client
+        :rtype: :class:`cortex.connection.ConnectionClient`
+        """  # pylint: disable=line-too-long
         if project is not None:
             return ConnectionClient(project=project)
         return self.connections
 
     @property
     def content(self) -> ManagedContentClient:
-        """_summary_
+        """Returns a pre-initialised ManagedContentClient whose project has been set to the project configured for the Cortex.client.
 
-        Returns:
-            ManagedContentClient: _description_
-        """
+        If you want to access managed content for a project that is
+        different from the one configured with Cortex.client, please use :meth:`cortex.client.Client.content_client` instead
+
+        .. code-block::
+
+            ## use default .content client helper
+            from cortex import Cortex
+            client = Cortex.client()
+            client.content.list
+            client.content.upload
+            client.content.exists
+            .....
+        ::
+
+        Refer to the documentation of :mod:`cortex.content.ManagedContentClient` to learn more about the methods available on the ManagedContentClient
+
+        :returns: An instance of this helper class that enables access to the Fabric Managed Content API.
+        :rtype: :class:`cortex.content.ManagedContentClient`
+        """  # pylint: disable=line-too-long
         return self._service_clients.get("content")
 
     def content_client(self, project: str = None) -> ManagedContentClient:
-        """_summary_
+        """Helper method to create a new :class:`cortex.connection.ManagedContentClient` instance that is configured to talk to another `project` than the default :attr:`cortex.client.Client._project`
 
-        Args:
-            project (str, optional): _description_. Defaults to None.
+        >>> contentc = client.content_client(project="another-project")
 
-        Returns:
-            ManagedContentClient: _description_
-        """
+        :param project: Project for which a managed content client is to be created, defaults to (the project configured with cortex.client.Client)
+        :type project: str, optional
+        :return: A managed content client
+        :rtype: :class:`cortex.connection.ManagedContentClient`
+        """  # pylint: disable=line-too-long
         if project is not None:
             return ManagedContentClient(project=project)
         return self.content
 
     @property
     def models(self) -> ModelClient:
-        """_summary_
+        """Returns a pre-initialised ModelClient whose project has been set to the project configured for the Cortex.client.
 
-        Returns:
-            ModelClient: _description_
-        """
+        If you want to access models for a project that is
+        different from the one configured with Cortex.client, please use :meth:`cortex.client.Client.model_client` instead
+
+        .. code-block::
+
+            ## use default .models client helper
+            from cortex import Cortex
+            client = Cortex.client()
+            client.models.list_models()
+            client.models.get_model()
+            client.models.save_model()
+            .....
+        ::
+
+        Refer to the documentation of :mod:`cortex.model.ModelClient` to learn more about the methods available on the ModelClient
+
+        :returns: An instance of this helper class that enables access to the Fabric Models API.
+        :rtype: :class:`cortex.model.ModelClient`
+        """  # pylint: disable=line-too-long
         return self._service_clients.get("models")
 
     def models_client(self, project: str = None) -> ModelClient:
-        """_summary_
+        """Helper method to create a new :class:`cortex.model.ModelClient` instance that is configured to talk to another `project` than the default :attr:`cortex.client.Client._project`
 
-        Args:
-            project (str, optional): _description_. Defaults to None.
+        >>> modelc = client.model_client(project="another-project")
 
-        Returns:
-            ModelClient: _description_
-        """
+        :param project: Project for which a models client is to be created, defaults to (the project configured with cortex.client.Client)
+        :type project: str, optional
+        :return: A models client
+        :rtype: :class:`cortex.model.ModelClient`
+        """  # pylint: disable=line-too-long
         if project is not None:
             return ModelClient(project=project)
         return self.models
@@ -280,8 +319,8 @@ class Client:
     def secrets(self) -> SecretsClient:
         """_summary_
 
-        Returns:
-            SecretsClient: _description_
+        :return: _description_
+        :rtype: SecretsClient
         """
         return self._service_clients.get("secrets")
 
