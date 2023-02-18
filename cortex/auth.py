@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
+from typing import Dict
 from .serviceconnector import _Client
 from .utils import get_logger, generate_token
 
@@ -21,16 +21,26 @@ log = get_logger(__name__)
 
 
 class AuthenticationClient(_Client):
-    """
-    Client authentication.
+    """Client authentication.
+
+    :param _Client: :py:class:`cortex.serviceconnector._Client`
+    :type _Client: _type_
+    :return: Instance of AuthenticationClient
+    :rtype: AuthenticationClient
     """
 
-    def fetch_auth_token(self, config):
+    def fetch_auth_token(self, config: Dict, validity=0.5) -> str:
         """
-        Generates JWT token from the personal access token provided..
+        Generates JWT token from the personal access token provided via the `config` parameter
 
-        :param config: Personal access token
-        :return: A JWT string.
-        """
-        token = generate_token(config, validity=0.5)
+        :param config: A Personal access token provided by the Cortex Console,represented as a python dict
+        :type config: Dict
+
+        :param validity: The validity of the JWT token in days, defaults to 0.5
+        :type validity: float, optional
+
+        :return: A JWT token in string form
+        :rtype: str
+        """  # pylint: disable=line-too-long
+        token = generate_token(config, validity=validity)
         return token
