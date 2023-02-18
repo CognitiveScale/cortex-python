@@ -27,7 +27,8 @@ class SecretsClient(_Client):
     """
     A client for the Cortex Secrets API.
     """
-    URIs = {'secret': 'projects/{projectId}/secrets/{secretName}'}
+
+    URIs = {"secret": "projects/{projectId}/secrets/{secretName}"}
 
     def post_secret(self, name: str, value: object):
         """
@@ -36,13 +37,14 @@ class SecretsClient(_Client):
         :param value: Secret value
         :return: status
         """
-        uri = self.URIs['secret'].format(
-            secretName=parse_string(name),
-            projectId=self._project())
+        uri = self.URIs["secret"].format(
+            secretName=parse_string(name), projectId=self._project()
+        )
         data = json.dumps(value)
-        headers = {'Content-Type': 'application/json'}
+        headers = {"Content-Type": "application/json"}
         res = self._serviceconnector.request(
-            'POST', uri=uri, body=data, headers=headers)
+            "POST", uri=uri, body=data, headers=headers
+        )
         raise_for_status_with_detail(res)
         return res.json()
 
@@ -53,13 +55,11 @@ class SecretsClient(_Client):
         :param name: The name of the Secret to retrieve.
         :return: A Secret object.
         """
-        port = os.getenv(
-            'CORTEX_ACCOUNTS_SERVICE_PORT_HTTP_CORTEX_ACCOUNTS') or '5000'
-        conn_svc_url = f'{self._serviceconnector.url.replace("cortex-internal", "cortex-accounts")}:{port}' #pylint: disable=line-too-long
-        uri = f'{conn_svc_url}/internal/projects/{self._project()}/secrets/{parse_string(name)}'
-        log.debug('Getting Secret using URI: {}', uri)
-        res = self._serviceconnector.request(
-            'GET', uri=uri, is_internal_url=True)
+        port = os.getenv("CORTEX_ACCOUNTS_SERVICE_PORT_HTTP_CORTEX_ACCOUNTS") or "5000"
+        conn_svc_url = f'{self._serviceconnector.url.replace("cortex-internal", "cortex-accounts")}:{port}'  # pylint: disable=line-too-long
+        uri = f"{conn_svc_url}/internal/projects/{self._project()}/secrets/{parse_string(name)}"
+        log.debug("Getting Secret using URI: {}", uri)
+        res = self._serviceconnector.request("GET", uri=uri, is_internal_url=True)
         raise_for_status_with_detail(res)
 
         return res.json()

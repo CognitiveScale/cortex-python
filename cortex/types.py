@@ -29,7 +29,7 @@ class TypeClient(_Client):
     """
 
     URIs = {
-        'type': 'projects/{projectId}/types/{name}',
+        "type": "projects/{projectId}/types/{name}",
     }
 
     def save_type(self):
@@ -46,13 +46,11 @@ class TypeClient(_Client):
         :param name: The name of the type to retrieve.
         :return: A type object.
         """
-        uri = self.URIs['type'].format(
-            projectId=self._project(),
-            name=urllib.parse.quote(
-                name,
-                safe=''))
-        log.debug('Getting type using URI: {}', uri)
-        res = self._serviceconnector.request('GET', uri=uri)
+        uri = self.URIs["type"].format(
+            projectId=self._project(), name=urllib.parse.quote(name, safe="")
+        )
+        log.debug("Getting type using URI: {}", uri)
+        res = self._serviceconnector.request("GET", uri=uri)
         raise_for_status_with_detail(res)
         return Type(res.json(), self)
 

@@ -29,9 +29,8 @@ class ModelClient(_Client):
     """
 
     URIs = {
-        'models': 'projects/{projectId}/models',
-        'model': 'projects/{projectId}/models/{modelName}'
-
+        "models": "projects/{projectId}/models",
+        "model": "projects/{projectId}/models/{modelName}",
     }
 
     def __init__(self, *args, **kwargs):
@@ -42,11 +41,13 @@ class ModelClient(_Client):
         List Models
         :return: list of models
         """
-        r = self._serviceconnector.request(method='GET', uri=self.URIs['models'].format(projectId=self._project()))
+        r = self._serviceconnector.request(
+            method="GET", uri=self.URIs["models"].format(projectId=self._project())
+        )
         raise_for_status_with_detail(r)
         rs = r.json()
 
-        return rs.get('models', [])
+        return rs.get("models", [])
 
     def save_model(self, model_obj):
         """
@@ -55,9 +56,11 @@ class ModelClient(_Client):
         :return: status
         """
         body = json.dumps(model_obj)
-        headers = {'Content-Type': 'application/json'}
-        uri = self.URIs['models'].format(projectId=self._project())
-        r = self._serviceconnector.request(method='POST', uri=uri, body=body, headers=headers)
+        headers = {"Content-Type": "application/json"}
+        uri = self.URIs["models"].format(projectId=self._project())
+        r = self._serviceconnector.request(
+            method="POST", uri=uri, body=body, headers=headers
+        )
         raise_for_status_with_detail(r)
         return r.json()
 
@@ -67,8 +70,10 @@ class ModelClient(_Client):
         :param model_name: Model name
         :return: model json
         """
-        uri = self.URIs['model'].format(projectId=self._project(), modelName=parse_string(model_name))
-        r = self._serviceconnector.request(method='GET', uri=uri)
+        uri = self.URIs["model"].format(
+            projectId=self._project(), modelName=parse_string(model_name)
+        )
+        r = self._serviceconnector.request(method="GET", uri=uri)
         raise_for_status_with_detail(r)
 
         return r.json()
@@ -79,12 +84,14 @@ class ModelClient(_Client):
         :param model_name: Model name
         :return: status
         """
-        uri = self.URIs['model'].format(projectId=self._project(), modelName=parse_string(model_name))
-        r = self._serviceconnector.request(method='DELETE', uri=uri)
+        uri = self.URIs["model"].format(
+            projectId=self._project(), modelName=parse_string(model_name)
+        )
+        r = self._serviceconnector.request(method="DELETE", uri=uri)
         raise_for_status_with_detail(r)
         rs = r.json()
 
-        return rs.get('success', False)
+        return rs.get("success", False)
 
 
 class Model(CamelResource):
@@ -97,14 +104,14 @@ class Model(CamelResource):
         self._client = client
         self._project = client._project
 
-    def to_camel(self, camel='1.0.0'):
+    def to_camel(self, camel="1.0.0"):
         return {
-            'camel': camel,
-            'name': self.name,
-            'title': self.title,
-            'description': self.description,
-            'status': self.status,
-            'type': self.type,
-            'tags': self.tags or [],
-            'properties': self.properties or [],
+            "camel": camel,
+            "name": self.name,
+            "title": self.title,
+            "description": self.description,
+            "status": self.status,
+            "type": self.type,
+            "tags": self.tags or [],
+            "properties": self.properties or [],
         }

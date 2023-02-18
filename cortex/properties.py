@@ -27,6 +27,7 @@ class PropertyManager:
     """
     Maintains a list of key-value pairs.
     """
+
     def __init__(self):
         self._properties = dict({})
 
@@ -40,9 +41,9 @@ class PropertyManager:
         if key is None or not key:
             return False
         find_dict = self._properties
-        is_path, _, is_key = key.rpartition('.')
+        is_path, _, is_key = key.rpartition(".")
         if is_path:
-            for part in is_path.split('.'):
+            for part in is_path.split("."):
                 if isinstance(find_dict, dict):
                     find_dict = find_dict.get(part, {})
                 else:
@@ -58,7 +59,7 @@ class PropertyManager:
         :param file_name: file in which to save properties
         """
         _time = str(datetime.now())
-        self.set('meta', {'updated': _time})
+        self.set("meta", {"updated": _time})
         self._dump(self._properties, file_name)
 
     def load(self, config_file, replace=False) -> bool:
@@ -77,7 +78,9 @@ class PropertyManager:
 
         _path = Path(config_file)
         if not _path.exists() or not _path.is_file():
-            raise FileNotFoundError("Can't find the configuration file {}".format(_path))
+            raise FileNotFoundError(
+                "Can't find the configuration file {}".format(_path)
+            )
 
         try:
             cfg_dict = self._load(_path)
@@ -112,7 +115,7 @@ class PropertyManager:
             return None
 
         rtn_val = self._properties
-        for part in key.split('.'):
+        for part in key.split("."):
             if isinstance(rtn_val, dict):
                 rtn_val = rtn_val.get(part)
                 if rtn_val is None:
@@ -124,14 +127,14 @@ class PropertyManager:
 
     def set(self, key: str, value):
         """
-        Sets a key-value pair. The value can be a union (str, dict, tuple, array).
+         Sets a key-value pair. The value can be a union (str, dict, tuple, array).
 
-       :param key: the key string
-       :param value: the value of the key
-       """
+        :param key: the key string
+        :param value: the value of the key
+        """
         if key is None or not key or not isinstance(key, str):
             raise ValueError("The key must be a valid str")
-        keys = key.split('.')
+        keys = key.split(".")
         _prop_branch = self._properties
         _last_key = None
         _last_prop_branch = None
@@ -185,9 +188,9 @@ class PropertyManager:
         :return: `True` if the key is removed; `False` if the key is not found
         """
         del_dict = self._properties
-        del_path, _, del_key = key.rpartition('.')
+        del_path, _, del_key = key.rpartition(".")
         if del_path:
-            for part in del_path.split('.'):
+            for part in del_path.split("."):
                 if isinstance(del_dict, dict):
                     del_dict = del_dict.get(part)
                 else:
@@ -200,9 +203,9 @@ class PropertyManager:
 
     def remove_all(self):
         with threading.Lock():
-            meta = self._properties.get('meta')
+            meta = self._properties.get("meta")
             self._properties.clear()
-            self.set('meta', meta)
+            self.set("meta", meta)
 
     def get_all(self) -> dict:
         """
@@ -222,7 +225,7 @@ class PropertyManager:
         :param sep: the join separator; defaults to '.'
         :return: the names joined with the separator
         """
-        _sep = sep if sep is not None else '.'
+        _sep = sep if sep is not None else "."
         return _sep.join(map(str, names))
 
     @staticmethod
@@ -234,26 +237,44 @@ class PropertyManager:
         with threading.Lock():
             # make sure the dump is clean
             try:
-                with closing(open(_config_file, 'w')) as ymlfile:
+                with closing(open(_config_file, "w")) as ymlfile:
                     yaml.safe_dump(data, ymlfile, default_flow_style=False)
             except IOError as e:
-                raise IOError("The configuration file {} failed to open with: {}".format(config_file, e))
+                raise IOError(
+                    "The configuration file {} failed to open with: {}".format(
+                        config_file, e
+                    )
+                )
         # check the file was created
         if not _config_file.exists():
-            raise IOError("Failed to save configconfiguration file {}. Check the disk is writable".format(config_file))
+            raise IOError(
+                "Failed to save configconfiguration file {}. Check the disk is writable".format(
+                    config_file
+                )
+            )
         return
 
     @staticmethod
     def _load(config_file) -> dict:
         config_file = Path(config_file)
         if not config_file.exists():
-            raise FileNotFoundError("The configuration file {} does not exist".format(config_file))
+            raise FileNotFoundError(
+                "The configuration file {} does not exist".format(config_file)
+            )
         with threading.Lock():
             try:
-                with closing(open(config_file, 'r')) as ymlfile:
+                with closing(open(config_file, "r")) as ymlfile:
                     rtn_dict = yaml.safe_load(ymlfile)
             except IOError as e:
-                raise IOError("The configuration file {} failed to open with: {}".format(config_file, e))
+                raise IOError(
+                    "The configuration file {} failed to open with: {}".format(
+                        config_file, e
+                    )
+                )
             if not isinstance(rtn_dict, dict) or not rtn_dict:
-                raise TypeError("The configuration file {} could not be loaded as a dict type".format(config_file))
+                raise TypeError(
+                    "The configuration file {} could not be loaded as a dict type".format(
+                        config_file
+                    )
+                )
             return rtn_dict

@@ -26,12 +26,14 @@ class AuthenticationException(CortexException):
     Cortex authentication exception.
     """
 
+
 class SendMessageException(CortexException):
     """_summary_
 
     Args:
         CortexException (_type_): _description_
-    """    
+    """
+
 
 class BadTokenException(CortexException):
     """
@@ -56,9 +58,10 @@ class ProjectException(CortexException):
     Cortex Project exception.
     """
 
+
 class VisualisationException(CortexException):
     """_summary_
 
     Args:
         CortexException (_type_): _description_
-    """    
+    """

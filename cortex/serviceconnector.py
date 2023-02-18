@@ -27,14 +27,16 @@ from .__version__ import __version__, __title__
 
 from .utils import get_logger, get_cortex_profile, verify_JWT, generate_token
 from .utils import raise_for_status_with_detail
+
 log = get_logger(__name__)
 
 JSONType = Union[str, int, float, bool, None, Dict[str, Any], List[Any]]
-T = TypeVar('T', bound="_Client")
+T = TypeVar("T", bound="_Client")
 
-userAgent = (f'{__title__}/{__version__} ({sys.platform};'
-             f'{platform.architecture()[0]}; {platform.release()})'
-             )
+userAgent = (
+    f"{__title__}/{__version__} ({sys.platform};"
+    f"{platform.architecture()[0]}; {platform.release()})"
+)
 
 
 class ServiceConnector:
@@ -42,8 +44,9 @@ class ServiceConnector:
     Defines the settings and security credentials required to access a service.
     """
 
-    def __init__(self, url, version=4, token=None, config=None,
-                 verify_ssl_cert=True, project=''):
+    def __init__(
+        self, url, version=4, token=None, config=None, verify_ssl_cert=True, project=""
+    ):
         self.url = url
         self.version = version
         self.token = token
@@ -60,7 +63,7 @@ class ServiceConnector:
         Returns:
             str: _description_
         """
-        return f'{self.url}/fabric/v{self.version}'
+        return f"{self.url}/fabric/v{self.version}"
 
     ## methods ##
 
@@ -75,12 +78,18 @@ class ServiceConnector:
         """
         headers_to_send = self._construct_headers(headers)
         url = self._construct_url(uri)
-        return requests.post(url, files=files, body=data,
-                             headers=headers_to_send, allow_redirects=False,
-                             verify=self.verify_ssl_cert)
+        return requests.post(
+            url,
+            files=files,
+            body=data,
+            headers=headers_to_send,
+            allow_redirects=False,
+            verify=self.verify_ssl_cert,
+        )
 
-    def request_with_retry(self, method, uri, body=None,
-                           headers=None, debug=False, **kwargs):
+    def request_with_retry(
+        self, method, uri, body=None, headers=None, debug=False, **kwargs
+    ):
         """
         Sends a request to the specified URI. Auto retry with backoff on 50x errors
 
@@ -95,7 +104,7 @@ class ServiceConnector:
         headers_to_send = self._construct_headers(headers)
         url = self._construct_url(uri)
         if debug:
-            log.debug("START {} {}".format('GET', uri))
+            log.debug("START {} {}".format("GET", uri))
         res = ServiceConnector.requests_retry_session().request(
             method,
             url,
@@ -103,14 +112,22 @@ class ServiceConnector:
             allow_redirects=False,
             headers=headers_to_send,
             verify=self.verify_ssl_cert,
-            **kwargs
+            **kwargs,
         )
         if debug:
-            log.debug("  END {} {}".format('GET', uri))
+            log.debug("  END {} {}".format("GET", uri))
         return res
 
-    def request(self, method, uri, body=None, headers=None,
-                debug=False, is_internal_url=False, **kwargs):
+    def request(
+        self,
+        method,
+        uri,
+        body=None,
+        headers=None,
+        debug=False,
+        is_internal_url=False,
+        **kwargs,
+    ):
         """
         Sends a request to the specified URI.
 
@@ -134,7 +151,7 @@ class ServiceConnector:
             allow_redirects=False,
             headers=headers_to_send,
             verify=self.verify_ssl_cert,
-            **kwargs
+            **kwargs,
         )
         if debug:
             log.debug("  END {} {}".format(method, uri))
@@ -142,10 +159,10 @@ class ServiceConnector:
 
     @staticmethod
     def requests_retry_session(
-            retries=5,
-            backoff_factor=0.5,
-            status_forcelist=(500, 502, 503, 504),
-            session=None,
+        retries=5,
+        backoff_factor=0.5,
+        status_forcelist=(500, 502, 503, 504),
+        session=None,
     ):
         """_summary_
 
@@ -167,8 +184,8 @@ class ServiceConnector:
             status_forcelist=status_forcelist,
         )
         adapter = HTTPAdapter(max_retries=retry)
-        session.mount('http://', adapter)
-        session.mount('https://', adapter)
+        session.mount("http://", adapter)
+        session.mount("https://", adapter)
         return session
 
     @staticmethod
@@ -179,8 +196,8 @@ class ServiceConnector:
         :parma pieces: Strings representing the pieces of a URL.
         :return: A string representing the joined pieces of the URL.
         """
-        pieces = [_f for _f in [s.rstrip('/') for s in pieces] if _f]
-        return '/'.join(pieces)
+        pieces = [_f for _f in [s.rstrip("/") for s in pieces] if _f]
+        return "/".join(pieces)
 
     ## private ##
 
@@ -188,16 +205,16 @@ class ServiceConnector:
         return self.urljoin([self.base_url, uri])
 
     def _construct_headers(self, headers):
-        headers_to_send = {'User-Agent': userAgent}
+        headers_to_send = {"User-Agent": userAgent}
 
         if hasattr(self, "token") and self.token:
             self.token = verify_JWT(self.token, self._config)
-            auth = 'Bearer {}'.format(self.token)
-            headers_to_send['Authorization'] = auth
+            auth = "Bearer {}".format(self.token)
+            headers_to_send["Authorization"] = auth
         else:
             self.token = generate_token(self._config)
-            auth = 'Bearer {}'.format(self.token)
-            headers_to_send['Authorization'] = auth
+            auth = "Bearer {}".format(self.token)
+            headers_to_send["Authorization"] = auth
 
         if headers is not None:
             headers_to_send.update(headers)
@@ -251,8 +268,8 @@ class _Client:
     def _post_json(self, uri, obj: JSONType):
         # pylint: disable=no-member
         body_s = json.dumps(obj)
-        headers = {'Content-Type': 'application/json'}
-        res = self._serviceconnector.request('POST', uri, body_s, headers)
+        headers = {"Content-Type": "application/json"}
+        res = self._serviceconnector.request("POST", uri, body_s, headers)
         if res.status_code not in [requests.codes.ok, requests.codes.created]:
             log.info("Status: {}, Message: {}".format(res.status_code, res.text))
         raise_for_status_with_detail(res)
@@ -261,20 +278,18 @@ class _Client:
     def _post_json_with_retry(self, uri, obj: JSONType):
         # pylint: disable=no-member
         body_s = json.dumps(obj)
-        headers = {'Content-Type': 'application/json'}
-        res = self._serviceconnector.request_with_retry(
-            'POST', uri, body_s, headers)
+        headers = {"Content-Type": "application/json"}
+        res = self._serviceconnector.request_with_retry("POST", uri, body_s, headers)
         if res.status_code not in [requests.codes.ok, requests.codes.created]:
             log.info("Status: {}, Message: {}".format(res.status_code, res.text))
         raise_for_status_with_detail(res)
         return res.json()
 
     def _get(self, uri, debug=False, **kwargs):
-        return self._serviceconnector.request(
-            'GET', uri, debug=debug, **kwargs)
+        return self._serviceconnector.request("GET", uri, debug=debug, **kwargs)
 
     def _delete(self, uri, debug=False):
-        res = self._serviceconnector.request('DELETE', uri, debug=debug)
+        res = self._serviceconnector.request("DELETE", uri, debug=debug)
         return res
 
     def _project(self):
@@ -282,21 +297,20 @@ class _Client:
 
     def _get_json(self, uri, debug=False) -> Optional[dict]:
         # pylint: disable=no-member
-        res = self._serviceconnector.request('GET', uri=uri, debug=debug)
+        res = self._serviceconnector.request("GET", uri=uri, debug=debug)
         # If the resource is not found, return None ...
         if res.status_code == requests.codes.not_found:
             return None
         raise_for_status_with_detail(res)
         return res.json()
 
-    def _request_json(self, uri, method='GET'):
+    def _request_json(self, uri, method="GET"):
         res = self._serviceconnector.request(method, uri=uri)
         raise_for_status_with_detail(res)
         return res.json()
 
     @classmethod
-    def from_current_cli_profile(
-            cls: Type[T], version: str = '3', **kwargs) -> T:
+    def from_current_cli_profile(cls: Type[T], version: str = "3", **kwargs) -> T:
         """_summary_
 
         Args:

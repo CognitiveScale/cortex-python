@@ -20,6 +20,7 @@ from .serviceconnector import _Client
 from .camel import CamelResource
 from .utils import get_logger, raise_for_status_with_detail, parse_string
 from .exceptions import SendMessageException
+
 log = get_logger(__name__)
 
 
@@ -27,14 +28,15 @@ class SkillClient(_Client):
     """
     A client used to interact with skills.
     """
+
     URIs = {
-        'deploy': 'projects/{projectId}/skills/{skillName}/deploy',
-        'invoke': 'projects/{project}/skillinvoke/{skill_name}/inputs/{input}',
-        'logs': 'projects/{projectId}/skills/{skillName}/action/{actionName}/logs',
-        'send_message': '{url}/internal/messages/{activation}/{channel}/{output_name}',
-        'skill': 'projects/{projectId}/skills/{skillName}',
-        'skills': 'projects/{projectId}/skills',
-        'undeploy': 'projects/{projectId}/skills/{skillName}/undeploy',
+        "deploy": "projects/{projectId}/skills/{skillName}/deploy",
+        "invoke": "projects/{project}/skillinvoke/{skill_name}/inputs/{input}",
+        "logs": "projects/{projectId}/skills/{skillName}/action/{actionName}/logs",
+        "send_message": "{url}/internal/messages/{activation}/{channel}/{output_name}",
+        "skill": "projects/{projectId}/skills/{skillName}",
+        "skills": "projects/{projectId}/skills",
+        "undeploy": "projects/{projectId}/skills/{skillName}/undeploy",
     }
 
     def list_skills(self):
@@ -43,12 +45,12 @@ class SkillClient(_Client):
         :return: list of skills
         """
         res = self._serviceconnector.request(
-            method='GET', uri=self.URIs['skills'].format(
-                projectId=self._project()))
+            method="GET", uri=self.URIs["skills"].format(projectId=self._project())
+        )
         raise_for_status_with_detail(res)
         rs_json = res.json()
 
-        return rs_json.get('skills', [])
+        return rs_json.get("skills", [])
 
     def save_skill(self, skill_obj):
         """
@@ -57,10 +59,11 @@ class SkillClient(_Client):
         :return: response json
         """
         body = json.dumps(skill_obj)
-        headers = {'Content-Type': 'application/json'}
-        uri = self.URIs['skills'].format(projectId=self._project())
+        headers = {"Content-Type": "application/json"}
+        uri = self.URIs["skills"].format(projectId=self._project())
         res = self._serviceconnector.request(
-            method='POST', uri=uri, body=body, headers=headers)
+            method="POST", uri=uri, body=body, headers=headers
+        )
         raise_for_status_with_detail(res)
         return res.json()
 
@@ -70,10 +73,10 @@ class SkillClient(_Client):
         :param skill_name: Skill name
         :return: skill json
         """
-        uri = self.URIs['skill'].format(
-            projectId=self._project(),
-            skillName=parse_string(skill_name))
-        res = self._serviceconnector.request(method='GET', uri=uri)
+        uri = self.URIs["skill"].format(
+            projectId=self._project(), skillName=parse_string(skill_name)
+        )
+        res = self._serviceconnector.request(method="GET", uri=uri)
         raise_for_status_with_detail(res)
 
         return res.json()
@@ -84,14 +87,14 @@ class SkillClient(_Client):
         :param skill_name: Skill name
         :return: status
         """
-        uri = self.URIs['skill'].format(
-            projectId=self._project(),
-            skillName=parse_string(skill_name))
-        res = self._serviceconnector.request(method='DELETE', uri=uri)
+        uri = self.URIs["skill"].format(
+            projectId=self._project(), skillName=parse_string(skill_name)
+        )
+        res = self._serviceconnector.request(method="DELETE", uri=uri)
         raise_for_status_with_detail(res)
         rs_json = res.json()
 
-        return rs_json.get('success', False)
+        return rs_json.get("success", False)
 
     def get_logs(self, skill_name, action_name):
         """
@@ -100,10 +103,12 @@ class SkillClient(_Client):
         :param action_name: Action name
         :return: Logs
         """
-        uri = self.URIs['logs'].format(projectId=self._project(),
-                                       skillName=parse_string(skill_name),
-                                       actionName=parse_string(action_name))
-        res = self._serviceconnector.request(method='GET', uri=uri)
+        uri = self.URIs["logs"].format(
+            projectId=self._project(),
+            skillName=parse_string(skill_name),
+            actionName=parse_string(action_name),
+        )
+        res = self._serviceconnector.request(method="GET", uri=uri)
         raise_for_status_with_detail(res)
 
         return res.json()
@@ -114,10 +119,10 @@ class SkillClient(_Client):
         :param skill_name: Skill name
         :return: status
         """
-        uri = self.URIs['deploy'].format(
-            projectId=self._project(),
-            skillName=parse_string(skill_name))
-        res = self._serviceconnector.request(method='GET', uri=uri)
+        uri = self.URIs["deploy"].format(
+            projectId=self._project(), skillName=parse_string(skill_name)
+        )
+        res = self._serviceconnector.request(method="GET", uri=uri)
         raise_for_status_with_detail(res)
 
         return res.json()
@@ -128,15 +133,16 @@ class SkillClient(_Client):
         :param skill_name: Skill name
         :return: status
         """
-        uri = self.URIs['undeploy'].format(
-            projectId=self._project(),
-            skillName=parse_string(skill_name))
-        res = self._serviceconnector.request(method='GET', uri=uri)
+        uri = self.URIs["undeploy"].format(
+            projectId=self._project(), skillName=parse_string(skill_name)
+        )
+        res = self._serviceconnector.request(method="GET", uri=uri)
         raise_for_status_with_detail(res)
         return res.json()
 
-    def send_message(self, activation: str, channel: str,
-                     output_name: str, message: object):
+    def send_message(
+        self, activation: str, channel: str, output_name: str, message: object
+    ):
         """
         Send a payload to a specific output, this can be called more than one
         and will replace the stdout/stderr
@@ -148,20 +154,31 @@ class SkillClient(_Client):
         :param message: dict - payload to be sent to the agent
         :return: success or failure message
         """
-        uri = self.URIs['send_message'].format(
-            url=self._serviceconnector.url, activation=activation,
-            channel=channel, output_name=output_name)
+        uri = self.URIs["send_message"].format(
+            url=self._serviceconnector.url,
+            activation=activation,
+            channel=channel,
+            output_name=output_name,
+        )
         data = json.dumps(message)
-        headers = {'Content-Type': 'application/json'}
-        res = self._serviceconnector.request(method='POST', uri=uri, body=data,
-                                             headers=headers, debug=False,
-                                             is_internal_url=True)
+        headers = {"Content-Type": "application/json"}
+        res = self._serviceconnector.request(
+            method="POST",
+            uri=uri,
+            body=data,
+            headers=headers,
+            debug=False,
+            is_internal_url=True,
+        )
         if res.status_code != 200:
-            raise SendMessageException(f'Send message failed {res.status_code}: {res.text}')
+            raise SendMessageException(
+                f"Send message failed {res.status_code}: {res.text}"
+            )
         return res.json()
 
-    def invoke(self, skill_name: str, input_name: str,
-               payload: object, properties: object):
+    def invoke(
+        self, skill_name: str, input_name: str, payload: object, properties: object
+    ):
         """
         Invoke a skill
         :param skill_name: Skill name
@@ -170,13 +187,12 @@ class SkillClient(_Client):
         :param properties: Skill properties
         :return: status
         """
-        uri = self.URIs['invoke'].format(
-            project=self._project(),
-            skill_name=skill_name,
-            input=input_name)
+        uri = self.URIs["invoke"].format(
+            project=self._project(), skill_name=skill_name, input=input_name
+        )
         data = json.dumps({"payload": payload, "properties": properties})
-        headers = {'Content-Type': 'application/json'}
-        res = self._serviceconnector.request('POST', uri, data, headers)
+        headers = {"Content-Type": "application/json"}
+        res = self._serviceconnector.request("POST", uri, data, headers)
         raise_for_status_with_detail(res)
         return res.json()
 
@@ -192,9 +208,9 @@ class SkillClient(_Client):
 
 class Skill(CamelResource):
     """
-     Computational components of an agent; executes an
-     atomic unit of work and can be triggered by one or more inputs to produce
-     one or more outputs.
+    Computational components of an agent; executes an
+    atomic unit of work and can be triggered by one or more inputs to produce
+    one or more outputs.
     """
 
     def __init__(self, skill, client: SkillClient):

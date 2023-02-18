@@ -28,7 +28,8 @@ class ConnectionClient(_Client):
     """
     A client used to manage connections.
     """
-    URIs = {'connections': 'projects/{projectId}/connections'}
+
+    URIs = {"connections": "projects/{projectId}/connections"}
 
     def save_connection(self, connection: object):
         """
@@ -36,10 +37,10 @@ class ConnectionClient(_Client):
         :param connection: Connection object
         :return: status
         """
-        uri = self.URIs['connections'].format(projectId=self._project())
+        uri = self.URIs["connections"].format(projectId=self._project())
         data = json.dumps(connection)
-        headers = {'Content-Type': 'application/json'}
-        res = self._serviceconnector.request('POST', uri, data, headers)
+        headers = {"Content-Type": "application/json"}
+        res = self._serviceconnector.request("POST", uri, data, headers)
         raise_for_status_with_detail(res)
         return res.json()
 
@@ -49,20 +50,21 @@ class ConnectionClient(_Client):
         :param name: The name of the connection to retrieve.
         :return: A Connection object.
         """
-        port = os.getenv(
-            'CORTEX_CONNECTIONS_SERVICE_PORT_HTTP_CORTEX_CONNECTIONS') or '4450'
-        conn_svc_url = f'{self._serviceconnector.url.replace("cortex-internal", "cortex-connections")}:{port}' # pylint: disable=line-too-long
-        uri = f'{conn_svc_url}/internal/projects/{self._project()}/connections/{urllib.parse.quote(name, safe="")}' # pylint: disable=line-too-long
-        log.debug('Getting connection using URI: {}', uri)
-        res = self._serviceconnector.request(
-            'GET', uri=uri, is_internal_url=True)
+        port = (
+            os.getenv("CORTEX_CONNECTIONS_SERVICE_PORT_HTTP_CORTEX_CONNECTIONS")
+            or "4450"
+        )
+        conn_svc_url = f'{self._serviceconnector.url.replace("cortex-internal", "cortex-connections")}:{port}'  # pylint: disable=line-too-long
+        uri = f'{conn_svc_url}/internal/projects/{self._project()}/connections/{urllib.parse.quote(name, safe="")}'  # pylint: disable=line-too-long
+        log.debug("Getting connection using URI: {}", uri)
+        res = self._serviceconnector.request("GET", uri=uri, is_internal_url=True)
         raise_for_status_with_detail(res)
 
         return res.json()
 
     def _bootstrap(self):
-        uri = self.URIs['connections'] + '/_/bootstrap'
-        res = self._serviceconnector.request('GET', uri=uri)
+        uri = self.URIs["connections"] + "/_/bootstrap"
+        res = self._serviceconnector.request("GET", uri=uri)
         raise_for_status_with_detail(res)
         return res.json()
 

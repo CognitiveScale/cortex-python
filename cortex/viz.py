@@ -23,11 +23,11 @@ from .exceptions import VisualisationException
 class Viz:
 
     """
-    A wrapper that assists users in running multiple commonly used visualizations 
+    A wrapper that assists users in running multiple commonly used visualizations
     on the same dataframe; not meant to be directly instantiated by clients.
     """
 
-    def __init__(self, df, figsize=(18, 9)): #pylint: disable=invalid-name
+    def __init__(self, df, figsize=(18, 9)):  # pylint: disable=invalid-name
         self.data_frame = df
         self.corr_m = df.corr()
 
@@ -43,20 +43,22 @@ class Viz:
             column (str): _description_
         """
         cm_sorted = self.corr_m[column].sort_values(ascending=False)
-        plt.rcParams['figure.figsize'] = self.figsize
+        plt.rcParams["figure.figsize"] = self.figsize
         plt.xticks(rotation=90)
         sns.barplot(x=cm_sorted.index, y=cm_sorted)
         plt.show()
         plt.clf()
 
     def show_corr_heatmap(self, **kwargs):
-        """_summary_
-        """
-        plt.rcParams['figure.figsize'] = self.figsize
+        """_summary_"""
+        plt.rcParams["figure.figsize"] = self.figsize
         sns.heatmap(
-            self.corr_m, annot=True, cmap=kwargs.get(
-                'cmap', 'BuGn'), robust=True, fmt=kwargs.get(
-                'fmt', '.1f'))
+            self.corr_m,
+            annot=True,
+            cmap=kwargs.get("cmap", "BuGn"),
+            robust=True,
+            fmt=kwargs.get("fmt", ".1f"),
+        )
         plt.show()
         plt.clf()
 
@@ -67,12 +69,13 @@ class Viz:
             column (str): _description_
         """
         try:
-            from scipy.stats import norm #pylint: disable=import-outside-toplevel
+            from scipy.stats import norm  # pylint: disable=import-outside-toplevel
+
             fit = norm
         except ImportError:
             fit = None
 
-        plt.rcParams['figure.figsize'] = self.figsize
+        plt.rcParams["figure.figsize"] = self.figsize
         sns.distplot(self.data_frame[column], fit=fit)
         plt.show()
         plt.clf()
@@ -87,13 +90,16 @@ class Viz:
             Exception: _description_
         """
         try:
-            from scipy import stats #pylint: disable=import-outside-toplevel
-            plt.rcParams['figure.figsize'] = self.figsize
+            from scipy import stats  # pylint: disable=import-outside-toplevel
+
+            plt.rcParams["figure.figsize"] = self.figsize
             stats.probplot(self.data_frame[column], plot=plt)
             plt.show()
             plt.clf()
         except ImportError as exc:
-            raise VisualisationException('show_probplot requires SciPy to be installed') from exc
+            raise VisualisationException(
+                "show_probplot requires SciPy to be installed"
+            ) from exc
 
     def show_corr_pairs(self, column: str, threshold=0.7):
         """_summary_
@@ -107,7 +113,7 @@ class Viz:
         keys = list(corr_map[column].keys())
         variables = [i for i in keys if values[keys.index(i)] > threshold]
 
-        plt.rcParams['figure.figsize'] = self.figsize
+        plt.rcParams["figure.figsize"] = self.figsize
         sns.pairplot(self.data_frame, height=3, vars=variables)
         plt.show()
         plt.clf()

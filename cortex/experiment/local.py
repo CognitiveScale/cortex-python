@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import dill
+from typing import List
 import os
 
 from pathlib import Path
 from contextlib import closing
 from datetime import datetime
-from typing import List
+import dill
 
 from .model import Run, _to_html
 from ..exceptions import ConfigurationException
@@ -30,17 +30,19 @@ from ..utils import get_logger
 
 log = get_logger(__name__)
 
+
 class LocalExperiment:
     """
     Runs experiment locally, not using Cortex services.
     """
-    config_file = 'config.yml'
-    root_key = 'experiment'
-    dir_cortex = '.cortex'
-    dir_local = 'local'
-    dir_artifacts = 'artifacts'
-    dir_experiments = 'experiments'
-    runs_key = 'runs'
+
+    config_file = "config.yml"
+    root_key = "experiment"
+    dir_cortex = ".cortex"
+    dir_local = "local"
+    dir_artifacts = "artifacts"
+    dir_experiments = "experiments"
+    runs_key = "runs"
 
     def __init__(self, name, basedir=None):
         self._name = name
@@ -50,18 +52,20 @@ class LocalExperiment:
         else:
             self._basedir = Path.home() / self.dir_cortex
 
-        self._work_dir = self._basedir / self.dir_local / self.dir_experiments / self.name
+        self._work_dir = (
+            self._basedir / self.dir_local / self.dir_experiments / self.name
+        )
         self._work_dir.mkdir(parents=True, exist_ok=True)
         Path(self._work_dir / self.dir_artifacts).mkdir(parents=True, exist_ok=True)
 
         # Initialize config
-        pm = PropertyManager()
+        prop_mgr = PropertyManager()
         try:
-            pm.load(str(self._work_dir / self.config_file))
+            prop_mgr.load(str(self._work_dir / self.config_file))
         except FileNotFoundError:
-            pm.set('meta', {'created': str(datetime.now())})
+            prop_mgr.set("meta", {"created": str(datetime.now())})
 
-        self._config = pm
+        self._config = prop_mgr
 
     @property
     def name(self):
@@ -86,12 +90,12 @@ class LocalExperiment:
         runs = self._config.get(self._config.join(self.root_key, self.runs_key)) or []
         replaced = False
         if len(runs) > 0:
-            for r in runs:
-                if r['id'] == run.id:
+            for each_run in runs:
+                if each_run["id"] == run.id:
                     updated_runs.append(run.to_json())
                     replaced = True
                 else:
-                    updated_runs.append(r)
+                    updated_runs.append(each_run)
 
         if not replaced:
             updated_runs.append(run.to_json())
@@ -100,8 +104,8 @@ class LocalExperiment:
         self._save_config()
 
         for name, artifact in run.artifacts.items():
-            with closing(open(self.get_artifact_path(run, name), 'wb')) as f:
-                dill.dump(artifact, f)
+            with closing(open(self.get_artifact_path(run, name), "wb")) as file_d:
+                dill.dump(artifact, file_d)
 
     def reset(self):
         """
@@ -115,9 +119,9 @@ class LocalExperiment:
         """
         Removes only the files from the given directory
         """
-        for f in os.listdir(dir_to_clean):
-            if os.path.isfile(os.path.join(dir_to_clean, f)):
-                os.remove(os.path.join(dir_to_clean, f))
+        for file_d in os.listdir(dir_to_clean):
+            if os.path.isfile(os.path.join(dir_to_clean, file_d)):
+                os.remove(os.path.join(dir_to_clean, file_d))
 
     def set_meta(self, prop, value):
         """
@@ -126,9 +130,9 @@ class LocalExperiment:
         :param prop: The name of the metadata property to associate with the experiment.
         :param value: The value of the metadata property to associate with the experiment.
         """
-        meta = self._config.get('meta')
+        meta = self._config.get("meta")
         meta[prop] = value
-        self._config.set('meta', meta)
+        self._config.set("meta", meta)
         self._save_config()
 
     def runs(self) -> List[Run]:
@@ -143,24 +147,42 @@ class LocalExperiment:
         """
         Gets a particular run from the runs in this experiment.
         """
-        for r in self.runs():
-            if r.id == run_id:
-                return r
+        for run in self.runs():
+            if run.id == run_id:
+                return run
         return None
 
     def last_run(self) -> Run:
+        """_summary_
+
+        Returns:
+            Run: _description_
+        """
         runs = self.runs()
         if len(runs) > 0:
             return runs[-1]
         return None
 
-    def find_runs(self, filter, sort, limit: int) -> List[Run]:
-        raise NotImplementedError('find_runs is not supported in local mode')
+    def find_runs(self, filter_obj, sort, limit: int) -> List[Run]:
+        """_summary_
+
+        Args:
+            filter_obj (_type_): _description_
+            sort (_type_): _description_
+            limit (int): _description_
+
+        Raises:
+            NotImplementedError: _description_
+
+        Returns:
+            List[Run]: _description_
+        """
+        raise NotImplementedError("find_runs is not supported in local mode")
 
     def _save_config(self):
         self._config.save(self._work_dir / self.config_file)
 
-    def load_artifact(self, run: Run, name: str, extension: str = 'pk'):
+    def load_artifact(self, run: Run, name: str, extension: str = "pk"):
         """
         Returns a particular artifact created by the given run of the experiment.
 
@@ -169,10 +191,10 @@ class LocalExperiment:
         :param extension: An optional extension (defaults to 'pk').
         """
         artifact_file = self.get_artifact_path(run, name, extension)
-        with closing(open(artifact_file, 'rb')) as f:
-            return dill.load(f)
+        with closing(open(artifact_file, "rb")) as file_d:
+            return dill.load(file_d)
 
-    def get_artifact_path(self, run: Run, name: str, extension: str = 'pk'):
+    def get_artifact_path(self, run: Run, name: str, extension: str = "pk"):
         """
         Returns the fully qualified path to a particular artifact.
 
@@ -180,7 +202,11 @@ class LocalExperiment:
         :param name: The name of the artifact.
         :param extension: An optional extension (defaults to 'pk').
         """
-        return self._work_dir / self.dir_artifacts / "{}_{}.{}".format(name, run.id, extension)
+        return (
+            self._work_dir
+            / self.dir_artifacts
+            / "{}_{}.{}".format(name, run.id, extension)
+        )
 
     def _repr_html_(self):
         return _to_html(self)
@@ -190,8 +216,11 @@ class LocalExperiment:
         Provides html output of the experiment.
         """
         try:
-            from IPython.display import (display, HTML)
+            from IPython.display import display, HTML # pylint: disable=import-outside-toplevel
+
             display(HTML(self._repr_html_()))
-        except ImportError:
+        except ImportError as exc:
             raise ConfigurationException(
-                'The ipython package is required, please install it using pip install cortex-python[jupyter]')
+                "The ipython package is required, please install it" 
+                "using pip install cortex-python[viz]"
+            ) from exc
