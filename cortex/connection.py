@@ -25,18 +25,23 @@ log = get_logger(__name__)
 
 
 class ConnectionClient(_Client):
-    """
-    A client used to manage connections.
+    """A client used to manage connections on a Fabric server.
+
+    :param _Client: _description_
+    :type _Client: _type_
+    :return: An instance of a ConnectionClient
     """
 
     URIs = {"connections": "projects/{projectId}/connections"}
 
-    def save_connection(self, connection: object):
-        """
-        Posts the connection client information.
-        :param connection: Connection object
-        :return: status
-        """
+    def save_connection(self, connection: dict) -> dict:
+        """Saves the provided `connection` dictionary to the Fabric API server.
+
+        :param connection: A Python dictionary containing specification for one of the `supported Fabric connection types <https://cognitivescale.github.io/cortex-fabric/docs/reference-guides/connection-types>`_
+        :type connection: dict
+        :return: A dictionary containing metadata about the saved connection
+        :rtype: dict
+        """  # pylint: disable=line-too-long
         uri = self.URIs["connections"].format(projectId=self._project())
         data = json.dumps(connection)
         headers = {"Content-Type": "application/json"}
@@ -44,12 +49,14 @@ class ConnectionClient(_Client):
         raise_for_status_with_detail(res)
         return res.json()
 
-    def get_connection(self, name: str):
-        """
-        Fetches a Connection to work with.
-        :param name: The name of the connection to retrieve.
-        :return: A Connection object.
-        """
+    def get_connection(self, name: str) -> dict:
+        """Fetch the specific connection in the `name` argument and return the details as a python dictionary
+
+        :param name: Name of the connection to be fetched from the Fabric API
+        :type name: str
+        :return: A python dictionary containing the specified connection details
+        :rtype: dict
+        """  # pylint: disable=line-too-long
         port = (
             os.getenv("CORTEX_CONNECTIONS_SERVICE_PORT_HTTP_CORTEX_CONNECTIONS")
             or "4450"
