@@ -15,9 +15,9 @@ limitations under the License.
 """
 
 import json
+from typing import Dict
 
 from .camel import CamelResource
-from typing import Dict
 from .serviceconnector import _Client
 from .utils import raise_for_status_with_detail, parse_string
 
@@ -33,21 +33,18 @@ class ModelClient(_Client):
         "model": "projects/{projectId}/models/{modelName}",
     }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     def list_models(self):
         """
         List Models
         :return: list of models
         """
-        r = self._serviceconnector.request(
+        res = self._serviceconnector.request(
             method="GET", uri=self.URIs["models"].format(projectId=self._project())
         )
-        raise_for_status_with_detail(r)
-        rs = r.json()
+        raise_for_status_with_detail(res)
+        res = res.json()
 
-        return rs.get("models", [])
+        return res.get("models", [])
 
     def save_model(self, model_obj):
         """
@@ -58,11 +55,11 @@ class ModelClient(_Client):
         body = json.dumps(model_obj)
         headers = {"Content-Type": "application/json"}
         uri = self.URIs["models"].format(projectId=self._project())
-        r = self._serviceconnector.request(
+        res = self._serviceconnector.request(
             method="POST", uri=uri, body=body, headers=headers
         )
-        raise_for_status_with_detail(r)
-        return r.json()
+        raise_for_status_with_detail(res)
+        return res.json()
 
     def get_model(self, model_name):
         """
@@ -73,10 +70,10 @@ class ModelClient(_Client):
         uri = self.URIs["model"].format(
             projectId=self._project(), modelName=parse_string(model_name)
         )
-        r = self._serviceconnector.request(method="GET", uri=uri)
-        raise_for_status_with_detail(r)
+        res = self._serviceconnector.request(method="GET", uri=uri)
+        raise_for_status_with_detail(res)
 
-        return r.json()
+        return res.json()
 
     def delete_model(self, model_name):
         """
@@ -87,11 +84,11 @@ class ModelClient(_Client):
         uri = self.URIs["model"].format(
             projectId=self._project(), modelName=parse_string(model_name)
         )
-        r = self._serviceconnector.request(method="DELETE", uri=uri)
-        raise_for_status_with_detail(r)
-        rs = r.json()
+        res = self._serviceconnector.request(method="DELETE", uri=uri)
+        raise_for_status_with_detail(res)
+        res_json = res.json()
 
-        return rs.get("success", False)
+        return res_json.get("success", False)
 
 
 class Model(CamelResource):
@@ -105,6 +102,14 @@ class Model(CamelResource):
         self._project = client._project
 
     def to_camel(self, camel="1.0.0"):
+        """_summary_
+
+        Args:
+            camel (str, optional): _description_. Defaults to "1.0.0".
+
+        Returns:
+            _type_: _description_
+        """
         return {
             "camel": camel,
             "name": self.name,
