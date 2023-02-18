@@ -625,6 +625,7 @@ class Experiment(CamelResource):
         return dill.loads(self._client.get_artifact(self.name, run.id, name))
 
     def to_camel(self, camel="1.0.0"):
+        # pylint: disable=duplicate-code
         """_summary_
 
         Args:
@@ -697,7 +698,7 @@ class RemoteRun(Run):
 
     @staticmethod
     def from_json(json, experiment):
-        # pylint: disable=protected-access,redefined-outer-name
+        # pylint: disable=protected-access,redefined-outer-name,duplicate-code
         """
         Builds a run from the given json.
         :param run_json: json that specifies the run; acceptable values are runId,

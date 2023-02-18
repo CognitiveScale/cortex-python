@@ -22,7 +22,7 @@ from ..exceptions import ConfigurationException
 class Run:
     # pylint: disable=too-many-instance-attributes,too-many-public-methods
     """
-    Captures the elapsed time of a run of an experiment and 
+    Captures the elapsed time of a run of an experiment and
     saves the metrics and parameters for the run.
     """
 
@@ -67,7 +67,7 @@ class Run:
         self.stop()
 
     @property
-    def id(self): # pylint: disable=invalid-name
+    def id(self):  # pylint: disable=invalid-name
         """
         The id for the run.
         """
@@ -171,13 +171,13 @@ class Run:
             "params": self.params,
             "metrics": self.metrics,
             "meta": self.meta,
-            "artifacts": list(self.artifacts), 
+            "artifacts": list(self.artifacts),
         }
         return doc
 
     @staticmethod
     def from_json(json, experiment):
-    # pylint: disable=protected-access
+        # pylint: disable=protected-access,duplicate-code
         """
         Creates a run from a json representation.
 
@@ -260,7 +260,7 @@ class Run:
     @staticmethod
     def _to_scaler(arr):
         if hasattr(arr, "dtype"):
-            import numpy as np # pylint: disable=import-outside-toplevel
+            import numpy as np  # pylint: disable=import-outside-toplevel,import-error
 
             return np.asscalar(arr)
         return arr

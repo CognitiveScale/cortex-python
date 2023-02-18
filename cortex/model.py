@@ -102,6 +102,7 @@ class Model(CamelResource):
         self._project = client._project
 
     def to_camel(self, camel="1.0.0"):
+        # pylint: disable=duplicate-code
         """_summary_
 
         Args:

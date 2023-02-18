@@ -14,8 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import matplotlib.pyplot as plt
-import seaborn as sns
+import matplotlib.pyplot as plt  # pylint: disable=import-error
+import seaborn as sns  # pylint: disable=import-error
 
 from .exceptions import VisualisationException
 
