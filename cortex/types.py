@@ -35,16 +35,17 @@ class TypeClient(_Client):
     def save_type(self):
         """_summary_
 
-        Raises:
-            NotImplementedError: _description_
+        :raises NotImplementedError: _description_
         """
         raise NotImplementedError()
 
-    def get_type(self, name):
-        """
-        Fetches a type to work with.
+    def get_type(self, name: str):
+        """Fetches a type to work with.
+
         :param name: The name of the type to retrieve.
-        :return: A type object.
+        :type name: str
+        :return: An instance of :class:`cortex.types.Type`
+        :rtype: :class:`cortex.types.Type`
         """
         uri = self.URIs["type"].format(
             projectId=self._project(), name=urllib.parse.quote(name, safe="")
