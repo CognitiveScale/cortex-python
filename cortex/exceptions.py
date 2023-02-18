@@ -65,3 +65,19 @@ class VisualisationException(CortexException):
     Args:
         CortexException (_type_): _description_
     """
+
+
+class UpdateRunException(CortexException):
+    """_summary_
+
+    Args:
+        CortexException (_type_): _description_
+    """
+
+
+class DeleteRunException(CortexException):
+    """_summary_
+
+    Args:
+        CortexException (_type_): _description_
+    """

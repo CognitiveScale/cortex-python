@@ -112,3 +112,10 @@ The documentation will be rendered in HTML format under the `docs/_build/${VERSI
     > make stage
     ```
 3. In GitHub, create a pull request from `staging` to `master`.
+
+
+## TODO
+- [x] extending the client with helpers for cortex resources 
+- [x] camelcase in pylinyrc
+- [ ] use exceptions defined in `cortex/exceptions.py`
+- [ ] integrate the cortex-python-profiles package back into the python SDK
