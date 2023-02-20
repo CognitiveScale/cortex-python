@@ -29,23 +29,23 @@ class Message(Document):
     Wraps a set of parameters or a payload when invoking an action, skill, or agent.
 
     The following keys are valid in the params dictionary
-    .. code-block::
-        {
-            "activationId": "Request ID for the current execution",
-            "agentName": "Name of the agent invoking the skill, will be empty for skill invokes",
-            "apiEndpoint": "URI of the API server to use when making requests to
-        platform services in processing of this message.",
-            "channelId": "ID of the channel (wire) this message was sent on",
-            "outputName": "Output name defined in the agent definition, can be overridden",
-            "payload": "JSON payload passed to the skill",
-            "projectId": "Project to which this skill belongs to",
-            "properties": "Properties merged from Skill definition, Skill reference, and Agent definition.",
-            "sessionId": "The ID of the session associated with this message,
-        this will be the activationId unless provided externally",
-            "skillName": "The name of the skill being invoked.",
-            "timestamp": "Timestamp of the invoke",
-            "token": " The JWT token to be used for making authenticated requests to APIs needed to process this message."
-        }
+
+        .. code-block::
+
+            {
+                "activationId": "Request ID for the current execution",
+                "agentName": "Name of the agent invoking the skill, will be empty for skill invokes",
+                "apiEndpoint": "URI of the API server to use when making requests to platform services in processing of this message.",
+                "channelId": "ID of the channel (wire) this message was sent on",
+                "outputName": "Output name defined in the agent definition, can be overridden",
+                "payload": "JSON payload passed to the skill",
+                "projectId": "Project to which this skill belongs to",
+                "properties": "Properties merged from Skill definition, Skill reference, and Agent definition.",
+                "sessionId": "The ID of the session associated with this message, this will be the activationId unless provided externally",
+                "skillName": "The name of the skill being invoked.",
+                "timestamp": "Timestamp of the invoke",
+                "token": " The JWT token to be used for making authenticated requests to APIs needed to process this message."
+            }
     """
 
     def __init__(self, params: Dict = None):
