@@ -21,7 +21,6 @@ from .fixtures import mock_pat_config, mock_api_endpoint
 
 
 class TestAuthenticationClient(unittest.TestCase):
-
     def setUp(self):
         self.ac = AuthenticationClient()
 

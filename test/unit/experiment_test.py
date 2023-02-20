@@ -30,46 +30,47 @@ import dill
 
 # PROJECT = 'expproj'
 TOKEN = john_doe_token()
-projectId = 'cogscale'
-url = 'http://127.0.0.1:123'
-params = {'token': TOKEN, 'projectId': projectId, 'apiEndpoint': url}
+projectId = "cogscale"
+url = "http://127.0.0.1:123"
+params = {"token": TOKEN, "projectId": projectId, "apiEndpoint": url}
 
 
 class TestExperiment(unittest.TestCase):
     """
     Test experiment checks experiment functionality
     """
+
     # values for testing experiments
-    EXP_NAME = 'unittest-exp'
+    EXP_NAME = "unittest-exp"
 
     def setUp(self):
         self.cortex = Cortex.from_message(params)
         self.expc = ExperimentClient(self.cortex)
         self.local = Cortex.local()
-        self.local_tmp = Cortex.local('/tmp/cortex')
+        self.local_tmp = Cortex.local("/tmp/cortex")
 
     @mocketize
     def test_get_remote_experiment(self):
-        uri = self.cortex.experiments.URIs['experiment'].format(experimentName=self.EXP_NAME, projectId=projectId)
+        uri = self.cortex.experiments.URIs["experiment"].format(
+            experimentName=self.EXP_NAME, projectId=projectId
+        )
         local_url = self.cortex.experiments._serviceconnector._construct_url(uri)
         returns = {"name": self.EXP_NAME}
-        Entry.single_register(Entry.GET, 
-                              local_url, 
-                              status=200, 
-                              body=json.dumps(returns))
+        Entry.single_register(
+            Entry.GET, local_url, status=200, body=json.dumps(returns)
+        )
 
         exp = self.cortex.experiments.get_experiment(self.EXP_NAME)
         self.assertNotEqual(exp, None)
-    
+
     @mocketize
     def test_list_remote_experiments(self):
-        uri = self.cortex.experiments.URIs['experiments'].format( projectId=projectId)
+        uri = self.cortex.experiments.URIs["experiments"].format(projectId=projectId)
         local_url = self.cortex.experiments._serviceconnector._construct_url(uri)
         returns = {"experiments": [{"name": self.EXP_NAME}]}
-        Entry.single_register(Entry.GET, 
-                              local_url, 
-                              status=200, 
-                              body=json.dumps(returns))
+        Entry.single_register(
+            Entry.GET, local_url, status=200, body=json.dumps(returns)
+        )
         exps = self.cortex.experiments.list_experiments()
 
         self.assertNotEqual(exps, None)
@@ -77,20 +78,24 @@ class TestExperiment(unittest.TestCase):
 
     @mocketize
     def test_make_remote_experiment(self):
-        uri = self.cortex.experiments.URIs['experiments'].format(projectId=projectId)
+        uri = self.cortex.experiments.URIs["experiments"].format(projectId=projectId)
         local_url = self.cortex.experiments._serviceconnector._construct_url(uri)
         returns = {"name": self.EXP_NAME}
-        Entry.single_register(Entry.POST, 
-                              local_url, 
-                              status=200, 
-                              body=json.dumps(returns))
-        exp = Experiment(document=self.cortex.experiments.save_experiment(self.EXP_NAME), client=self.cortex.experiments)
+        Entry.single_register(
+            Entry.POST, local_url, status=200, body=json.dumps(returns)
+        )
+        exp = Experiment(
+            document=self.cortex.experiments.save_experiment(self.EXP_NAME),
+            client=self.cortex.experiments,
+        )
         self.assertNotEqual(exp, None)
         self.assertIsInstance(exp, Experiment)
 
     @mocketize
     def test_make_local_experiment(self):
-        uri = ExperimentClient.URIs['experiment'].format(experimentName=self.EXP_NAME, projectId=projectId)
+        uri = ExperimentClient.URIs["experiment"].format(
+            experimentName=self.EXP_NAME, projectId=projectId
+        )
         returns = {"name": self.EXP_NAME}
         Entry.single_register(Entry.GET, uri, status=200, body=json.dumps(returns))
         exp = self.local.experiment(self.EXP_NAME)
@@ -100,37 +105,55 @@ class TestExperiment(unittest.TestCase):
     def test_make_local_experiment_custom_basedir(self):
         exp = self.local_tmp.experiment(self.EXP_NAME)
         self.assertNotEqual(exp, None)
-        self.assertTrue(os.path.isdir(f'/tmp/cortex/local/experiments/{self.EXP_NAME}'))
+        self.assertTrue(os.path.isdir(f"/tmp/cortex/local/experiments/{self.EXP_NAME}"))
 
     @mocketize
     def test_remote_load_artifact(self):
-        uri = self.cortex.experiments.URIs['experiments'].format(projectId=projectId)
+        uri = self.cortex.experiments.URIs["experiments"].format(projectId=projectId)
         local_url = self.expc._serviceconnector._construct_url(uri)
         returns = {"name": self.EXP_NAME}
-        Entry.single_register(Entry.POST, local_url, status=200, body=json.dumps(returns))
+        Entry.single_register(
+            Entry.POST, local_url, status=200, body=json.dumps(returns)
+        )
 
-        exp = Experiment(document=self.cortex.experiments.save_experiment(experiment_name=self.EXP_NAME), client=self.cortex.experiments)
+        exp = Experiment(
+            document=self.cortex.experiments.save_experiment(
+                experiment_name=self.EXP_NAME
+            ),
+            client=self.cortex.experiments,
+        )
         # add a run & artifact
 
         # register mock for creating a run
-        uri = ExperimentClient.URIs['runs'].format(projectId=projectId, experimentName=self.EXP_NAME)
+        uri = ExperimentClient.URIs["runs"].format(
+            projectId=projectId, experimentName=self.EXP_NAME
+        )
         local_url = self.expc._serviceconnector._construct_url(uri)
-        run_id = '000001'
+        run_id = "000001"
         returns = {"runId": run_id}
-        Entry.single_register(Entry.POST, local_url, status=200, body=json.dumps(returns))
+        Entry.single_register(
+            Entry.POST, local_url, status=200, body=json.dumps(returns)
+        )
 
         run = exp.start_run()
         # make an artifact
-        my_dictionary = {'a_thing': 1, 'another_thing': 2}
+        my_dictionary = {"a_thing": 1, "another_thing": 2}
 
         # get the artifact & test if it is what is expected
         # register mock for loading an artifact
-        uri = ExperimentClient.URIs['artifact'].format(experimentName=self.EXP_NAME, runId=run_id, artifactId='my_dictionary', projectId=projectId)
+        uri = ExperimentClient.URIs["artifact"].format(
+            experimentName=self.EXP_NAME,
+            runId=run_id,
+            artifactId="my_dictionary",
+            projectId=projectId,
+        )
         local_url = self.expc._serviceconnector._construct_url(uri)
 
-        Entry.single_register(Entry.GET, local_url, status=200, body=dill.dumps(my_dictionary))
+        Entry.single_register(
+            Entry.GET, local_url, status=200, body=dill.dumps(my_dictionary)
+        )
 
-        result = exp.load_artifact(run, 'my_dictionary')
+        result = exp.load_artifact(run, "my_dictionary")
         self.assertEqual(result, my_dictionary)
 
     def test_save_multiple_local_experiments(self):
@@ -154,21 +177,21 @@ class TestExperiment(unittest.TestCase):
     def test_reset_works_in_context(self):
         exp = self.local.experiment(self.EXP_NAME)
         exp.reset()
-        exp.set_meta('style', 'supervised')
-        exp.set_meta('function', 'regression')
-        test_artifact = {'model': {}}
+        exp.set_meta("style", "supervised")
+        exp.set_meta("function", "regression")
+        test_artifact = {"model": {}}
         with exp.start_run() as run:
-            run.log_artifact('test', test_artifact)
+            run.log_artifact("test", test_artifact)
 
         self.assertTrue(len(exp.runs()) == 1)
-        self.assertEqual(run.get_artifact('test'), test_artifact)
+        self.assertEqual(run.get_artifact("test"), test_artifact)
 
     def make_run(self, exp):
         run = exp.start_run()
-        run.set_meta('meta', 'meta_val')
-        run.log_params({'param': 'param_val'})
+        run.set_meta("meta", "meta_val")
+        run.log_params({"param": "param_val"})
         run.start()
         run.stop()
-        run.log_metric(name='metric_1', metric=85)
+        run.log_metric(name="metric_1", metric=85)
         exp.save_run(run)
         return run
