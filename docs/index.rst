@@ -6,11 +6,19 @@ Cortex Python Reference
 This reference guide describes the base API client library to integrate with Cortex Fabric.
 Refer to the `Cortex Fabric documentation <https://cognitivescale.github.io/cortex-fabric/>`_ for more info about how to use the library.
 
+Cortex Client
+-------------
+
+.. autoclass:: cortex.client.Client
+    :members:
+    :exclude-members: to_connector
+
 Cortex
 ------
 
 .. autoclass:: cortex.client.Cortex
     :members:
+
 
 CortexEnv
 ---------
@@ -18,10 +26,10 @@ CortexEnv
 .. autoclass:: cortex.env.CortexEnv
     :members:
 
-Cortex Client
--------------
+Cortex Local Experiments
+------------------------
 
-.. autoclass:: cortex.client.Client
+.. autoclass:: cortex.experiment.local.LocalExperiment
     :members:
 
 Cortex Experiment
@@ -69,6 +77,16 @@ ManagedContentClient
 SessionClient
 -------------
 .. autoclass:: cortex.session.SessionClient
+    :members:
+
+SecretsClient
+-------------
+.. autoclass:: cortex.secrets.SecretsClient
+    :members:
+
+SkillClient
+-----------
+.. autoclass:: cortex.skill.SkillClient
     :members:
 
 Messages

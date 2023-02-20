@@ -39,7 +39,7 @@ log = get_logger(__name__)
 
 class ExperimentClient(_Client):
     """
-    A client for the `Cortex experiment and model management API <https://cognitivescale.github.io/cortex-fabric/docs/models/experiments>`_. You can find a pre-created instance of this class on every :class:`cortex.Cortex.Client` instance via the :attr:`Client.experiments` attribute.
+    A client for the `Cortex experiment and model management API <https://cognitivescale.github.io/cortex-fabric/docs/models/experiments>`_. You can find a pre-created instance of this class on every :class:`cortex.client.Client` instance via the :attr:`Client.experiments` attribute.
 
     >>> from cortex import Cortex; client = Cortex.client();
     >>> client.experiments.list_experiments() # list experiments from the default project configured for the user
@@ -85,6 +85,7 @@ class ExperimentClient(_Client):
     def save_experiment(self, experiment_name: str, model_id=None, **kwargs) -> Dict:
         """Save an experiment with the provided `experiment_name`, and `modelId`. All the fields specified in the `API reference for Cortex Experiments <https://cognitivescale.github.io/cortex-fabric/swagger/index.html#operation/CreateExperiment>`_ (except name and modelId) can be passed in as keyword args to this method
 
+        >>> from cortex import Cortex; cc=Cortex.client()
         >>> cc.experiments.save_experiment('exp-name', 'juhf')
         {'_version': 1, 'name': 'exp-name', 'tags': [], '_projectId': 'exp-test', 'modelId': 'juhf'}
 
@@ -490,7 +491,7 @@ class ExperimentClient(_Client):
         :type artifact: str
         :param stream: A Python I/O stream which will be written to managed content with filename provided in the `artifact` param
         :type stream: Python I/O stream
-        :raises :exc:`cortex.exceptions.UpdateRunException`
+        :raises: :exc:`cortex.exceptions.UpdateRunException`
         :return: A boolean indicating the status of the update operation
         :rtype: bool
         """

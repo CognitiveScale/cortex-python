@@ -176,15 +176,17 @@ class Run:
         return doc
 
     @staticmethod
-    def from_json(json, experiment):
+    def from_json(json: dict, experiment: str):
         # pylint: disable=protected-access,duplicate-code
         """
         Creates a run from a json representation.
 
         :param json: The json representation of the run.
+        :type json: dict
         :param experiment: The experiment to associate with the run.
-        :return: A run that has the values in the given json object with
-        the given experiment.
+        :type experiment: str
+        :return: A run that has the values in the given json object with the given experiment.
+        :rtype: :class:`cortex.experiment.model.Run`
         """
         run = Run(experiment)
         run._id = json["id"]

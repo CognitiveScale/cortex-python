@@ -25,7 +25,7 @@ from pathlib import Path
 import python_jwt as py_jwt
 import jwcrypto.jwk as jwkLib
 from requests.exceptions import HTTPError
-from .exceptions import BadTokenException
+from .exceptions import BadTokenException, AuthenticationHeaderError
 
 
 def md5sum(file_name, blocksize=65536):
@@ -218,14 +218,6 @@ def base64decode_jsonstring(base64encoded_jsonstring: str):
     return json.loads(
         base64.urlsafe_b64decode(base64encoded_jsonstring).decode("utf-8")
     )
-
-
-class AuthenticationHeaderError(Exception):
-    """_summary_
-
-    Args:
-        Exception (_type_): _description_
-    """
 
 
 def raise_for_status_with_detail(resp):

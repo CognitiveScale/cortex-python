@@ -27,12 +27,22 @@ class AuthenticationException(CortexException):
     """
 
 
-class SendMessageException(CortexException):
-    """_summary_
+class InvalidMessageTypeException(CortexException):
+    """This exception is thrown when the :class:`cortex.message.Message` instance is invalid
 
-    Args:
-        CortexException (_type_): _description_
+    :type Exception: Exception
     """
+
+
+class IncompleteMessageKeysException(CortexException):
+    """This exception is raised when the message passed to a Skill has missing fields
+
+    :type Exception: Exception
+    """
+
+
+class SendMessageException(CortexException):
+    """This exception is raised when a message send to Skill doesn't result in a successful HTTP status code"""  # pylint: disable=line-too-long
 
 
 class BadTokenException(CortexException):
@@ -60,24 +70,16 @@ class ProjectException(CortexException):
 
 
 class VisualisationException(CortexException):
-    """_summary_
-
-    Args:
-        CortexException (_type_): _description_
-    """
+    """Indicates missing dependent packages when using the cortex-python package inside a jupyter notebook"""  # pylint: disable=line-too-long
 
 
 class UpdateRunException(CortexException):
-    """_summary_
-
-    Args:
-        CortexException (_type_): _description_
-    """
+    """Raised when the :meth:`cortex.experiment.ExperimentClient.update_run` method fails"""
 
 
 class DeleteRunException(CortexException):
-    """_summary_
+    """Raised when the :meth:`cortex.experiment.ExperimentClient.delete_run` method fails"""
 
-    Args:
-        CortexException (_type_): _description_
-    """
+
+class AuthenticationHeaderError(Exception):
+    """This error is raised when a request to the Fabric API results in a 302 redirect status code along with the header `X-Auth-Error` containing additional context about the failure. This usually occurs due to an expired JWT."""  # pylint: disable=line-too-long

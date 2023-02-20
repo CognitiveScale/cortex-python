@@ -60,8 +60,8 @@ class ServiceConnector:
     def base_url(self) -> str:
         """_summary_
 
-        Returns:
-            str: _description_
+        :return: _description_
+        :rtype: str
         """
         return f"{self.url}/fabric/v{self.version}"
 
@@ -166,14 +166,16 @@ class ServiceConnector:
     ):
         """_summary_
 
-        Args:
-            retries (int, optional): _description_. Defaults to 5.
-            backoff_factor (float, optional): _description_. Defaults to 0.5.
-            status_forcelist (tuple, optional): _description_. Defaults to (500, 502, 503, 504).
-            session (_type_, optional): _description_. Defaults to None.
-
-        Returns:
-            _type_: _description_
+        :param retries: _description_, defaults to 5
+        :type retries: int, optional
+        :param backoff_factor: _description_, defaults to 0.5
+        :type backoff_factor: float, optional
+        :param status_forcelist: _description_, defaults to (500, 502, 503, 504)
+        :type status_forcelist: tuple, optional
+        :param session: _description_, defaults to None
+        :type session: _type_, optional
+        :return: _description_
+        :rtype: _type_
         """
         session = session or requests.Session()
         retry = Retry(
@@ -223,7 +225,7 @@ class ServiceConnector:
 
 class _Client:
     """
-    A client.
+    An internal client for accessing the Fabric API
     """
 
     URIs = {}
@@ -313,12 +315,12 @@ class _Client:
     def from_current_cli_profile(cls: Type[T], version: str = "3", **kwargs) -> T:
         """_summary_
 
-        Args:
-            cls (Type[T]): _description_
-            version (str, optional): _description_. Defaults to '3'.
-
-        Returns:
-            T: _description_
+        :param cls: _description_
+        :type cls: Type[T]
+        :param version: _description_, defaults to "3"
+        :type version: str, optional
+        :return: _description_
+        :rtype: T
         """
         cli_cfg = get_cortex_profile()
         url, token = cli_cfg["url"], cli_cfg["token"]
@@ -329,11 +331,11 @@ class _Client:
     def from_cortex_message(cls, message, version: str = "3", **kwargs):
         """_summary_
 
-        Args:
-            message (_type_): _description_
-            version (str, optional): _description_. Defaults to "3".
-
-        Returns:
-            _type_: _description_
+        :param message: _description_
+        :type message: _type_
+        :param version: _description_, defaults to "3"
+        :type version: str, optional
+        :return: _description_
+        :rtype: _type_
         """
         return cls(message["apiEndpoint"], version, message["token"], **kwargs)

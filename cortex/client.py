@@ -28,27 +28,15 @@ from .types import TypeClient
 from .experiment import ExperimentClient
 from .serviceconnector import ServiceConnector
 from .env import CortexEnv
-from .exceptions import ProjectException
+from .exceptions import (
+    ProjectException,
+    InvalidMessageTypeException,
+    IncompleteMessageKeysException,
+)
 from .message import Message
 from .utils import decode_JWT, get_logger, generate_token
 
 log = get_logger(__name__)
-
-
-class InvalidMessageTypeException(Exception):
-    """_summary_
-
-    :param Exception: _description_
-    :type Exception: _type_
-    """
-
-
-class IncompleteMessageKeysException(Exception):
-    """_summary_
-
-    :param Exception: _description_
-    :type Exception: _type_
-    """
 
 
 class _Token:
@@ -58,29 +46,75 @@ class _Token:
         if token:
             self._jwt = decode_JWT(self._token)
 
-    def is_expired(self):
-        """_summary_
+    def is_expired(self) -> bool:
+        """Checks if the token's JWT has expired
 
-        Returns:
-            _type_: _description_
+        :return: A boolean indicating if the JWT has expired
+        :rtype: bool
         """
         current_time = time.time()
         return not self._jwt or (self._jwt[0].get("exp", current_time) < current_time)
 
     @property
-    def token(self):
-        """_summary_
+    def token(self) -> str:
+        """Returns the token
 
-        Returns:
-            _type_: _description_
+        :return: The token
+        :rtype: str
         """
         return self._token
 
 
 class Client:
     """
-    API client used to access agents, skills, and datasets.
-    """
+    API client used to access Connections, Managed Content, Experiments, Secrets, Models, Sessions, Skills and Types in a Fabric cluster. Experiments also have a `local client` (:class:`cortex.experiment.local.LocalExperiment`) for data scientists to work without access to a Fabric cluster.
+
+    Create an instance of the Cortex Fabric client. There are a few different ways in which you can instantiate a Client
+
+    1. If the user has the Cortex CLI installed and configured to a Fabric environment, AND a default project is set, they can do the following:
+
+    >>> from cortex import Cortex; client = Cortex.client()
+
+    2. If the user has the Cortex CLI installed and configured, but a default project is not set:
+
+    >>> from cortex import Cortex; client = Cortex.client(project="some-project")
+
+    3. If the user does not have the Cortex CLI installed, or is using the cortex-python package from within a Skill (Daemon) running inside a Fabric cluster, they can simply extract the required parameters from the request object and create a Cortex client like below:
+
+    .. code-block::
+
+        from cortex import Cortex
+
+        @app.post('/invoke')
+        def start(req: dict):
+            payload = req['payload']
+            client = Cortex.client(api_endpoint=req["apiEndpoint"], project=req["projectId"], token=req["token"])
+            client.experiments.list_experiments()
+            ....
+
+    4. If the user does not have the Cortex CLI installed, or is using the cortex-python package from within a **Skill(Job)** running inside a Fabric cluster, they can simply pass the `params` object passed into the Job script and create a Cortex client:
+
+    .. code-block:: python
+
+        # contents of main.py for a Skill (job)
+        from cortex import Cortex
+
+        def main(params):
+            client = Cortex.from_message(params)
+
+        if __name__ == "__main__":
+            if len(sys.argv)<2:
+                print("Message/payload argument is required")
+                exit(1)
+            # The last argument in sys.argv is the payload from cortex
+            main(json.loads(sys.argv[-1]))
+
+
+    :param url: Cortex fabric url
+    :param token: (optional) Use JWT token to authenticate requests, will default to settings in ~/.cortex/config if not provided to generate JWT tokens
+    :param project: (optional) Project name, must specify project for each request
+    :param version: (optional) Fabric API version (default: 4)
+    """  # pylint: disable=line-too-long
 
     def __init__(
         self,
@@ -91,16 +125,6 @@ class Client:
         version: int = VERSION,
         verify_ssl_cert: bool = False,
     ):
-        """
-        Create an instance of the Cortex Fabric client
-
-        :param url: Cortex fabric url
-        :param token: (optional) Use JWT token to authenticate requests,
-        will default to settings in ~/.cortex/config if not provided to
-        generate JWT tokens
-        :param project: (optional) Project name, must specify project for each request
-        :param version: (optional) Fabric API version (default: 4)
-        """
 
         self._token = token
         self._config = config
@@ -177,9 +201,8 @@ class Client:
             client.experiments.save_experiments()
             client.experiments.list_runs()
             client.experiments.delete_runs()
-        ::
 
-        Refer to the documentation of :mod:`cortex.experiment.ExperimentClient` to learn more about the methods available on the ExperimentClient
+        Refer to the documentation of :class:`cortex.experiment.ExperimentClient` to learn more about the methods available on the ExperimentClient
 
         :returns: An instance of this helper class that enables access to the Fabric Experiments API.
         :rtype: :class:`cortex.experiment.ExperimentClient`
@@ -214,9 +237,8 @@ class Client:
             client = Cortex.client()
             client.connections.save_connection
             client.connections.get_connection
-        ::
 
-        Refer to the documentation of :mod:`cortex.connection.ConnectionClient` to learn more about the methods available on the ConnectionClient
+        Refer to the documentation of :class:`cortex.connection.ConnectionClient` to learn more about the methods available on the ConnectionClient
 
         :returns: An instance of this helper class that enables access to the Fabric Connections API.
         :rtype: :class:`cortex.connection.ConnectionClient`
@@ -253,9 +275,8 @@ class Client:
             client.content.upload
             client.content.exists
             .....
-        ::
 
-        Refer to the documentation of :mod:`cortex.content.ManagedContentClient` to learn more about the methods available on the ManagedContentClient
+        Refer to the documentation of :class:`cortex.content.ManagedContentClient` to learn more about the methods available on the ManagedContentClient
 
         :returns: An instance of this helper class that enables access to the Fabric Managed Content API.
         :rtype: :class:`cortex.content.ManagedContentClient`
@@ -281,7 +302,7 @@ class Client:
         """Returns a pre-initialised ModelClient whose project has been set to the project configured for the Cortex.client.
 
         If you want to access models for a project that is
-        different from the one configured with Cortex.client, please use :meth:`cortex.client.Client.model_client` instead
+        different from the one configured with Cortex.client, please use :meth:`cortex.client.Client.models_client` instead
 
         .. code-block::
 
@@ -292,9 +313,8 @@ class Client:
             client.models.get_model()
             client.models.save_model()
             .....
-        ::
 
-        Refer to the documentation of :mod:`cortex.model.ModelClient` to learn more about the methods available on the ModelClient
+        Refer to the documentation of :class:`cortex.model.ModelClient` to learn more about the methods available on the ModelClient
 
         :returns: An instance of this helper class that enables access to the Fabric Models API.
         :rtype: :class:`cortex.model.ModelClient`
@@ -304,7 +324,7 @@ class Client:
     def models_client(self, project: str = None) -> ModelClient:
         """Helper method to create a new :class:`cortex.model.ModelClient` instance that is configured to talk to another `project` than the default :attr:`cortex.client.Client._project`
 
-        >>> modelc = client.model_client(project="another-project")
+        >>> modelc = client.models_client(project="another-project")
 
         :param project: Project for which a models client is to be created, defaults to (the project configured with cortex.client.Client)
         :type project: str, optional
@@ -317,88 +337,158 @@ class Client:
 
     @property
     def secrets(self) -> SecretsClient:
-        """_summary_
+        """Returns a pre-initialised SecretsClient whose project has been set to the project configured for the Cortex.client.
 
-        :return: _description_
-        :rtype: SecretsClient
-        """
+        .. important::
+
+            Note that, as of Fabric 6.3.3 and Fabric 6.4.0., you can only call :meth:`cortex.secrets.SecretsClient.get_secret` from within a skill running inside the Fabric cluster (won't work locally)
+
+        If you want to access secrets for a project that is
+        different from the one configured with Cortex.client, please use :meth:`cortex.client.Client.secrets_client` instead
+
+        .. code-block::
+
+            ## use default .secrets client helper
+            from cortex import Cortex
+            client = Cortex.client()
+            client.models.get_secret()
+            client.models.post_secret()
+            .....
+
+        Refer to the documentation of :class:`cortex.secrets.SecretsClient` to learn more about the methods available on the SecretsClient
+
+        :returns: An instance of this helper class that enables access to the Fabric Secrets API.
+        :rtype: :class:`cortex.secrets.SecretsClient`
+        """  # pylint: disable=line-too-long
         return self._service_clients.get("secrets")
 
     def secrets_client(self, project: str = None) -> SecretsClient:
-        """_summary_
+        """Helper method to create a new :class:`cortex.secrets.SecretsClient` instance that is configured to talk to another `project` than the default :attr:`cortex.client.Client._project`
 
-        Args:
-            project (str, optional): _description_. Defaults to None.
+        >>> secretsc = client.secrets_client(project="another-project")
 
-        Returns:
-            SecretsClient: _description_
-        """
+        :param project: Project for which a secrets client is to be created, defaults to (the project configured with cortex.client.Client)
+        :type project: str, optional
+        :return: A secrets client
+        :rtype: :class:`cortex.secrets.SecretsClient`
+        """  # pylint: disable=line-too-long
         if project is not None:
             return SecretsClient(project=project)
         return self.secrets
 
     @property
     def skills(self) -> SkillClient:
-        """_summary_
+        """Returns a pre-initialised SkillClient whose project has been set to the project configured for the Cortex.client.Client
 
-        Returns:
-            SkillClient: _description_
-        """
+        If you want to access Skills for a project that is
+        different from the one configured with Cortex.client, please use :meth:`cortex.client.Client.skills_client` instead
+
+        .. code-block::
+
+            ## use default .skills client helper
+            from cortex import Cortex
+            client = Cortex.client()
+            client.skills.get_skill()
+            client.skills.save_skill()
+            client.skills.delete_skill()
+            client.skills.get_logs()
+            client.skills.deploy()
+            client.skills.undeploy()
+            .....
+
+        Refer to the documentation of :class:`cortex.skill.SkillClient` to learn more about the methods available on the SkillClient
+
+        :returns: An instance of this helper class that enables access to the Fabric SKills API.
+        :rtype: :class:`cortex.skill.SkillClient`
+        """  # pylint: disable=line-too-long
         return self._service_clients.get("skills")
 
     def skills_client(self, project: str = None) -> SkillClient:
-        """_summary_
+        """Helper method to create a new :class:`cortex.skill.SkillClient` instance that is configured to talk to another `project` than the default :attr:`cortex.client.Client._project`
 
-        Args:
-            project (str, optional): _description_. Defaults to None.
+        >>> skillsc = client.skills_client(project="another-project")
 
-        Returns:
-            SkillClient: _description_
-        """
+        :param project: Project for which a Skill client is to be created, defaults to (the project configured with cortex.client.Client)
+        :type project: str, optional
+        :return: A Skills client
+        :rtype: :class:`cortex.skill.SkillClient`
+        """  # pylint: disable=line-too-long
         if project is not None:
             return SkillClient(project=project)
         return self.skills
 
     @property
     def sessions(self) -> SessionClient:
-        """_summary_
+        """Returns a pre-initialised SessionClient whose project has been set to the project configured for the Cortex.client.Client
 
-        Returns:
-            SessionClient: _description_
-        """
+        If you want to access Sessions for a project that is
+        different from the one configured with Cortex.client, please use :meth:`cortex.client.Client.sessions_client` instead
+
+        .. code-block::
+
+            ## use default .sessions client helper
+            from cortex import Cortex
+            client = Cortex.client()
+            client.sessions.start_session()
+            client.sessions.get_session_data()
+            client.sessions.put_session_data()
+            client.sessions.delete_session()
+            .....
+
+        Refer to the documentation of :class:`cortex.session.SessionClient` to learn more about the methods available on the SessionClient
+
+        :returns: An instance of this helper class that enables access to the Fabric Sessions API.
+        :rtype: :class:`cortex.session.SessionClient`
+        """  # pylint: disable=line-too-long
         return self._service_clients.get("sessions")
 
     def sessions_client(self, project: str = None) -> SessionClient:
-        """_summary_
+        """Helper method to create a new :class:`cortex.session.SessionClient` instance that is configured to talk to another `project` than the default :attr:`cortex.client.Client._project`
 
-        Args:
-            project (str, optional): _description_. Defaults to None.
+        >>> sessionsc = client.sessions_client(project="another-project")
 
-        Returns:
-            SessionClient: _description_
-        """
+        :param project: Project for which a Sessions client is to be created, defaults to (the project configured with cortex.client.Client)
+        :type project: str, optional
+        :return: A Sessions client
+        :rtype: :class:`cortex.session.SessionClient`
+        """  # pylint: disable=line-too-long
         if project is not None:
             return SessionClient(project=project)
         return self.sessions
 
     @property
     def types(self) -> TypeClient:
-        """_summary_
+        """Returns a pre-initialised TypeClient whose project has been set to the project configured for the Cortex.client.Client
 
-        Returns:
-            TypeClient: _description_
-        """
+        If you want to access Types for a project that is
+        different from the one configured with Cortex.client, please use :meth:`cortex.client.Client.types_client` instead
+
+        .. code-block::
+
+            ## use default .types client helper
+            from cortex import Cortex
+            client = Cortex.client()
+            client.types.get_type()
+            client.types.save_type()
+            .....
+
+        Refer to the documentation of :class:`cortex.types.TypeClient` to learn more about the methods available on the TypeClient
+
+        :returns: An instance of this helper class that enables access to the Fabric Types API.
+        :rtype: :class:`cortex.types.TypeClient`
+        """  # pylint: disable=line-too-long
         return self._service_clients.get("types")
 
     def types_client(self, project: str = None) -> TypeClient:
-        """_summary_
+        """Helper method to create a new :class:`cortex.types.TypeClient` instance that is configured to talk to another `project` than the default :attr:`cortex.client.Client._project`
 
-        Args:
-            project (str, optional): _description_. Defaults to None.
+        >>> typesc = client.types_client(project="another-project")
 
-        Returns:
-            TypeClient: _description_
-        """
+        :param project: Project for which a Types client is to be created, defaults to (the project configured with cortex.client.Client)
+        :type project: str, optional
+        :return: A Types client
+        :rtype: :class:`cortex.types.TypeClient`
+        """  # pylint: disable=line-too-long
         if project is not None:
             return TypeClient(project=project)
         return self.types
@@ -422,10 +512,10 @@ class Local:
 
     @property
     def basedir(self):
-        """_summary_
+        """Return the configured base directory of this :class:`cortex.client.Local` instance
 
-        Returns:
-            _type_: _description_
+        :return: configured base directory
+        :rtype: _type_
         """
         return self._basedir
 
@@ -444,10 +534,15 @@ class Cortex:
         config: dict = None,
         project: str = None,
         profile: str = None,
-    ):
+    ) -> Client:
         """
-        Gets a client with the provided parameters. All parameters are optional and default to
-        environment variable values if not specified.
+        Gets a client with the provided parameters. All parameters are optional and default to environment variable values if not specified. Client creation can fail if you don't have a default project set in your environment variables or the Cortex config file.
+
+        .. important::
+
+            You can also set a default project when configuring your Cortex CLI using `cortex configure --project <your-project>`.
+
+            This value will be updated into the `$HOME/.cortex/config` file. If your Cortex config file `$HOME/.cortex/config` does not contain a default `project` set for the profile being used as the default one, you will need to set the project key when instantiating a :class:`cortex.client.Client`.
 
         **Example**
 
@@ -456,14 +551,14 @@ class Cortex:
 
         :param api_endpoint: The Cortex URL.
         :param api_version: The version of the API to use with this client.
-        :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE
-        file or directory with certificates of trusted CAs (default: True)
+        :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE file or directory with certificates of trusted CAs (default: True)
         :param project: Cortex Project that you want to use.
-        :param token: (optional) Use JWT token for authenticating requests, will default to
-        settings in ~/.cortex/config if not provided
-        :param config: (optional) Use Cortex personal access token config file to
-        generate JWT tokens.
-        """
+        :param token: (optional) Use JWT token for authenticating requests, will default to settings in ~/.cortex/config if not provided
+        :param config: (optional) Use Cortex personal access token config file to generate JWT tokens.
+
+        :returns: An instance of :class:`cortex.client.Client`
+        :rtype: :class:`cortex.client.Client`
+        """  # pylint: disable=line-too-long
         env = CortexEnv(
             api_endpoint=api_endpoint,
             token=token,
@@ -501,14 +596,19 @@ class Cortex:
         )
 
     @staticmethod
-    def from_message(msg, verify_ssl_cert=None):
-        """
-        Creates a Cortex client from a skill's input message, expects
-        { api_endpoint:"..", token:"..", projectId:".."}
+    def from_message(msg, verify_ssl_cert=None) -> Client:
+        """Creates a Cortex client from a skill's input message, expects
+
+        .. code-block::
+
+            { api_endpoint:"..", token:"..", projectId:".."}
+
         :param msg: A message for constructing a Cortex Client.
-        :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE
-        file or directory with certificates of trusted CAs (default: True)
-        """
+        :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE file or directory with certificates of trusted CAs (default: True)
+
+        :returns: A Cortex Client
+        :rtype: :class:`cortex.client.Client`
+        """  # pylint: disable=line-too-long
         if not isinstance(msg, dict):
             raise InvalidMessageTypeException(
                 f"Skill message must be a `dict` not a {type(msg)}"
@@ -527,13 +627,12 @@ class Cortex:
 
     @staticmethod
     def local(basedir=None):
-        """_summary_
+        """Create a Local Cortex implementation (mock)
 
-        Args:
-            basedir (_type_, optional): _description_. Defaults to None.
-
-        Returns:
-            _type_: _description_
+        :param basedir: Root filesystem location, defaults to None
+        :type basedir: str, optional
+        :return: an instance of :class:`cortex.client.Local`
+        :rtype: :class:`cortex.client.Local`
         """
         return Local(basedir)
 

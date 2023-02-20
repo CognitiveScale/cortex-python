@@ -34,7 +34,7 @@ log = get_logger(__name__)
 
 class ManagedContentClient(_Client):
     """
-    A client used to access the `Cortex managed content service (blob store) <https://cognitivescale.github.io/cortex-fabric/docs/manage-data/managed-content>`_. You can find a pre-created instance of this class on every :py:class:`cortex.Cortex.Client` instance via the :py:attr:`Client.content` attribute.
+    A client used to access the `Cortex managed content service (blob store) <https://cognitivescale.github.io/cortex-fabric/docs/manage-data/managed-content>`_. You can find a pre-created instance of this class on every :py:class:`cortex.client.Client` instance via the :py:attr:`Client.content` attribute.
 
     >>> from cortex import Cortex; client = Cortex.client();
     >>> client.content.list() # list content from the default project configured for the user
@@ -65,6 +65,7 @@ class ManagedContentClient(_Client):
         :type retries: int, optional
         :return: a dict with the response to request upload.
         :rtype: dict
+
         .. NOTE: This method uses a multi-part form request; to upload very large files, use `uploadStreaming` instead.
         .. seealso: uploadStreaming()
         """  # pylint: disable=line-too-long

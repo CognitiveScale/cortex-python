@@ -117,5 +117,7 @@ The documentation will be rendered in HTML format under the `docs/_build/${VERSI
 ## TODO
 - [x] extending the client with helpers for cortex resources 
 - [x] camelcase in pylinyrc
-- [ ] use exceptions defined in `cortex/exceptions.py`
+- [ ] Update all documentation with proper Sphinx formatting
+  - [ ] Most of the major modules have been fixed except skill.py, model.py
+- [x] use exceptions defined in `cortex/exceptions.py`
 - [ ] integrate the cortex-python-profiles package back into the python SDK

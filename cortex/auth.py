@@ -36,7 +36,7 @@ class AuthenticationClient(_Client):
         :param config: A Personal access token provided by the Cortex Console,represented as a python dict
         :type config: Dict
 
-        :param validity: The validity of the JWT token in days, defaults to 0.5
+        :param validity: The validity of the JWT token in days, defaults to 0.5 days
         :type validity: float, optional
 
         :return: A JWT token in string form

@@ -56,11 +56,9 @@ class SessionClient(_Client):
         Gets data for a specific session.
 
         :param session_id: The ID of the session to query.
-        :param key: An optional key in the session memory;
-        the entire session memory is returned if a key is not
-        specified.
+        :param key: An optional key in the session memory; the entire session memory is returned if a key is not specified.
         :return: A dict containing the requested session data
-        """
+        """  # pylint: disable=line-too-long
         uri = self.URIs["get"].format(
             sessionId=parse_string(session_id), projectId=self._project()
         )

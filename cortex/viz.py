@@ -37,11 +37,11 @@ class Viz:
             self.figsize = figsize
 
     def show_corr(self, column: str):
-        """_summary_
+        """Plots the pre-calculated pairwise correlations of the specified column
 
-        Args:
-            column (str): _description_
-        """
+        :param column: Name of the column whose correlations are to be plotted
+        :type column: str
+        """  # pylint: disable=line-too-long
         cm_sorted = self.corr_m[column].sort_values(ascending=False)
         plt.rcParams["figure.figsize"] = self.figsize
         plt.xticks(rotation=90)
@@ -50,7 +50,7 @@ class Viz:
         plt.clf()
 
     def show_corr_heatmap(self, **kwargs):
-        """_summary_"""
+        """Plots the Correlation heatmap of the dataframe in self.data_frame using Seaborn's `sns.heatmap` method."""  # pylint: disable=line-too-long
         plt.rcParams["figure.figsize"] = self.figsize
         sns.heatmap(
             self.corr_m,
@@ -63,10 +63,10 @@ class Viz:
         plt.clf()
 
     def show_dist(self, column: str):
-        """_summary_
+        """Visualises the univariate normal distribution of the specified column
 
-        Args:
-            column (str): _description_
+        :param column: Column which is to be fitted to a normal distribution
+        :type column: str
         """
         try:
             from scipy.stats import norm  # pylint: disable=import-outside-toplevel
@@ -81,14 +81,12 @@ class Viz:
         plt.clf()
 
     def show_probplot(self, column: str):
-        """_summary_
+        """Computes and visualises the probability distribution of the specified `column`
 
-        Args:
-            column (str): _description_
-
-        Raises:
-            Exception: _description_
-        """
+        :param column: Column whose prob. distribution is to be plotted
+        :type column: str
+        :raises VisualisationException: Indicates missing `scipy` package that is needed for this method to work
+        """  # pylint: disable=line-too-long
         try:
             from scipy import stats  # pylint: disable=import-outside-toplevel
 
@@ -102,12 +100,13 @@ class Viz:
             ) from exc
 
     def show_corr_pairs(self, column: str, threshold=0.7):
-        """_summary_
+        """Plots the pairwise correlations of the given `column`. Only the correlations with columns whose correlation with the given column is greater than `threshold` will be plotted.
 
-        Args:
-            column (str): _description_
-            threshold (float, optional): _description_. Defaults to 0.7.
-        """
+        :param column: _description_
+        :type column: str
+        :param threshold: _description_, defaults to 0.7
+        :type threshold: float, optional
+        """  # pylint: disable=line-too-long
         corr_map = self.data_frame.corr()
         values = list(corr_map[column].values)
         keys = list(corr_map[column].keys())

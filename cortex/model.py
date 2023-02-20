@@ -101,15 +101,14 @@ class Model(CamelResource):
         self._client = client
         self._project = client._project
 
-    def to_camel(self, camel="1.0.0"):
+    def to_camel(self, camel="1.0.0") -> dict:
         # pylint: disable=duplicate-code
-        """_summary_
+        """Converts this instance of Model to a CAMEL JSON representation
 
-        Args:
-            camel (str, optional): _description_. Defaults to "1.0.0".
-
-        Returns:
-            _type_: _description_
+        :param camel: Version of the CAMEL spec to convert to, defaults to "1.0.0"
+        :type camel: str, optional
+        :return: A python dict representing a JSON CAMEL specification of the model
+        :rtype: dict
         """
         return {
             "camel": camel,
