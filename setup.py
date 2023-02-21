@@ -1,5 +1,5 @@
 """
-Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2023 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -20,58 +20,47 @@ import os
 
 here = os.path.abspath(os.path.dirname(__file__))
 about = {}
-with open(os.path.join(here, 'cortex', '__version__.py'), 'r') as f:
+with open(os.path.join(here, "cortex", "__version__.py"), "r") as f:
     exec(f.read(), about)
 
-with open('README.md') as f:
+with open("README.md") as f:
     long_description = f.read()
 
 setup(
-    name=about['__title__'],
-    version=about['__version__'],
-    description=about['__description__'],
+    name=about["__title__"],
+    version=about["__version__"],
+    description=about["__description__"],
     long_description=long_description,
-    long_description_content_type='text/markdown',
-    author=about['__author__'],
-    author_email=about['__author_email__'],
-    url=about['__url__'],
-    license=about['__license__'],
-    package_data={'': ['LICENSE', 'CHANGELOG.md']},
+    long_description_content_type="text/markdown",
+    author=about["__author__"],
+    author_email=about["__author_email__"],
+    url=about["__url__"],
+    license=about["__license__"],
+    package_data={"": ["LICENSE", "CHANGELOG.md"]},
     project_urls={
-        'Documentation': 'https://cognitivescale.github.io/cortex-python/master/',
-        'Source': 'https://github.com/CognitiveScale/cortex-python',
+        "Documentation": "https://cognitivescale.github.io/cortex-python/master/",
+        "Source": "https://github.com/CognitiveScale/cortex-python",
     },
-    platforms=['any'],
+    platforms=["any"],
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        'requests>=2.12.4,<3',
-        'requests-toolbelt>=0.8.0',
-        'python-jwt>=3.3.0,<4.0',
-        'pyyaml>=5.3.1,<6',
-        'cuid>=0.3,<1',
-        'tenacity>=8.0,<9.0',
-        'dill>=0.2.8.2'
+        "requests>=2.12.4,<3",
+        "requests-toolbelt>=0.8.0",
+        "python-jwt>=3.3.0,<4.0",
+        "pyyaml>=5.3.1,<6",
+        "cuid>=0.3,<1",
+        "tenacity>=8.0,<9.0",
+        "dill>=0.2.8.2",
     ],
     extras_require={
-        'viz': [
-            'matplotlib>=2.2.2,<3',
-            'seaborn>=0.9.0,<0.10',
-            'pandas'
-        ],
-        'jupyter': [
-            'ipython>=6.4.0,<7',
-            'maya>=0.5.0',
-            'jinja2'
-        ],
+        "viz": ["matplotlib>=2.2.2,<3", "seaborn>=0.9.0,<0.10", "pandas"],
+        "jupyter": ["ipython>=6.4.0,<7", "maya>=0.5.0", "jinja2"],
     },
-    tests_require=[
-        'mocket>=3.9.0,<4.0',
-        'pytest>=7.2.1,<8'
-    ],
+    tests_require=["mocket>=3.9.0,<4.0", "pytest>=7.2.1,<8"],
     classifiers=[
-        'Operating System :: MacOS :: MacOS X',
-        'Operating System :: POSIX',
-        'Programming Language :: Python :: 3.6',
-    ]
+        "Operating System :: MacOS :: MacOS X",
+        "Operating System :: POSIX",
+        "Programming Language :: Python :: 3.6",
+    ],
 )

@@ -1,5 +1,5 @@
 """
-Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2023 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -176,7 +176,7 @@ class Run:
         return doc
 
     @staticmethod
-    def from_json(json: dict, experiment: str):
+    def from_json(json: dict, experiment):
         # pylint: disable=protected-access,duplicate-code
         """
         Creates a run from a json representation.
@@ -184,7 +184,7 @@ class Run:
         :param json: The json representation of the run.
         :type json: dict
         :param experiment: The experiment to associate with the run.
-        :type experiment: str
+        :type experiment: :class:`cortex.experiment.Experiment`
         :return: A run that has the values in the given json object with the given experiment.
         :rtype: :class:`cortex.experiment.model.Run`
         """

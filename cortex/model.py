@@ -1,5 +1,5 @@
 """
-Copyright 2019 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2023 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -25,8 +25,10 @@ from .utils import raise_for_status_with_detail, parse_string
 class ModelClient(_Client):
 
     """
-    A client for the Cortex model management API.
-    """
+    A client for the Cortex model management API. While the :mod:`cortex.experiment` module deals with the initial lifecycle aspects of model ideation, and design, the :class:`cortex.model.ModelClient` exists to save metadata about a known well-working model configuration produced after multiple iterations of Experiment runs and training configurations.
+
+    Models can have a lifecycle, are able to store metadata about their types, and more. Refer to the `official API reference <https://cognitivescale.github.io/cortex-fabric/swagger/index.html#operation/PostModel>`_ to understand all the model metadata that can be saved when models are created or updated.
+    """  # pylint: disable=line-too-long
 
     URIs = {
         "models": "projects/{projectId}/models",

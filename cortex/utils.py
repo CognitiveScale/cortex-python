@@ -1,5 +1,5 @@
 """
-Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2023 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ from pathlib import Path
 import python_jwt as py_jwt
 import jwcrypto.jwk as jwkLib
 from requests.exceptions import HTTPError
+from tenacity import RetryCallState
 from .exceptions import BadTokenException, AuthenticationHeaderError
 
 
@@ -250,3 +251,24 @@ def parse_string(string: str):
     """
     # Replaces special characters like / with %2F (URL encoding)
     return urllib.parse.quote(string, safe="")
+
+
+def generic_retry_before_handler(retry_state: RetryCallState):
+    """Helper to track the status of retries using tenacity
+
+    :param retry_state: This is passed in by tenacity
+    :type retry_state: :class:`tenacity.RetryCallState`
+    """
+    if retry_state.attempt_number < 1:
+        loglevel = logging.INFO
+    else:
+        loglevel = logging.WARNING
+
+    log_message(
+        msg=(
+            f"Retrying {retry_state.fn}: attempt {retry_state.attempt_number} "
+            f"ended with: {retry_state.outcome}"
+        ),
+        log=get_logger("http_status"),
+        level=loglevel,
+    )
