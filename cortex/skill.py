@@ -1,5 +1,5 @@
 """
-Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2023 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -177,22 +177,35 @@ class SkillClient(_Client):
         return res.json()
 
     def invoke(
-        self, skill_name: str, input_name: str, payload: object, properties: object
-    ):
-        """
-        Invoke a skill
+        self,
+        skill_name: str,
+        input_name: str,
+        payload: object,
+        properties: object,
+        sync: bool = False,
+    ) -> dict:
+        """Invoke a skill on a specified `input_name` with the specified `payload` and `properties`. Use `sync=True` if you want to access the Skill invocation results without polling.
+
         :param skill_name: Skill name
-        :param input: input name
+        :type skill_name: str
+        :param input_name: Input name of the Skill
+        :type input_name: str
         :param payload: Skill payload
+        :type payload: object
         :param properties: Skill properties
-        :return: status
-        """
+        :type properties: object
+        :param sync: Set this to True if you want synchronous skill invokes
+        :type sync: bool,
+        :return: The activation details of the invocation if `sync=False`, and the full Skill response if `sync=True`
+        :rtype: dict
+        """  # pylint: disable=line-too-long
         uri = self.URIs["invoke"].format(
             project=self._project(), skill_name=skill_name, input=input_name
         )
         data = json.dumps({"payload": payload, "properties": properties})
+        params = {"sync": "true" if sync is True else "false"}
         headers = {"Content-Type": "application/json"}
-        res = self._serviceconnector.request("POST", uri, data, headers)
+        res = self._serviceconnector.request("POST", uri, data, headers, params=params)
         raise_for_status_with_detail(res)
         return res.json()
 
