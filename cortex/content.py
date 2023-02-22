@@ -1,5 +1,5 @@
 """
-Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2023 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -27,7 +27,10 @@ from requests.exceptions import HTTPError
 import tenacity
 
 from .serviceconnector import _Client
-from .utils import raise_for_status_with_detail, get_logger
+from .utils import (
+    raise_for_status_with_detail,
+    get_logger,
+)
 
 log = get_logger(__name__)
 
@@ -72,7 +75,7 @@ class ManagedContentClient(_Client):
         res = tenacity.Retrying(
             stop=tenacity.stop_after_attempt(retries + 1),
             retry=tenacity.retry_if_exception(
-                ManagedContentClient._http_request_retry_predicate
+                ManagedContentClient._http_request_retry_predicate,
             ),
         )
         return res.wraps(self._upload)(key, stream_name, stream, content_type)
