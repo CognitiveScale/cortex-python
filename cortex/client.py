@@ -198,7 +198,7 @@ class Client:
             from cortex import Cortex
             client = Cortex.client()
             client.experiments.list_experiments()
-            client.experiments.save_experiments()
+            client.experiments.save_experiment()
             client.experiments.list_runs()
             client.experiments.delete_runs()
 
