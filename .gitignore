@@ -13,7 +13,9 @@ _venv*
 dist
 .python-version
 .pytest_cache
+coverage/
 .coverage
+test/report.html
 .idea
 notebooks/local-mode/datasets/
 notebooks/local-mode/experiments/

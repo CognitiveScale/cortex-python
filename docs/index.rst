@@ -6,11 +6,19 @@ Cortex Python Reference
 This reference guide describes the base API client library to integrate with Cortex Fabric.
 Refer to the `Cortex Fabric documentation <https://cognitivescale.github.io/cortex-fabric/>`_ for more info about how to use the library.
 
+Cortex Client
+-------------
+
+.. autoclass:: cortex.client.Client
+    :members:
+    :exclude-members: to_connector
+
 Cortex
 ------
 
 .. autoclass:: cortex.client.Cortex
     :members:
+
 
 CortexEnv
 ---------
@@ -18,10 +26,10 @@ CortexEnv
 .. autoclass:: cortex.env.CortexEnv
     :members:
 
-Cortex Client
--------------
+Cortex Local Experiments
+------------------------
 
-.. autoclass:: cortex.client.Client
+.. autoclass:: cortex.experiment.local.LocalExperiment
     :members:
 
 Cortex Experiment
@@ -30,10 +38,16 @@ Cortex Experiment
 .. autoclass:: cortex.experiment.Experiment
     :members:
 
-Cortex Skill
--------------
+Cortex Experiment Run
+---------------------
 
-.. autoclass:: cortex.skill.Skill
+.. autoclass:: cortex.experiment.Run
+    :members:
+
+Cortex Experiment RemoteRun
+----------------------------
+
+.. autoclass:: cortex.experiment.RemoteRun
     :members:
 
 
@@ -50,6 +64,11 @@ ConnectionClient
 .. autoclass:: cortex.connection.ConnectionClient
     :members:
 
+ExperimentClient
+----------------
+.. autoclass:: cortex.experiment.ExperimentClient
+    :members:
+
 ManagedContentClient
 --------------------
 .. autoclass:: cortex.content.ManagedContentClient
@@ -60,9 +79,20 @@ SessionClient
 .. autoclass:: cortex.session.SessionClient
     :members:
 
-Types
------
+SecretsClient
+-------------
+.. autoclass:: cortex.secrets.SecretsClient
+    :members:
+
+SkillClient
+-----------
+.. autoclass:: cortex.skill.SkillClient
+    :members:
+
+Messages
+--------
 .. autoclass:: cortex.message.Message
+    :members:
 
 Exceptions
 ----------

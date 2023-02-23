@@ -1,5 +1,5 @@
 """
-Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2023 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -27,10 +27,8 @@ class SecretsClient(_Client):
     """
     A client for the Cortex Secrets API.
     """
-    URIs = {'secret': 'projects/{projectId}/secrets/{secretName}'}
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    URIs = {"secret": "projects/{projectId}/secrets/{secretName}"}
 
     def post_secret(self, name: str, value: object):
         """
@@ -39,12 +37,16 @@ class SecretsClient(_Client):
         :param value: Secret value
         :return: status
         """
-        uri = self.URIs['secret'].format(secretName=parse_string(name), projectId=self._project())
+        uri = self.URIs["secret"].format(
+            secretName=parse_string(name), projectId=self._project()
+        )
         data = json.dumps(value)
-        headers = {'Content-Type': 'application/json'}
-        r = self._serviceconnector.request('POST', uri=uri, body=data, headers=headers)
-        raise_for_status_with_detail(r)
-        return r.json()
+        headers = {"Content-Type": "application/json"}
+        res = self._serviceconnector.request(
+            "POST", uri=uri, body=data, headers=headers
+        )
+        raise_for_status_with_detail(res)
+        return res.json()
 
     def get_secret(self, name: str):
         """
@@ -53,14 +55,14 @@ class SecretsClient(_Client):
         :param name: The name of the Secret to retrieve.
         :return: A Secret object.
         """
-        port = os.getenv('CORTEX_ACCOUNTS_SERVICE_PORT_HTTP_CORTEX_ACCOUNTS') or '5000'
-        conn_svc_url = f'{self._serviceconnector.url.replace("cortex-internal", "cortex-accounts")}:{port}'
-        uri = f'{conn_svc_url}/internal/projects/{self._project()}/secrets/{parse_string(name)}'
-        log.debug('Getting Secret using URI: %s' % uri)
-        r = self._serviceconnector.request('GET', uri=uri, is_internal_url=True)
-        raise_for_status_with_detail(r)
+        port = os.getenv("CORTEX_ACCOUNTS_SERVICE_PORT_HTTP_CORTEX_ACCOUNTS") or "5000"
+        conn_svc_url = f'{self._serviceconnector.url.replace("cortex-internal", "cortex-accounts")}:{port}'  # pylint: disable=line-too-long
+        uri = f"{conn_svc_url}/internal/projects/{self._project()}/secrets/{parse_string(name)}"
+        log.debug("Getting Secret using URI: {}", uri)
+        res = self._serviceconnector.request("GET", uri=uri, is_internal_url=True)
+        raise_for_status_with_detail(res)
 
-        return r.json()
+        return res.json()
 
 
 class Secret(CamelResource):
@@ -71,4 +73,4 @@ class Secret(CamelResource):
     def __init__(self, secret, client: SecretsClient):
         super().__init__(secret, True)
         self._client = client
-        self._project = client.project
+        self._project = client._project

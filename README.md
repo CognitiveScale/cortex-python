@@ -32,7 +32,7 @@ To install the optional components:
 
 When developing, it's a best practice to work in a virtual environment. Create and activate a virtual environment:
 ```
-  > virtualenv --python=python3.8 _venv
+  > virtualenv --python=python3.10 _venv
   > source _venv/bin/activate
 ```
 
@@ -43,6 +43,12 @@ Install developer dependencies:
   > cd cortex-python
   > make dev.install
 ```
+
+Run Developer test and linting tasks:
+Three types of checks are configured for this:
+1. [symilar](https://pylint.readthedocs.io/en/v2.16.2/symilar.html) - to test code duplication
+2. [pylint](https://pylint.readthedocs.io/en/v2.16.2/) - for linting
+3. [pytest](https://docs.pytest.org/en/7.2.x/) - for running the unit tests. These are orchestrated through [tox](https://tox.wiki/en/3.27.1/). The tox configuration is available at [`tox.ini`](/tox.ini)
 
 There's a convenience `Makefile` that has commands to common tasks, such as build, test, etc. Use it!
 
@@ -106,3 +112,12 @@ The documentation will be rendered in HTML format under the `docs/_build/${VERSI
     > make stage
     ```
 3. In GitHub, create a pull request from `staging` to `master`.
+
+
+## TODO
+- [x] extending the client with helpers for cortex resources 
+- [x] camelcase in pylinyrc
+- [ ] Update all documentation with proper Sphinx formatting
+  - [x] Most of the major modules have been fixed except skill.py, model.py
+- [x] use exceptions defined in `cortex/exceptions.py`
+- [ ] integrate the cortex-python-profiles package back into the python SDK

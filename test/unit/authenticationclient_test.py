@@ -1,5 +1,5 @@
 """
-Copyright 2018 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2023 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ from .fixtures import mock_pat_config, mock_api_endpoint
 
 
 class TestAuthenticationClient(unittest.TestCase):
-
     def setUp(self):
         self.ac = AuthenticationClient()
 

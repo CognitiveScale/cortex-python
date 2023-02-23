@@ -1,5 +1,5 @@
 """
-Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2023 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ class Timer:
     """
     Used with the run class to time actions.
     """
+
     def __init__(self):
         self.start_time = None
         self._start_clock = None

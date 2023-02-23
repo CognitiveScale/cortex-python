@@ -15,25 +15,27 @@ def john_doe_subject():
     """
     The subject part of the jwt token
     """
-    return '71a8faac-9dfb-428d-a90c-0b53481b8665'
+    return "71a8faac-9dfb-428d-a90c-0b53481b8665"
 
 
 def build_mock_url(uri, version=4):
     """
     build a mock url for testing
     """
-    return "{api_endpoint}/fabric/v{version}/{uri}".format(api_endpoint=mock_api_endpoint(), version=version, uri=uri)
+    return "{api_endpoint}/fabric/v{version}/{uri}".format(
+        api_endpoint=mock_api_endpoint(), version=version, uri=uri
+    )
 
 
 def mock_api_endpoint():
     """
     the url endpoint for mocking
     """
-    return 'http://1.2.3.4:8000'
+    return "http://127.0.0.1:8000"
 
 
 def register_entry(verb, url, body: dict):
-    print('Registering mock for', verb, url)
+    print("Registering mock for", verb, url)
     Entry.single_register(verb, url, status=200, body=json.dumps(body))
 
 
@@ -52,10 +54,11 @@ def mock_pat_config():
             "crv": "Ed25519",
             "x": "fPxYvREALYwHVpZtCmYxtc2EW6asDTpqyhqgfco6kWQ",
             "d": "B9vmiGHtwG9GuFZNso3JDm5_O9bcUbtQyGgp6VrAfL4",
-            "kty": "OKP", "kid": "HpW-ya7FSU7yV-alzyewPPDwPeFgrki0VQPKbh4J4Pw"
+            "kty": "OKP",
+            "kid": "HpW-ya7FSU7yV-alzyewPPDwPeFgrki0VQPKbh4J4Pw",
         },
         "issuer": "cognitivescale.com",
         "audience": "cortex",
         "username": "71a8faac-9dfb-428d-a90c-0b53481b8665",
-        "url": "https://192.168.39.27:31326"
+        "url": "https://192.168.39.27:31326",
     }
