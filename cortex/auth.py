@@ -29,14 +29,14 @@ class AuthenticationClient(_Client):
     :rtype: AuthenticationClient
     """
 
-    def fetch_auth_token(self, config: Dict, validity=0.5) -> str:
+    def fetch_auth_token(self, config: Dict, validity=2) -> str:
         """
         Generates JWT token from the personal access token provided via the `config` parameter
 
         :param config: A Personal access token provided by the Cortex Console,represented as a python dict
         :type config: Dict
 
-        :param validity: The validity of the JWT token in days, defaults to 0.5 days
+        :param validity: The validity of the JWT token in minutes, defaults to 2 minutes
         :type validity: float, optional
 
         :return: A JWT token in string form
