@@ -1,5 +1,5 @@
 """
-Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2023 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,19 +14,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import yaml
 from datetime import datetime
 import os
 from contextlib import closing
 import threading
 import copy
 from pathlib import Path
+import yaml
 
 
 class PropertyManager:
     """
     Maintains a list of key-value pairs.
     """
+
     def __init__(self):
         self._properties = dict({})
 
@@ -34,15 +35,17 @@ class PropertyManager:
         """
         Identifies if a key exists or not.
 
-        :param key: The key of the value; should be a dot separated string of keys from root up the tree.
-        :return: `True` if the key exists in the properties; `False` if the key doesn't exist in the properties.
+        :param key: The key of the value; should be a dot separated
+        string of keys from root up the tree.
+        :return: `True` if the key exists in the properties; `False`
+        if the key doesn't exist in the properties.
         """
         if key is None or not key:
             return False
         find_dict = self._properties
-        is_path, _, is_key = key.rpartition('.')
+        is_path, _, is_key = key.rpartition(".")
         if is_path:
-            for part in is_path.split('.'):
+            for part in is_path.split("."):
                 if isinstance(find_dict, dict):
                     find_dict = find_dict.get(part, {})
                 else:
@@ -58,14 +61,15 @@ class PropertyManager:
         :param file_name: file in which to save properties
         """
         _time = str(datetime.now())
-        self.set('meta', {'updated': _time})
+        self.set("meta", {"updated": _time})
         self._dump(self._properties, file_name)
 
     def load(self, config_file, replace=False) -> bool:
         """
         Loads the properties from the YAML configuration file; allows for multiple configuration.
 
-        Files to be merged into the properties dictionary, or properties to be refreshed in real time.
+        Files to be merged into the properties dictionary, or
+        properties to be refreshed in real time.
 
         :param config_file: the path and filename of the YAML file
         :param replace: boolean value that identifies if the file is to be added or replaced
@@ -77,14 +81,17 @@ class PropertyManager:
 
         _path = Path(config_file)
         if not _path.exists() or not _path.is_file():
-            raise FileNotFoundError("Can't find the configuration file {}".format(_path))
+            raise FileNotFoundError(
+                "Can't find the configuration file {}".format(_path)
+            )
 
         try:
             cfg_dict = self._load(_path)
-        except (IOError, TypeError) as e:
-            raise IOError(e)
+        except (IOError, TypeError) as exc:
+            raise IOError(exc) from exc
         if replace:
-            with threading.Lock():
+            lock = threading.Lock()
+            with lock:
                 self._properties.clear()
                 self._properties = cfg_dict
             return True
@@ -100,38 +107,42 @@ class PropertyManager:
         """
         Gets a property value for the dot-separated key.
 
-        :param key: the key of the value; should be a dot-separated string of keys from root up the tree
+        :param key: the key of the value; should be a dot-separated string
+        of keys from root up the tree
 
         :return:
             An object found in the key can be any structure found under that key.
             If the key is not found, `None` is returned.
-            If the key is `None`, then the complete properties dictionary is returned.
-            The full tree is returned under the requested key, be it a value, tuple, list, or dictionary.
+            If the key is `None`, then the complete properties dictionary
+            is returned.
+            The full tree is returned under the requested key, be it a value,
+            tuple, list, or dictionary.
         """
         if key is None or not key:
             return None
 
         rtn_val = self._properties
-        for part in key.split('.'):
+        for part in key.split("."):
             if isinstance(rtn_val, dict):
                 rtn_val = rtn_val.get(part)
                 if rtn_val is None:
                     return None
             else:
                 return None
-        with threading.Lock():
+        lock = threading.Lock()
+        with lock:
             return copy.deepcopy(rtn_val)
 
     def set(self, key: str, value):
         """
-        Sets a key-value pair. The value can be a union (str, dict, tuple, array).
+         Sets a key-value pair. The value can be a union (str, dict, tuple, array).
 
-       :param key: the key string
-       :param value: the value of the key
-       """
+        :param key: the key string
+        :param value: the value of the key
+        """
         if key is None or not key or not isinstance(key, str):
             raise ValueError("The key must be a valid str")
-        keys = key.split('.')
+        keys = key.split(".")
         _prop_branch = self._properties
         _last_key = None
         _last_prop_branch = None
@@ -162,18 +173,20 @@ class PropertyManager:
     def _add_value(self, key, value, base):
         if key is None:
             return None
-        for k, v in value.items():
-            if isinstance(v, dict):
+        for k, val in value.items():
+            if isinstance(val, dict):
                 if k in base:
                     base = base[k]
-                    self._add_value(k, v, base)
+                    self._add_value(k, val, base)
                 else:
-                    with threading.Lock():
-                        base.update({k: v})
+                    lock = threading.Lock()
+                    with lock:
+                        base.update({k: val})
             else:
-                with threading.Lock():
-                    base[k] = v
-        return
+                lock = threading.Lock()
+                with lock:
+                    base[k] = val
+        return None
 
     def remove(self, key) -> bool:
         """
@@ -185,24 +198,27 @@ class PropertyManager:
         :return: `True` if the key is removed; `False` if the key is not found
         """
         del_dict = self._properties
-        del_path, _, del_key = key.rpartition('.')
+        del_path, _, del_key = key.rpartition(".")
         if del_path:
-            for part in del_path.split('.'):
+            for part in del_path.split("."):
                 if isinstance(del_dict, dict):
                     del_dict = del_dict.get(part)
                 else:
                     return False
         if del_dict is None or del_key not in del_dict:
             return False
-        with threading.Lock():
+        lock = threading.Lock()
+        with lock:
             del del_dict[del_key]
         return True
 
     def remove_all(self):
-        with threading.Lock():
-            meta = self._properties.get('meta')
+        """_summary_"""
+        lock = threading.Lock()
+        with lock:
+            meta = self._properties.get("meta")
             self._properties.clear()
-            self.set('meta', meta)
+            self.set("meta", meta)
 
     def get_all(self) -> dict:
         """
@@ -210,7 +226,8 @@ class PropertyManager:
 
         :returns: a deep copy of the key-value pairs
         """
-        with threading.Lock():
+        lock = threading.Lock()
+        with lock:
             return copy.deepcopy(self._properties)
 
     @staticmethod
@@ -222,38 +239,55 @@ class PropertyManager:
         :param sep: the join separator; defaults to '.'
         :return: the names joined with the separator
         """
-        _sep = sep if sep is not None else '.'
+        _sep = sep if sep is not None else "."
         return _sep.join(map(str, names))
 
     @staticmethod
     def _dump(data, config_file) -> None:
+        # pylint: disable=unspecified-encoding
         _path, _file = os.path.split(config_file)
         if not os.path.exists(_path):
             os.makedirs(_path, exist_ok=True)
         _config_file = Path(config_file)
-        with threading.Lock():
+        lock = threading.Lock()
+        with lock:
             # make sure the dump is clean
             try:
-                with closing(open(_config_file, 'w')) as ymlfile:
+                with closing(open(_config_file, "w")) as ymlfile:
                     yaml.safe_dump(data, ymlfile, default_flow_style=False)
-            except IOError as e:
-                raise IOError("The configuration file {} failed to open with: {}".format(config_file, e))
+            except IOError as exc:
+                raise IOError(
+                    f"The configuration file {config_file} failed to open with: {exc}"
+                ) from exc
         # check the file was created
         if not _config_file.exists():
-            raise IOError("Failed to save configconfiguration file {}. Check the disk is writable".format(config_file))
-        return
+            raise IOError(
+                "Failed to save configconfiguration file {}. Check the disk is writable".format(
+                    config_file
+                )
+            )
 
     @staticmethod
     def _load(config_file) -> dict:
+        # pylint: disable=unspecified-encoding
         config_file = Path(config_file)
         if not config_file.exists():
-            raise FileNotFoundError("The configuration file {} does not exist".format(config_file))
-        with threading.Lock():
+            raise FileNotFoundError(
+                "The configuration file {} does not exist".format(config_file)
+            )
+        lock = threading.Lock()
+        with lock:
             try:
-                with closing(open(config_file, 'r')) as ymlfile:
+                with closing(open(config_file, "r")) as ymlfile:
                     rtn_dict = yaml.safe_load(ymlfile)
-            except IOError as e:
-                raise IOError("The configuration file {} failed to open with: {}".format(config_file, e))
+            except IOError as exc:
+                raise IOError(
+                    "The configuration file {config_file} failed to open with: {exc}"
+                ) from exc
             if not isinstance(rtn_dict, dict) or not rtn_dict:
-                raise TypeError("The configuration file {} could not be loaded as a dict type".format(config_file))
+                raise TypeError(
+                    "The configuration file {} could not be loaded as a dict type".format(
+                        config_file
+                    )
+                )
             return rtn_dict

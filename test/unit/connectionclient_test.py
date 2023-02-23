@@ -1,5 +1,5 @@
 """
-Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2023 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from io import BytesIO
+from io import BytesIO, StringIO
 import json
 import unittest
 
@@ -28,15 +28,14 @@ from cortex import Cortex
 from .fixtures import john_doe_token
 
 TOKEN = john_doe_token()
-projectId = 'cogscale'
-url = 'http://localhost:123'
+projectId = "cogscale"
+url = "http://127.0.0.1:123"
 
 # params similar to those passed from
-params = {'token': TOKEN, 'projectId': projectId, 'apiEndpoint': url}
+params = {"token": TOKEN, "projectId": projectId, "apiEndpoint": url}
 
 
 class TestConnectionClient(unittest.TestCase):
-
     def setUp(self):
         self.cc = ConnectionClient(url, token=TOKEN, project=projectId)
         self.mc = ManagedContentClient(url, token=TOKEN, project=projectId)
@@ -45,70 +44,77 @@ class TestConnectionClient(unittest.TestCase):
 
     @mocketize
     def test_save_connection(self):
-        uri = self.cc.URIs['connections'].format(projectId=projectId)
+        uri = self.cc.URIs["connections"].format(projectId=projectId)
         url = self.cc._serviceconnector._construct_url(uri)
-        connection = {'connectionType': 'ctype', 'name': 'cname'}
-        Entry.single_register(Entry.POST,
-                              url,
-                              status=200,
-                              body=json.dumps(connection))
+        connection = {"connectionType": "ctype", "name": "cname"}
+        Entry.single_register(Entry.POST, url, status=200, body=json.dumps(connection))
         r = self.cc.save_connection(connection=connection)
         self.assertEqual(r, connection)
 
     @mocketize
     def test_upload(self):
-        key = 'some-key'
-        result = {'Key': key}
-        uri = self.mc.URIs['content'].format(projectId=projectId)
-        url = self.mc._serviceconnector._construct_url(uri)
+        key = "some-key"
+        result = {"Key": key}
+        uri = self.mc.URIs["content"].format(projectId=projectId)
+        local_url = self.mc._serviceconnector._construct_url(uri)
+        with BytesIO(b"arbitrary content") as content:
+            Entry.single_register(
+                Entry.POST, local_url, status=200, body=json.dumps(result)
+            )
+            res = self.mc.upload(
+                key=key,
+                stream_name="foo",
+                stream=content,
+                content_type="application/octet-stream",
+            )
+            self.assertEqual(res, result)
 
-        with BytesIO(b'arbitrary content') as content:
-            Entry.single_register(Entry.POST,
-                                  url,
-                                  status=200,
-                                  body=json.dumps(result))
-            r = self.mc.upload(key=key, stream_name='foo', stream=content, content_type='application/octet-stream')
-            self.assertEqual(r, result)
+        with StringIO("arbitrary content") as content:
+            Entry.single_register(
+                Entry.POST, local_url, status=200, body=json.dumps(result)
+            )
+            res = self.mc.upload(
+                key=key,
+                stream_name="foo",
+                stream=content,
+                content_type="application/text",
+            )
+            self.assertEqual(res, result)
 
     @mocketize
     def test_uploadStreaming(self):
-        key = 'some-key'
-        result = {'Key': key}
-        uri = '{0}/{1}'.format(self.mc.URIs['content'].format(projectId=projectId), key)
-        url = self.mc._serviceconnector._construct_url(uri)
+        key = "some-key"
+        result = {"Key": key}
+        uri = "{0}/{1}".format(self.mc.URIs["content"].format(projectId=projectId), key)
+        local_url = self.mc._serviceconnector._construct_url(uri)
 
-        with BytesIO(b'arbitrary content') as content:
-            Entry.single_register(Entry.POST,
-                                  url,
-                                  status=200,
-                                  body=json.dumps(result))
-            r = self.mc.upload_streaming(key=key, stream=content, content_type='application/octet-stream')
+        with BytesIO(b"arbitrary content") as content:
+            Entry.single_register(
+                Entry.POST, local_url, status=200, body=json.dumps(result)
+            )
+            r = self.mc.upload_streaming(
+                key=key, stream=content, content_type="application/octet-stream"
+            )
             self.assertEqual(r, result)
 
     @mocketize
     def test_download(self):
-        key = 'some-key'
-        uri = '{0}/{1}'.format(self.mc.URIs['content'].format(projectId=projectId), key)
-        url = self.mc._serviceconnector._construct_url(uri)
-        buf = b'arbitrary content'
+        key = "some-key"
+        uri = "{0}/{1}".format(self.mc.URIs["content"].format(projectId=projectId), key)
+        local_url = self.mc._serviceconnector._construct_url(uri)
+        buf = b"arbitrary content"
         with BytesIO(buf) as content:
-            Entry.single_register(Entry.GET,
-                                  url,
-                                  status=200,
-                                  body=content)
+            Entry.single_register(Entry.GET, local_url, status=200, body=content)
             r = self.mc.download(key=key)
             self.assertEqual(r.read(), buf)
 
     @mocketize
     def test_exists(self):
-        key = 'some-key'
-        result = {'Key': key}
-        uri = '{0}/{1}'.format(self.mc.URIs['content'].format(projectId=projectId), key)
+        key = "some-key"
+        result = {"Key": key}
+        uri = "{0}/{1}".format(self.mc.URIs["content"].format(projectId=projectId), key)
         url = self.cc._serviceconnector._construct_url(uri)
-        Entry.single_register(Entry.HEAD,
-                              url,
-                              status=200,
-                              body=json.dumps(result))
+        Entry.single_register(Entry.HEAD, url, status=200, body=json.dumps(result))
 
         r = self.mc.exists(key=key)
         self.assertTrue(r)

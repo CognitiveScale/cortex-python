@@ -1,5 +1,5 @@
 """
-Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2023 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from .serviceconnector import _Client
 from typing import Dict
 from .utils import get_logger, parse_string
+from .serviceconnector import _Client
 
 log = get_logger(__name__)
 
@@ -27,16 +27,13 @@ class SessionClient(_Client):
     """
 
     URIs = {
-        'start': 'projects/{projectId}/sessions',
-        'get': 'projects/{projectId}/sessions/{sessionId}',
-        'put': 'projects/{projectId}/sessions/{sessionId}',
-        'delete': 'projects/{projectId}/sessions/{sessionId}'
+        "start": "projects/{projectId}/sessions",
+        "get": "projects/{projectId}/sessions/{sessionId}",
+        "put": "projects/{projectId}/sessions/{sessionId}",
+        "delete": "projects/{projectId}/sessions/{sessionId}",
     }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def start_session(self, ttl=None, description='No description given') -> str:
+    def start_session(self, ttl=None, description="No description given") -> str:
         """
         Starts a new session.
 
@@ -44,31 +41,32 @@ class SessionClient(_Client):
         :param description: An optional human-readable description for this sessions instance
         :return: The ID of the new Session.
         """
-        uri = self.URIs['start'].format(projectId=self._project())
+        uri = self.URIs["start"].format(projectId=self._project())
         params = {}
         if ttl:
-            params['ttl'] = ttl
+            params["ttl"] = ttl
 
-        params['description'] = description
+        params["description"] = description
 
         result = self._post_json(uri, params)
-        return result.get('sessionId')
+        return result.get("sessionId")
 
     def get_session_data(self, session_id, key=None) -> Dict[str, object]:
         """
         Gets data for a specific session.
 
         :param session_id: The ID of the session to query.
-        :param key: An optional key in the session memory; the entire session memory is returned if a key is not
-        specified.
+        :param key: An optional key in the session memory; the entire session memory is returned if a key is not specified.
         :return: A dict containing the requested session data
-        """
-        uri = self.URIs['get'].format(sessionId=parse_string(session_id), projectId=self._project())
+        """  # pylint: disable=line-too-long
+        uri = self.URIs["get"].format(
+            sessionId=parse_string(session_id), projectId=self._project()
+        )
         if key:
-            uri += '?key={key}'.format(key=key)
+            uri += "?key={key}".format(key=key)
 
         result = self._get_json(uri) or {}
-        return result.get('state', {})
+        return result.get("state", {})
 
     def put_session_data(self, session_id, data: Dict):
         """
@@ -78,8 +76,10 @@ class SessionClient(_Client):
         :param data: Dict containing the new session keys to set.
         :return: status
         """
-        uri = self.URIs['put'].format(sessionId=parse_string(session_id), projectId=self._project())
-        return self._post_json(uri, {'state': data})
+        uri = self.URIs["put"].format(
+            sessionId=parse_string(session_id), projectId=self._project()
+        )
+        return self._post_json(uri, {"state": data})
 
     def delete_session(self, session_id):
         """
@@ -88,8 +88,10 @@ class SessionClient(_Client):
         :param session_id: The ID of the session to delete.
         :return: status
         """
-        uri = self.URIs['delete'].format(sessionId=parse_string(session_id), projectId=self._project())
-        return self._request_json(uri, method='DELETE')
+        uri = self.URIs["delete"].format(
+            sessionId=parse_string(session_id), projectId=self._project()
+        )
+        return self._request_json(uri, method="DELETE")
 
 
 class Session:
@@ -100,7 +102,7 @@ class Session:
     def __init__(self, session_id, client: SessionClient):
         self._session_id = session_id
         self._client = client
-        self._project = client.project
+        self._project = client._project
 
     def get(self, key=None) -> object:
         """

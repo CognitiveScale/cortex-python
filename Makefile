@@ -41,10 +41,11 @@ build.release: clean
 	python setup.py sdist bdist_wheel
 
 dev.test:
-	pytest --cache-clear test/unit
+	pylint --recursive=y cortex
+	pytest --cache-clear  --html=coverage/test-report.html --self-contained-html --cov=cortex/ --cov-report=html:coverage --cov-report=term test/unit
 
 test:
-	tox -r
+	tox -r # tox runs make dev.test internally
 
 stage:
 	git fetch --all

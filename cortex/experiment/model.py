@@ -1,5 +1,5 @@
 """
-Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2023 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,9 +18,12 @@ import cuid
 from ..timer import Timer
 from ..exceptions import ConfigurationException
 
+
 class Run:
+    # pylint: disable=too-many-instance-attributes,too-many-public-methods
     """
-    Captures the elapsed time of a run of an experiment and saves the metrics and parameters for the run.
+    Captures the elapsed time of a run of an experiment and
+    saves the metrics and parameters for the run.
     """
 
     def __init__(self, experiment):
@@ -40,7 +43,7 @@ class Run:
         Starts the timer.
         """
         if self._timer is not None:
-            raise ValueError('Attempt to start a Run that is already started')
+            raise ValueError("Attempt to start a Run that is already started")
 
         self._timer = Timer()
         self._timer.start()
@@ -64,7 +67,7 @@ class Run:
         self.stop()
 
     @property
-    def id(self):
+    def id(self):  # pylint: disable=invalid-name
         """
         The id for the run.
         """
@@ -160,31 +163,41 @@ class Run:
         """
         A json representation of the run.
         """
-        doc = {'id': self.id, 'startTime': self.start_time, 'endTime': self.end_time, 'took': self.took,
-               'params': self.params, 'metrics': self.metrics, 'meta': self.meta,
-               'artifacts': [name for name in self.artifacts.keys()]}
+        doc = {
+            "id": self.id,
+            "startTime": self.start_time,
+            "endTime": self.end_time,
+            "took": self.took,
+            "params": self.params,
+            "metrics": self.metrics,
+            "meta": self.meta,
+            "artifacts": list(self.artifacts),
+        }
         return doc
 
     @staticmethod
-    def from_json(json, experiment):
+    def from_json(json: dict, experiment):
+        # pylint: disable=protected-access,duplicate-code
         """
         Creates a run from a json representation.
 
         :param json: The json representation of the run.
+        :type json: dict
         :param experiment: The experiment to associate with the run.
-        :return: A run that has the values in the given json object with
-        the given experiment.
+        :type experiment: :class:`cortex.experiment.Experiment`
+        :return: A run that has the values in the given json object with the given experiment.
+        :rtype: :class:`cortex.experiment.model.Run`
         """
         run = Run(experiment)
-        run._id = json['id']
-        run._start = json.get('startTime', json.get('start'))
-        run._end = json.get('endTime', json.get('end'))
-        run._interval = json.get('took')
-        run._params = json.get('params', {})
-        run._metrics = json.get('metrics', {})
-        run._meta = json.get('meta', {})
+        run._id = json["id"]
+        run._start = json.get("startTime", json.get("start"))
+        run._end = json.get("endTime", json.get("end"))
+        run._interval = json.get("took")
+        run._params = json.get("params", {})
+        run._metrics = json.get("metrics", {})
+        run._meta = json.get("meta", {})
 
-        artifacts = json.get('artifacts', [])
+        artifacts = json.get("artifacts", [])
         for name in artifacts:
             run._artifacts[name] = experiment.load_artifact(run, name)
 
@@ -194,7 +207,7 @@ class Run:
         """
         Logs for a given parameter.
         """
-        if hasattr(param, 'tolist'):
+        if hasattr(param, "tolist"):
             _val = param.tolist()
         else:
             _val = self._to_scaler(param)
@@ -205,14 +218,14 @@ class Run:
         """
         Logs a group of parameters.
         """
-        for k, v in params.items():
-            self.log_param(k, v)
+        for k, val in params.items():
+            self.log_param(k, val)
 
     def log_metric(self, name: str, metric):
         """
         Logs a given metric.
         """
-        if hasattr(metric, 'tolist'):
+        if hasattr(metric, "tolist"):
             _val = metric.tolist()
         else:
             _val = self._to_scaler(metric)
@@ -223,7 +236,7 @@ class Run:
         """
         Sets metadata for the run.
         """
-        if hasattr(val, 'tolist'):
+        if hasattr(val, "tolist"):
             _val = val.tolist()
         else:
             _val = self._to_scaler(val)
@@ -240,26 +253,31 @@ class Run:
         """
         Logs a given artifact reference.
         """
-        self._artifacts[name] = {'ref': ref}
+        self._artifacts[name] = {"ref": ref}
 
     @staticmethod
-    def _is_numpy_dtype(x):
-        return hasattr(x, 'dtype')
+    def _is_numpy_dtype(arr):
+        return hasattr(arr, "dtype")
 
     @staticmethod
-    def _to_scaler(x):
-        if hasattr(x, 'dtype'):
-            import numpy as np
-            return np.asscalar(x)
-        return x
+    def _to_scaler(arr):
+        if hasattr(arr, "dtype"):
+            import numpy as np  # pylint: disable=import-outside-toplevel,import-error
+
+            return np.asscalar(arr)
+        return arr
+
 
 def _to_html(exp):
+    # pylint: disable=import-outside-toplevel
     try:
         import maya
         from jinja2 import Template
-    except (ImportError, NameError):
+    except (ImportError, NameError) as exc:
         raise ConfigurationException(
-            'The jupyter extras are required to use this, please install using "pip install cortex-python[jupyter]"')
+            "The jupyter extras are required to use this,"
+            'please install using "pip install cortex-python[viz]"'
+        ) from exc
 
     runs = exp.runs()
 
@@ -340,13 +358,13 @@ def _to_html(exp):
             metric_names.update(one_run.metrics.keys())
             num_metrics = len(metric_names)
 
-    t = Template(template)
-    return t.render(
+    tmpl = Template(template)
+    return tmpl.render(
         name=exp.name,
         runs=runs,
         maya=maya.MayaDT,
         num_params=num_params,
         param_names=sorted(list(param_names)),
         num_metrics=num_metrics,
-        metric_names=sorted(list(metric_names))
+        metric_names=sorted(list(metric_names)),
     )

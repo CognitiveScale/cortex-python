@@ -1,5 +1,5 @@
 """
-Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2023 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -35,27 +35,22 @@ def test__init__():
 
 def test__construct_url():
     sc = ServiceConnector(URL, VERSION, config=fixtures.mock_pat_config())
-    r = sc._construct_url('abc')
-    expect = 'http://1.2.3.4:80/fabric/v4/{}'.format('abc')
+    r = sc._construct_url("abc")
+    expect = "http://1.2.3.4:80/fabric/v4/{}".format("abc")
     assert r == expect
 
 
 @mocketize
 def test_request():
     sc = ServiceConnector(URL, VERSION, config=fixtures.mock_pat_config())
-    path = 'models/events'
+    path = "models/events"
     url = sc._construct_url(path)
     body = {"handle": 123}
-    useragentfragment = f'cortex-python/{__version__}'
-    Entry.single_register(
-        Entry.POST,
-        url,
-        status=200,
-        body=json.dumps(body)
-    )
-    r = sc.request('POST', path, body)
+    useragentfragment = f"cortex-python/{__version__}"
+    Entry.single_register(Entry.POST, url, status=200, body=json.dumps(body))
+    r = sc.request("POST", path, body)
 
     assert isinstance(r, requests.Response)
     assert r.status_code == 200
     assert r.json() == body
-    assert useragentfragment in r.request.headers['user-agent']
+    assert useragentfragment in r.request.headers["user-agent"]
