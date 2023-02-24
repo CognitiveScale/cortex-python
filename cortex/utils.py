@@ -20,11 +20,14 @@ import hashlib
 import logging
 import urllib.parse
 from collections import namedtuple
-import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
+from dateutil import tz
+
 import python_jwt as py_jwt
 import jwcrypto.jwk as jwkLib
 from requests.exceptions import HTTPError
+from requests import request
 from tenacity import RetryCallState
 from .exceptions import BadTokenException, AuthenticationHeaderError
 
@@ -140,6 +143,16 @@ def verify_JWT(token, config=None):
         return generate_token(config)
 
 
+def _get_fabric_info(config: dict):
+    uri = config.get("url") + "/fabric/v4/info"
+    headers = {"Content-Type": "application/json"}
+    return request("GET", uri, headers=headers).json()
+
+
+def _get_fabric_server_ts(config: dict):
+    return _get_fabric_info(config).get("serverTs")
+
+
 def generate_token(config, validity=2):
     """
     Use the Personal Access Token (JWK) obtained from Cortex's console
@@ -152,11 +165,18 @@ def generate_token(config, validity=2):
             "aud": config.get("audience"),
             "sub": config.get("username"),
         }
+
+        server_ts_dt = datetime.fromtimestamp(
+            _get_fabric_server_ts(config) / 1000, tz=tz.gettz("UTC")
+        )  # fabric info returns serverTs in milliseconds
+
+        expiry = server_ts_dt + timedelta(minutes=validity)
+
         token = py_jwt.generate_jwt(
             claims=token_payload,
             priv_key=key,
             algorithm="EdDSA",
-            lifetime=datetime.timedelta(minutes=validity),
+            expires=expiry,
             other_headers={"kid": key.thumbprint()},
         )
         return token

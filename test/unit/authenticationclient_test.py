@@ -17,15 +17,17 @@ import unittest
 
 from cortex.auth import AuthenticationClient
 from cortex.utils import decode_JWT, verify_JWT
-from .fixtures import mock_pat_config, mock_api_endpoint
+from .fixtures import mock_pat_config, mock_api_endpoint, register_mock_fabric_info
 
 
 class TestAuthenticationClient(unittest.TestCase):
     def setUp(self):
+        register_mock_fabric_info()
         self.ac = AuthenticationClient()
 
     def test_contructor_with_args(self):
         # This client doesn't need parameters, but allow them for backward compat
+        register_mock_fabric_info()
         ac = AuthenticationClient(mock_api_endpoint(), 4)
         jwt = ac.fetch_auth_token(mock_pat_config())
 
