@@ -4,11 +4,54 @@ functions for mocking connection to cortex for testing
 
 import json
 from cortex.utils import generate_token
+from datetime import datetime
+import calendar
 from mocket.mockhttp import Entry
 
 
 def john_doe_token():
     return generate_token(mock_pat_config())
+
+
+def register_mock_fabric_info(base_url=None):
+    """_summary_
+
+    :param url: _description_, defaults to None
+    :type url: _type_, optional
+    """
+    url = None
+    if base_url is None:
+        url = build_mock_url("info")
+    else:
+        url = f"{base_url}/fabric/v4/info"
+    Entry.single_register("GET", url, status=200, body=json.dumps(fabric_info_resp()))
+
+
+def fabric_info_resp() -> dict:
+    """Mock Fabric info response
+
+    :return: dict with fabric info response
+    :rtype: dict
+    """
+    return {
+        "version": "6.4.0-1462-dev",
+        "healths": [
+            {
+                "health": {
+                    "redis": {"ok": True, "message": "Connected to redis on db# 0"}
+                },
+                "version": "6.15.26-g46c7d25-ubi8",
+                "name": "accounts",
+                "healthy": True,
+            },
+        ],
+        "endpoints": '{ "registry": { "url": "https://private-registry.dci-dev.dev-eks.insights.ai", "description": "Cortex Configured Registry" }, "chartDocs": { "url": "https://cognitivescale.github.io/cortex-charts", "description": "Helm Chart Docs" }, "fabricDocs": { "url": "https://cognitivescale.github.io/cortex-fabric", "description": "Fabric Usage" } }',  # pylint: disable=line-too-long
+        # this mess is so we can get a timestamp in utc..
+        # because the generate_token method works with utc
+        "serverTs": calendar.timegm(datetime.utcnow().utctimetuple())
+        * 1000,  # pylint: disable=line-too-long
+        "deployType": "ENTERPRISE",
+    }
 
 
 def john_doe_subject():
