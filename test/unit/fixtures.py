@@ -3,13 +3,18 @@ functions for mocking connection to cortex for testing
 """
 
 import json
+
+from mocket import mocketize
+
 from cortex.utils import generate_token
 from datetime import datetime
 import calendar
 from mocket.mockhttp import Entry
 
 
+@mocketize
 def john_doe_token():
+    register_mock_fabric_info()
     return generate_token(mock_pat_config())
 
 
@@ -77,6 +82,13 @@ def mock_api_endpoint():
     return "http://127.0.0.1:8000"
 
 
+def mock_project():
+    """
+    the project for mocking
+    """
+    return "cogscale"
+
+
 def register_entry(verb, url, body: dict):
     print("Registering mock for", verb, url)
     Entry.single_register(verb, url, status=200, body=json.dumps(body))
@@ -103,5 +115,5 @@ def mock_pat_config():
         "issuer": "cognitivescale.com",
         "audience": "cortex",
         "username": "71a8faac-9dfb-428d-a90c-0b53481b8665",
-        "url": "https://192.168.39.27:31326",
+        "url": mock_api_endpoint()
     }
