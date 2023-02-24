@@ -125,7 +125,6 @@ class Client:
         version: int = VERSION,
         verify_ssl_cert: bool = False,
     ):
-
         self._token = token
         self._config = config
         self._project = project

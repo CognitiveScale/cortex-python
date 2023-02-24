@@ -159,16 +159,18 @@ def generate_token(config, validity=2):
     to generate JWTs to access cortex services..
     """
     try:
+        server_ts = int(
+            _get_fabric_server_ts(config) / 1000
+        )  # fabric info returns serverTs in milliseconds
         key = jwkLib.JWK.from_json(json.dumps(config.get("jwk")))
         token_payload = {
             "iss": config.get("issuer"),
             "aud": config.get("audience"),
             "sub": config.get("username"),
+            "iat": server_ts / 1000,
         }
 
-        server_ts_dt = datetime.fromtimestamp(
-            _get_fabric_server_ts(config) / 1000, tz=tz.gettz("UTC")
-        )  # fabric info returns serverTs in milliseconds
+        server_ts_dt = datetime.fromtimestamp(server_ts, tz=tz.gettz("UTC"))
 
         expiry = server_ts_dt + timedelta(minutes=validity)
 
@@ -177,7 +179,9 @@ def generate_token(config, validity=2):
             priv_key=key,
             algorithm="EdDSA",
             expires=expiry,
-            other_headers={"kid": key.thumbprint()},
+            other_headers={
+                "kid": key.thumbprint(),
+            },
         )
         return token
     except Exception as err:
