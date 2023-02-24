@@ -20,9 +20,8 @@ import hashlib
 import logging
 import urllib.parse
 from collections import namedtuple
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from dateutil import tz
 
 import python_jwt as py_jwt
 import jwcrypto.jwk as jwkLib
@@ -170,7 +169,7 @@ def generate_token(config, validity=2):
             "iat": server_ts / 1000,
         }
 
-        server_ts_dt = datetime.fromtimestamp(server_ts, tz=tz.gettz("UTC"))
+        server_ts_dt = datetime.fromtimestamp(server_ts, tz=timezone.utc)
 
         expiry = server_ts_dt + timedelta(minutes=validity)
 
