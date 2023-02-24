@@ -49,6 +49,7 @@ setup(
         "requests-toolbelt>=0.8.0",
         "python-jwt>=3.3.0,<4.0",
         "pyyaml>=5.3.1",
+        "python-dateutil>=2.8.0,<3",
         "cuid>=0.3,<1",
         "tenacity>=8.0,<9.0",
         "dill>=0.2.8.2",
