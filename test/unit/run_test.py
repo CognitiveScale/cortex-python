@@ -26,9 +26,11 @@ from requests.exceptions import HTTPError
 
 from cortex import Cortex
 from cortex.experiment import ExperimentClient, RemoteRun, Experiment
-from .fixtures import mock_pat_config, build_mock_url, mock_api_endpoint
+from .fixtures import build_mock_url, mock_api_endpoint, mock_project, john_doe_token
 
-PROJECT = "runproj"
+PROJECT = mock_project()
+TOKEN = john_doe_token()
+url = mock_api_endpoint()
 
 
 class TestRun(unittest.TestCase):
@@ -40,10 +42,9 @@ class TestRun(unittest.TestCase):
     RUN_ID = "000001"
 
     def setUp(self):
+        params = {"token": TOKEN, "projectId": PROJECT, "apiEndpoint": url}
         self.local = Cortex.local()
-        self.cortex = Cortex.client(
-            api_endpoint=mock_api_endpoint(), config=mock_pat_config(), project=PROJECT
-        )
+        self.cortex = Cortex.from_message(params)
 
         # register mock for getting an experiment from the client
         uri = ExperimentClient.URIs["experiment"].format(

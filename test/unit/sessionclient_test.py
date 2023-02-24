@@ -17,21 +17,22 @@ limitations under the License.
 import json
 import unittest
 import uuid
-from test.unit import fixtures
 from mocket.mockhttp import Entry
 from mocket import mocketize
 
 from cortex.session import SessionClient
 from cortex import Cortex
 
-TOKEN = fixtures.john_doe_token()
-projectId = "cogscale"
-url = "http://127.0.0.1:123"
-params = {"token": TOKEN, "projectId": projectId, "apiEndpoint": url}
+from .fixtures import john_doe_token, mock_api_endpoint, mock_project
+
+projectId = mock_project()
+url = mock_api_endpoint()
+TOKEN = john_doe_token()
 
 
 class TestSessionClient(unittest.TestCase):
     def setUp(self):
+        params = {"token": TOKEN, "projectId": projectId, "apiEndpoint": url}
         self.client = SessionClient(Cortex.from_message(params))
         self.session_id = str(uuid.uuid4())
 
