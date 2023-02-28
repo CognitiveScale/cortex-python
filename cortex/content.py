@@ -199,7 +199,7 @@ class ManagedContentClient(_Client):
         :rtype: bool
         """
         uri = self._make_content_uri(key)
-        res = self._serviceconnector.request_with_retry("HEAD", uri=uri, retries=1)
+        res = self._serviceconnector.request("HEAD", uri=uri)
         return res.status_code == 200
 
     def delete(self, key: str) -> dict:
