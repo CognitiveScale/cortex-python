@@ -17,7 +17,6 @@ limitations under the License.
 from io import BytesIO, StringIO
 import json
 import unittest
-from unittest.mock import patch
 
 from mocket.mockhttp import Entry
 from mocket import mocketize
