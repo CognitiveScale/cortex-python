@@ -32,10 +32,10 @@ from cortex.session import SessionClient, Session
 from cortex.types import TypeClient, Type
 from cortex.skill import SkillClient, Skill
 
-from .fixtures import john_doe_subject, john_doe_token
+from .fixtures import john_doe_subject, john_doe_token, mock_api_endpoint
 
 token = john_doe_token()
-api_endpoint = "https://api.test.cortex"
+api_endpoint = mock_api_endpoint()
 api_version = 4
 
 

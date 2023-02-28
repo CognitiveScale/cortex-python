@@ -20,11 +20,13 @@ import hashlib
 import logging
 import urllib.parse
 from collections import namedtuple
-import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
+
 import python_jwt as py_jwt
 import jwcrypto.jwk as jwkLib
 from requests.exceptions import HTTPError
+from requests import request
 from tenacity import RetryCallState
 from .exceptions import BadTokenException, AuthenticationHeaderError
 
@@ -140,24 +142,45 @@ def verify_JWT(token, config=None):
         return generate_token(config)
 
 
+def _get_fabric_info(config: dict):
+    uri = config.get("url") + "/fabric/v4/info"
+    headers = {"Content-Type": "application/json"}
+    return request("GET", uri, headers=headers).json()
+
+
+def _get_fabric_server_ts(config: dict):
+    return _get_fabric_info(config).get("serverTs")
+
+
 def generate_token(config, validity=2):
     """
     Use the Personal Access Token (JWK) obtained from Cortex's console
     to generate JWTs to access cortex services..
     """
     try:
+        server_ts = int(
+            _get_fabric_server_ts(config) / 1000
+        )  # fabric info returns serverTs in milliseconds
         key = jwkLib.JWK.from_json(json.dumps(config.get("jwk")))
         token_payload = {
             "iss": config.get("issuer"),
             "aud": config.get("audience"),
             "sub": config.get("username"),
+            "iat": server_ts / 1000,
         }
+
+        server_ts_dt = datetime.fromtimestamp(server_ts, tz=timezone.utc)
+
+        expiry = server_ts_dt + timedelta(minutes=validity)
+
         token = py_jwt.generate_jwt(
             claims=token_payload,
             priv_key=key,
             algorithm="EdDSA",
-            lifetime=datetime.timedelta(minutes=validity),
-            other_headers={"kid": key.thumbprint()},
+            expires=expiry,
+            other_headers={
+                "kid": key.thumbprint(),
+            },
         )
         return token
     except Exception as err:

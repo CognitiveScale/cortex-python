@@ -23,15 +23,14 @@ from cortex.experiment import ExperimentClient, Experiment
 
 from mocket.mockhttp import Entry
 from mocket import mocketize
-from .fixtures import mock_pat_config, build_mock_url, mock_api_endpoint
+from .fixtures import mock_api_endpoint, mock_project
 from .fixtures import john_doe_token
 
 import dill
 
-# PROJECT = 'expproj'
 TOKEN = john_doe_token()
-projectId = "cogscale"
-url = "http://127.0.0.1:123"
+projectId = mock_project()
+url = mock_api_endpoint()
 params = {"token": TOKEN, "projectId": projectId, "apiEndpoint": url}
 
 
