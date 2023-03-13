@@ -1,0 +1,352 @@
+fragment bucketAttributes on ProfileSchema {
+  bucketAttributes {
+    name
+    buckets {
+      filter
+    }
+  }
+}
+
+mutation CreateBucketAttribute($input: CreateBucketAttributeInput!) {
+  createBucketAttribute(input: $input) {
+    name
+    ...bucketAttributes
+  }
+}
+
+mutation DeleteBucketAttribute($input: DeleteBucketAttributeInput!) {
+  deleteBucketAttribute(input: $input) {
+    name
+    ...bucketAttributes
+  }
+}
+
+mutation UpdateBucketAttribute($input: UpdateBucketAttributeInput!) {
+  updateBucketAttribute(input: $input) {
+    name
+    ...bucketAttributes
+  }
+}
+query DataSourcesList($project: String!) {
+  dataSources(project: $project) {
+    attributes
+    connection {
+      name
+    }
+    name
+    primaryKey
+    title
+  }
+}
+
+mutation CreateProfileSchema($input: ProfileSchemaInput!) {
+  createProfileSchema(input: $input) {
+    name
+  }
+}
+
+mutation UpdateProfileSchema($input: ProfileSchemaInput!) {
+  updateProfileSchema(input: $input) {
+    name
+  }
+}
+
+query ProfileSchemaByName($project: String!, $name: String!) {
+  profileSchemaByName(project: $project, name: $name) {
+    primarySource {
+      name
+      attributes
+      name
+      profileGroup
+    }
+    joins {
+      name
+      attributes
+      profileGroup
+    }
+    customAttributes {
+      name
+      expression
+      window
+    }
+    bucketAttributes {
+      name
+      buckets {
+        name
+        filter
+      }
+    }
+  }
+}
+
+mutation BuildProfile($project: String!, $profileSchema: String!) {
+  buildProfile(project: $project, profileSchema: $profileSchema) {
+    jobId
+  }
+}
+
+query ProfileSchemaChangeLog(
+  $project: String!
+  $profileSchema: String!
+  $limit: Int
+) {
+  profileHistory(
+    project: $project
+    profileSchema: $profileSchema
+    limit: $limit
+  ) {
+    commitInfo {
+      operation
+      timestamp
+      version
+      userId
+    }
+    project
+  }
+}
+fragment customAttributes on ProfileSchema {
+  customAttributes {
+    name
+    expression
+  }
+}
+
+mutation CreateCustomAttribute($input: CreateCustomAttributeInput!) {
+  createCustomAttribute(input: $input) {
+    name
+    ...customAttributes
+  }
+}
+
+mutation DeleteCustomAttribute($input: DeleteCustomAttributeInput!) {
+  deleteCustomAttribute(input: $input) {
+    name
+    ...customAttributes
+  }
+}
+
+mutation UpdateCustomAttribute($input: UpdateCustomAttributeInput!) {
+  updateCustomAttribute(input: $input) {
+    name
+    ...customAttributes
+  }
+}
+mutation DeleteProfileSchema($input: DeleteProfileSchemaInput!) {
+  deleteProfileSchema(input: $input)
+}
+query ProfileFeatures(
+  $project: String!
+  $profileSchema: String!
+  $campaign: String
+) {
+  profileFeatures(
+    project: $project
+    profileSchema: $profileSchema
+    campaign: $campaign
+  ) {
+    dataType
+    featureName
+    featureType
+    maxValue
+    meanValue
+    minValue
+    pctDom
+    pctNull
+    profileGroup
+    observations
+    sourceName
+    stdDev
+    uniqueCount
+  }
+}
+query ProfileGroupCount($project: String!, $schema: String!, $filter: String, $groupBy: [String!]!, $limit: Int) {
+  profileGroupCount(project: $project, profileSchema: $schema, filter: $filter, groupBy: $groupBy, limit: $limit) {
+    key
+    count
+  }
+}
+query ProfileJobList($project: String!) {
+  jobs(project: $project) {
+    jobId
+    isActive
+    isCancelled
+    isComplete
+    status
+  }
+}
+query ProfileList(
+  $attributes: [String!]
+  $filter: String
+  $limit: Int
+  $profileSchema: String!
+  $project: String!
+) {
+  profiles(
+    attributes: $attributes
+    filter: $filter
+    limit: $limit
+    profileSchema: $profileSchema
+    project: $project
+  ) {
+    attributes {
+      key
+      source
+      type
+      value
+    }
+    profileID
+  }
+}
+
+query profilesForPlan(
+  $project: String!
+  $simulationId: String!
+  $profileSchema: String!
+  $planId: String!
+  $filter: String
+  $limit: Int
+) {
+  profilesForPlan(
+    project: $project
+    simulationId: $simulationId
+    profileSchema: $profileSchema
+    planId: $planId
+    filter: $filter
+    limit: $limit
+  ) {
+    profileID
+    profileSchema
+    attributes {
+      group
+      key
+      source
+      timestamp
+      type
+      value
+    }
+  }
+}
+query ProfileSchemaList($project: String!) {
+  profileSchemas(project: $project) {
+    name
+    project {
+      name
+    }
+    names {
+      title
+    }
+    joins {
+      name
+    }
+    primarySource {
+      attributes
+      name
+    }
+  }
+}
+query ProfileSchemaSummary($project: String!, $name: String!) {
+  profileSchemaByName(project: $project, name: $name) {
+    name
+    title
+    names {
+      title
+    }
+    description
+    primarySource {
+      attributes
+      name
+      profileGroup
+      profileKey
+      timestamp {
+        auto
+        field
+        fixed {
+          format
+          value
+        }
+        format
+      }
+    }
+    joins {
+      attributes
+      join {
+        joinSourceColumn
+        primarySourceColumn
+      }
+      name
+      profileGroup
+      timestamp {
+        auto
+        field
+        fixed {
+          format
+          value
+        }
+        format
+      }
+    }
+    attributeTags {
+      attributes {
+        name
+        sourceName
+      }
+      name
+    }
+    bucketAttributes {
+      name
+      profileGroup
+      source {
+        name
+      }
+      buckets {
+        filter
+        name
+      }
+    }
+    customAttributes {
+      expression
+      name
+      profileGroup
+      source {
+        name
+      }
+      window
+    }
+  }
+}
+query ProfileViewer($project: String!, $schema: String!, $profile: ID!) {
+  schema: profileSchemaByName(project: $project, name: $schema) {
+    name
+    title
+    description
+    attributeTags {
+      attributes {
+        name
+        sourceName
+      }
+      name
+    }
+  }
+  features: profileFeatures(project: $project, profileSchema: $schema) {
+    dataType
+    featureName
+    featureType
+    profileGroup
+    sourceName
+  }
+  profile: profileById(
+    project: $project
+    profileSchema: $schema
+    id: $profile
+  ) {
+    attributes {
+      group
+      key
+      source
+      timestamp
+      type
+      value
+    }
+    profileID
+  }
+}
