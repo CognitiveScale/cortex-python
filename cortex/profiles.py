@@ -16,24 +16,24 @@ limitations under the License.
 
 from typing import List, Optional
 
-from graphql_types.build_profile import BuildProfile
-from graphql_types.create_profile_schema import CreateProfileSchema
-from graphql_types.delete_profile_schema import DeleteProfileSchema
-from graphql_types.input_types import (
+from cortex.graphql_types.build_profile import BuildProfile
+from cortex.graphql_types.create_profile_schema import CreateProfileSchema
+from cortex.graphql_types.delete_profile_schema import DeleteProfileSchema
+from cortex.graphql_types.input_types import (
     DeleteProfileSchemaInput,
     ProfileSchemaInput,
 )
-from graphql_types.profile_features import ProfileFeatures
-from graphql_types.profile_group_count import ProfileGroupCount
-from graphql_types.profile_job_list import ProfileJobList
-from graphql_types.profile_list import ProfileList
-from graphql_types.profile_schema_by_name import ProfileSchemaByName
-from graphql_types.profile_schema_change_log import ProfileSchemaChangeLog
-from graphql_types.profile_schema_list import ProfileSchemaList
-from graphql_types.profile_schema_summary import ProfileSchemaSummary
-from graphql_types.profile_viewer import ProfileViewer
-from graphql_types.profiles_for_plan import ProfilesForPlan
-from graphql_types.update_profile_schema import UpdateProfileSchema
+from cortex.graphql_types.profile_features import ProfileFeatures
+from cortex.graphql_types.profile_group_count import ProfileGroupCount
+from cortex.graphql_types.profile_job_list import ProfileJobList
+from cortex.graphql_types.profile_list import ProfileList
+from cortex.graphql_types.profile_schema_by_name import ProfileSchemaByName
+from cortex.graphql_types.profile_schema_change_log import ProfileSchemaChangeLog
+from cortex.graphql_types.profile_schema_list import ProfileSchemaList
+from cortex.graphql_types.profile_schema_summary import ProfileSchemaSummary
+from cortex.graphql_types.profile_viewer import ProfileViewer
+from cortex.graphql_types.profiles_for_plan import ProfilesForPlan
+from cortex.graphql_types.update_profile_schema import UpdateProfileSchema
 
 from .base_client import BaseClient
 
@@ -251,7 +251,7 @@ class ProfileClient(BaseClient):
         :param campaign: Optional[str]
         :type campaign: Optional[str]
         :return: ProfileFeatures
-        """
+        """  # pylint: disable=line-too-long
         query = gql(
             """
             query ProfileFeatures($project: String!, $profileSchema: String!, $campaign: String) {
@@ -308,7 +308,7 @@ class ProfileClient(BaseClient):
         :param limit: Optional[int]
         :type limit: Optional[int]
         :return: ProfileGroupCount
-        """
+        """  # pylint: disable=line-too-long
         query = gql(
             """
             query ProfileGroupCount($project: String!, $schema: String!, $filter: String, $groupBy: [String!]!, $limit: Int) {
@@ -404,7 +404,7 @@ class ProfileClient(BaseClient):
                 profileID
               }
             }
-            """
+            """  # pylint: disable=line-too-long
         )
         variables: dict[str, object] = {
             "attributes": attributes,
@@ -524,7 +524,7 @@ class ProfileClient(BaseClient):
         :param name: The name of the profile schema
         :type name: str
         :return: ProfileSchemaSummary
-        """
+        """  # pylint: disable=line-too-long
         query = gql(
             """
             query ProfileSchemaSummary($project: String!, $name: String!) {

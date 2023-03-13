@@ -17,7 +17,7 @@ limitations under the License.
 from typing import Any, Dict, Optional, TypeVar, cast
 
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
-from graphql_types.exceptions import (
+from cortex.graphql_types.exceptions import (
     GraphQLClientGraphQLMultiError,
     GraphQLClientHttpError,
     GraphQlClientInvalidResponseError,

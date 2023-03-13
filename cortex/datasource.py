@@ -16,19 +16,19 @@ limitations under the License.
 
 from typing import Optional
 
-from graphql_types.change_log_source import ChangeLogSource
-from graphql_types.create_bucket_attribute import CreateBucketAttribute
-from graphql_types.create_custom_attribute import CreateCustomAttribute
-from graphql_types.create_data_source import CreateDataSource
-from graphql_types.data_source_list import DataSourceList
-from graphql_types.data_source_summary import DataSourceSummary
-from graphql_types.data_sources_list import DataSourcesList
-from graphql_types.delete_bucket_attribute import DeleteBucketAttribute
-from graphql_types.delete_custom_attribute import DeleteCustomAttribute
-from graphql_types.delete_data_source import DeleteDataSource
-from graphql_types.features_from_preview import FeaturesFromPreview
-from graphql_types.ingest_source import IngestSource
-from graphql_types.input_types import (
+from cortex.graphql_types.change_log_source import ChangeLogSource
+from cortex.graphql_types.create_bucket_attribute import CreateBucketAttribute
+from cortex.graphql_types.create_custom_attribute import CreateCustomAttribute
+from cortex.graphql_types.create_data_source import CreateDataSource
+from cortex.graphql_types.data_source_list import DataSourceList
+from cortex.graphql_types.data_source_summary import DataSourceSummary
+from cortex.graphql_types.data_sources_list import DataSourcesList
+from cortex.graphql_types.delete_bucket_attribute import DeleteBucketAttribute
+from cortex.graphql_types.delete_custom_attribute import DeleteCustomAttribute
+from cortex.graphql_types.delete_data_source import DeleteDataSource
+from cortex.graphql_types.features_from_preview import FeaturesFromPreview
+from cortex.graphql_types.ingest_source import IngestSource
+from cortex.graphql_types.input_types import (
     CreateBucketAttributeInput,
     CreateCustomAttributeInput,
     DataSourceInput,
@@ -38,14 +38,21 @@ from graphql_types.input_types import (
     UpdateBucketAttributeInput,
     UpdateCustomAttributeInput,
 )
-from graphql_types.update_bucket_attribute import UpdateBucketAttribute
-from graphql_types.update_custom_attribute import UpdateCustomAttribute
-from graphql_types.update_data_source import UpdateDataSource
+from cortex.graphql_types.update_bucket_attribute import UpdateBucketAttribute
+from cortex.graphql_types.update_custom_attribute import UpdateCustomAttribute
+from cortex.graphql_types.update_data_source import UpdateDataSource
 
 from .base_client import BaseClient
 
 
 def gql(query: str) -> str:
+    """
+    It takes a string and returns a string
+
+    :param query: The GraphQL query to be executed
+    :type query: str
+    :return: A string
+    """
     return query
 
 
@@ -134,7 +141,7 @@ class DatasourceClient(BaseClient):
         :param source: The name of the source you want to get the features from
         :type source: str
         :return: FeaturesFromPreview
-        """
+        """  # pylint: disable=line-too-long
         query = gql(
             """
             query FeaturesFromPreview($project: String!, $source: String!) {
