@@ -91,7 +91,9 @@ class BaseClient(_Client):
 
         return cast(dict[str, Any], data)
 
-    def _convert_dict_to_json_serializable(self, dict_: Dict[str, Any]) -> Dict[str, Any]:
+    def _convert_dict_to_json_serializable(
+        self, dict_: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         > It takes a dictionary of keys and values, and if any of the values are instances of `BaseModel`,
         it converts them to dictionaries using `BaseModel.dict()`

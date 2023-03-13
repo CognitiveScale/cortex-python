@@ -23,8 +23,10 @@ from .base_model import BaseModel
 # pylint: disable=missing-class-docstring
 # pylint: disable=empty-docstring
 
+
 class UpdateBucketAttribute(BaseModel):
     """This class is used to update the attributes of a bucket"""
+
     update_bucket_attribute: "UpdateBucketAttributeUpdateBucketAttribute" = Field(
         alias="updateBucketAttribute"
     )
@@ -32,9 +34,7 @@ class UpdateBucketAttribute(BaseModel):
 
 #
 class UpdateBucketAttributeUpdateBucketAttribute(BaseModel):
-    """
-
-    """
+    """ """
 
     bucket_attributes: List[
         "UpdateBucketAttributeUpdateBucketAttributeBucketAttributes"
@@ -42,15 +42,15 @@ class UpdateBucketAttributeUpdateBucketAttribute(BaseModel):
 
 
 class UpdateBucketAttributeUpdateBucketAttributeBucketAttributes(BaseModel):
-    """
+    """ """
 
-    """
     name: str
     buckets: List["UpdateBucketAttributeUpdateBucketAttributeBucketAttributesBuckets"]
 
 
 class UpdateBucketAttributeUpdateBucketAttributeBucketAttributesBuckets(BaseModel):
     """*|CURSOR_MARCADOR|*"""
+
     filter: str
 
 

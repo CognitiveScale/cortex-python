@@ -21,6 +21,7 @@ from .base_model import BaseModel
 class UpdateProfileSchema(BaseModel):
     """This class is used to validate the data sent to
     the API when a user wants to update their profile."""
+
     update_profile_schema: "UpdateProfileSchemaUpdateProfileSchema" = Field(
         alias="updateProfileSchema"
     )
@@ -28,6 +29,7 @@ class UpdateProfileSchema(BaseModel):
 
 class UpdateProfileSchemaUpdateProfileSchema(BaseModel):
     """A class that inherits from the BaseModel class."""
+
     name: str
 
 

@@ -23,6 +23,7 @@ from .profile_viewer import ProfileViewerProfileAttributes
 
 class ProfilesForPlan(BaseModel):
     """This class is a model for the profiles for a plan"""
+
     profiles_for_plan: List["ProfilesForPlanProfilesForPlan"] = Field(
         alias="profilesForPlan"
     )
@@ -30,6 +31,7 @@ class ProfilesForPlan(BaseModel):
 
 class ProfilesForPlanProfilesForPlan(BaseModel):
     """A class that inherits from the BaseModel class."""
+
     profile_i_d: str = Field(alias="profileID")
     profile_schema: str = Field(alias="profileSchema")
     attributes: List["ProfileViewerProfileAttributes"]

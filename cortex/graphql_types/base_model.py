@@ -19,16 +19,19 @@ from typing import Any, Dict
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic.class_validators import validator
 from pydantic.fields import ModelField
+
 # pylint: enable=no-name-in-module
 from .scalars import SCALARS_PARSE_FUNCTIONS, SCALARS_SERIALIZE_FUNCTIONS
 
 
 # pylint: disable=too-few-public-methods
 class BaseModel(PydanticBaseModel):
-    """ `BaseModel` is a class that inherits from `PydanticBaseModel` and is used as a base
+    """`BaseModel` is a class that inherits from `PydanticBaseModel` and is used as a base
     class for all models"""
+
     class Config:
         """Config class"""
+
         allow_population_by_field_name = True
         validate_assignment = True
         arbitrary_types_allowed = True

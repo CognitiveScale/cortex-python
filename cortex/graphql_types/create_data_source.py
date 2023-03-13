@@ -20,6 +20,7 @@ from .base_model import BaseModel
 
 # pylint: disable=missing-class-docstring
 
+
 class CreateDataSource(BaseModel):
     create_data_source: "CreateDataSourceCreateDataSource" = Field(
         alias="createDataSource"

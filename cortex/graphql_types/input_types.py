@@ -39,46 +39,43 @@ from .enums import (
 # pylint: disable=missing-class-docstring
 # pylint: disable=empty-docstring
 
+
 class ResourceRefInput(BaseModel):
     """A reference to a resource"""
+
     name: str
 
 
 class AgentActionSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     agent: "ResourceRefInput"
 
 
 class AttributeIdentifierInput(BaseModel):
-    """
+    """ """
 
-    """
     name: str
     source_name: str = Field(alias="sourceName")
 
 
 class AttributeTagInput(BaseModel):
-    """
+    """ """
 
-    """
     attributes: List["AttributeIdentifierInput"]
     name: str
 
 
 class BucketSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     filter: str
     name: str
 
 
 class BucketAttributeSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     buckets: List["BucketSpecInput"]
     name: str
     profile_group: Optional[str] = Field(alias="profileGroup")
@@ -86,17 +83,15 @@ class BucketAttributeSpecInput(BaseModel):
 
 
 class CampaignDeleteInput(BaseModel):
-    """
+    """ """
 
-    """
     name: str
     project: str
 
 
 class KPIMeasureSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     display_format: Optional[str] = Field(alias="displayFormat")
     expression: str
     is_percentage: bool = Field(alias="isPercentage")
@@ -105,9 +100,8 @@ class KPIMeasureSpecInput(BaseModel):
 
 
 class KPISpecInput(BaseModel):
-    """
+    """ """
 
-    """
     cohort_name: str = Field(alias="cohortName")
     description: Optional[str]
     ending_on: Optional[Any] = Field(alias="endingOn")
@@ -121,51 +115,45 @@ class KPISpecInput(BaseModel):
 
 
 class CampaignGoalSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     description: Optional[str]
     kpis: List["KPISpecInput"]
     name: str
 
 
 class CohortGroupSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     filter: str
     name: str
 
 
 class CohortSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     groups: List["CohortGroupSpecInput"]
     name: str
     profile_schema: "ResourceRefInput" = Field(alias="profileSchema")
 
 
 class ConditionSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     expression: str
     name: str
 
 
 class PropertyValueInput(BaseModel):
-    """
+    """ """
 
-    """
     name: str
     value: str
 
 
 class ConnectionInput(BaseModel):
-    """
+    """ """
 
-    """
     allow_read: bool = Field(alias="allowRead")
     allow_write: bool = Field(alias="allowWrite")
     connection_type: ConnectionType = Field(alias="connectionType")
@@ -178,18 +166,16 @@ class ConnectionInput(BaseModel):
 
 
 class CreateBucketAttributeInput(BaseModel):
-    """
+    """ """
 
-    """
     attribute: "BucketAttributeSpecInput"
     profile_schema: str = Field(alias="profileSchema")
     project: str
 
 
 class CreateCampaignInput(BaseModel):
-    """
+    """ """
 
-    """
     description: Optional[str]
     name: str
     project: str
@@ -197,9 +183,8 @@ class CreateCampaignInput(BaseModel):
 
 
 class CustomAttributeSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     expression: str
     name: str
     profile_group: Optional[str] = Field(alias="profileGroup")
@@ -208,26 +193,23 @@ class CustomAttributeSpecInput(BaseModel):
 
 
 class CreateCustomAttributeInput(BaseModel):
-    """
+    """ """
 
-    """
     attribute: "CustomAttributeSpecInput"
     profile_schema: str = Field(alias="profileSchema")
     project: str
 
 
 class GoalSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     condition: str
     name: str
 
 
 class SimulatedAttributeInput(BaseModel):
-    """
+    """ """
 
-    """
     data_type: AttributeDataType = Field(alias="dataType")
     initial_value: str = Field(alias="initialValue")
     name: str
@@ -235,18 +217,16 @@ class SimulatedAttributeInput(BaseModel):
 
 # pylint: disable=pointless-statement
 class ExplorationSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     epsilon: Optional[float]
     lambda: Optional[int]
     type: ExplorationType
 
 
 class SimulationSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     attributes: Optional[List[str]]
     exploration: List["ExplorationSpecInput"]
     iterations: int
@@ -257,16 +237,14 @@ class SimulationSpecInput(BaseModel):
 
 
 class SubjectSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     cohort: str
 
 
 class CreateMissionInput(BaseModel):
-    """
+    """ """
 
-    """
     campaign: str
     conditions: Optional[List["ConditionSpecInput"]]
     description: Optional[str]
@@ -282,9 +260,8 @@ class CreateMissionInput(BaseModel):
 
 
 class ReviewedPlanInput(BaseModel):
-    """
+    """ """
 
-    """
     cost: float
     final_rank: int = Field(alias="finalRank")
     ignore: Optional[bool]
@@ -293,9 +270,8 @@ class ReviewedPlanInput(BaseModel):
 
 
 class CreatePlanReviewInput(BaseModel):
-    """
+    """ """
 
-    """
     group_filter: str = Field(alias="groupFilter")
     project: str
     reviewed_plans: List["ReviewedPlanInput"] = Field(alias="reviewedPlans")
@@ -303,9 +279,8 @@ class CreatePlanReviewInput(BaseModel):
 
 
 class CreateProfileLinkInput(BaseModel):
-    """
+    """ """
 
-    """
     linked_profile_attribute: str = Field(alias="linkedProfileAttribute")
     linked_profile_schema: str = Field(alias="linkedProfileSchema")
     profile_attribute: str = Field(alias="profileAttribute")
@@ -314,18 +289,16 @@ class CreateProfileLinkInput(BaseModel):
 
 
 class CreateProjectInput(BaseModel):
-    """
+    """ """
 
-    """
     description: Optional[str]
     name: str
     title: Optional[str]
 
 
 class DataSinkInput(BaseModel):
-    """
+    """ """
 
-    """
     attributes: Optional[List[str]]
     connection: Optional["ResourceRefInput"]
     description: Optional[str]
@@ -336,27 +309,24 @@ class DataSinkInput(BaseModel):
 
 
 class UserQueryVariableSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     data_type: str = Field(alias="dataType")
     default: Optional[str]
     name: str
 
 
 class UserQuerySpecInput(BaseModel):
-    """
+    """ """
 
-    """
     dialect: UserQueryDialectSpec
     query_string: str = Field(alias="queryString")
     variables: List["UserQueryVariableSpecInput"]
 
 
 class DataSourceInput(BaseModel):
-    """
+    """ """
 
-    """
     attributes: Optional[List[str]]
     connection: Optional["ResourceRefInput"]
     description: Optional[str]
@@ -370,17 +340,15 @@ class DataSourceInput(BaseModel):
 
 
 class FixedTimestampInput(BaseModel):
-    """
+    """ """
 
-    """
     format: Optional[str]
     value: str
 
 
 class TimestampSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     auto: Optional[bool]
     field: Optional[str]
     fixed: Optional["FixedTimestampInput"]
@@ -388,9 +356,8 @@ class TimestampSpecInput(BaseModel):
 
 
 class DataSourceSelectionInput(BaseModel):
-    """
+    """ """
 
-    """
     attributes: Optional[List[str]]
     name: str
     profile_group: Optional[str] = Field(alias="profileGroup")
@@ -399,61 +366,54 @@ class DataSourceSelectionInput(BaseModel):
 
 
 class DeleteBucketAttributeInput(BaseModel):
-    """
+    """ """
 
-    """
     attribute_name: str = Field(alias="attributeName")
     profile_schema: str = Field(alias="profileSchema")
     project: str
 
 
 class DeleteConnectionInput(BaseModel):
-    """
+    """ """
 
-    """
     name: str
     project: str
 
 
 class DeleteCustomAttributeInput(BaseModel):
-    """
+    """ """
 
-    """
     attribute_name: str = Field(alias="attributeName")
     profile_schema: str = Field(alias="profileSchema")
     project: str
 
 
 class DeleteDataSourceInput(BaseModel):
-    """
+    """ """
 
-    """
     name: str
     project: str
 
 
 class DeleteMissionInput(BaseModel):
-    """
+    """ """
 
-    """
     campaign: str
     name: str
     project: str
 
 
 class DeletePlanReviewInput(BaseModel):
-    """
+    """ """
 
-    """
     project: str
     review_id: str = Field(alias="reviewId")
     simulation_id: str = Field(alias="simulationId")
 
 
 class DeleteProfileLinkInput(BaseModel):
-    """
+    """ """
 
-    """
     linked_profile_attribute: Optional[str] = Field(alias="linkedProfileAttribute")
     linked_profile_schema: Optional[str] = Field(alias="linkedProfileSchema")
     profile_attribute: Optional[str] = Field(alias="profileAttribute")
@@ -462,33 +422,29 @@ class DeleteProfileLinkInput(BaseModel):
 
 
 class DeleteProfileSchemaInput(BaseModel):
-    """
+    """ """
 
-    """
     name: str
     project: str
 
 
 class EffectSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     probability: float
     script: str
 
 
 class EpsilonGreedySpecInput(BaseModel):
-    """
+    """ """
 
-    """
     epsilon: float
     policy: PolicyEvaluation
 
 
 class FavoriteQueryInput(BaseModel):
-    """
+    """ """
 
-    """
     id: Optional[str]
     last_updated: Optional[Any] = Field(alias="lastUpdated")
     profile_schema_id: Optional[str] = Field(alias="profileSchemaId")
@@ -497,9 +453,8 @@ class FavoriteQueryInput(BaseModel):
 
 
 class FeatureInput(BaseModel):
-    """
+    """ """
 
-    """
     data_type: Optional[str] = Field(alias="dataType")
     description: Optional[str]
     feature_name: str = Field(alias="featureName")
@@ -521,24 +476,21 @@ class FeatureInput(BaseModel):
 
 
 class ScriptActionSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     language: ScriptLanguage
     script: str
 
 
 class SkillActionSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     skill: "ResourceRefInput"
 
 
 class InterventionInput(BaseModel):
-    """
+    """ """
 
-    """
     agent_action: Optional["AgentActionSpecInput"] = Field(alias="agentAction")
     condition: Optional[str]
     cost: Optional[float]
@@ -551,18 +503,16 @@ class InterventionInput(BaseModel):
 
 
 class JoinSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     join_source_column: str = Field(alias="joinSourceColumn")
     join_type: Optional[str] = Field(alias="joinType")
     primary_source_column: str = Field(alias="primarySourceColumn")
 
 
 class JoinSourceSelectionInput(BaseModel):
-    """
+    """ """
 
-    """
     attributes: Optional[List[str]]
     join: "JoinSpecInput"
     name: str
@@ -571,17 +521,15 @@ class JoinSourceSelectionInput(BaseModel):
 
 
 class ListFavoriteQueriesInput(BaseModel):
-    """
+    """ """
 
-    """
     profile_schema_id: Optional[str] = Field(alias="profileSchemaId")
     project: Optional[str]
 
 
 class ProfileNamesInput(BaseModel):
-    """
+    """ """
 
-    """
     categories: List[str]
     plural: str
     singular: str
@@ -589,9 +537,8 @@ class ProfileNamesInput(BaseModel):
 
 
 class ProfileSchemaInput(BaseModel):
-    """
+    """ """
 
-    """
     attribute_tags: Optional[List["AttributeTagInput"]] = Field(alias="attributeTags")
     description: Optional[str]
     joins: Optional[List["JoinSourceSelectionInput"]]
@@ -604,9 +551,8 @@ class ProfileSchemaInput(BaseModel):
 
 
 class RNDSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     alpha: Optional[float]
     epsilon: Optional[float]
     inv_lambda: Optional[float] = Field(alias="invLambda")
@@ -615,9 +561,8 @@ class RNDSpecInput(BaseModel):
 
 
 class WarmStartSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     choices_lambda: Optional[int] = Field(alias="choicesLambda")
     corrupt_prob_warm_start: Optional[float] = Field(alias="corruptProbWarmStart")
     corrupt_type_warm_start: Optional[int] = Field(alias="corruptTypeWarmStart")
@@ -637,9 +582,8 @@ class WarmStartSpecInput(BaseModel):
 
 
 class RefineUsingReviewsInput(BaseModel):
-    """
+    """ """
 
-    """
     project: str
     reviews: List[str]
     simulation_id: str = Field(alias="simulationId")
@@ -647,27 +591,24 @@ class RefineUsingReviewsInput(BaseModel):
 
 
 class RemoveCampaignGoalInput(BaseModel):
-    """
+    """ """
 
-    """
     campaign: str
     goal_name: str = Field(alias="goalName")
     project: str
 
 
 class RemoveCohortInput(BaseModel):
-    """
+    """ """
 
-    """
     campaign: str
     cohort_name: str = Field(alias="cohortName")
     project: str
 
 
 class RemoveConditionInput(BaseModel):
-    """
+    """ """
 
-    """
     campaign: str
     condition_name: str = Field(alias="conditionName")
     mission: str
@@ -675,9 +616,8 @@ class RemoveConditionInput(BaseModel):
 
 
 class RemoveInterventionInput(BaseModel):
-    """
+    """ """
 
-    """
     campaign: str
     intervention_name: str = Field(alias="interventionName")
     mission: str
@@ -685,9 +625,8 @@ class RemoveInterventionInput(BaseModel):
 
 
 class RunSimulationInput(BaseModel):
-    """
+    """ """
 
-    """
     campaign: str
     mission: str
     project: str
@@ -695,17 +634,15 @@ class RunSimulationInput(BaseModel):
 
 
 class SoftmaxSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     lambda: int
     policy: PolicyEvaluation
 
 
 class SquareCBSpecInput(BaseModel):
-    """
+    """ """
 
-    """
     elimination: bool
     gamma_exponent: Optional[int] = Field(alias="gammaExponent")
     gamma_scale: int = Field(alias="gammaScale")
@@ -716,9 +653,8 @@ class SquareCBSpecInput(BaseModel):
 
 
 class RunSimulationV2Input(BaseModel):
-    """
+    """ """
 
-    """
     campaign: str
     epsilon_greedy: Optional["EpsilonGreedySpecInput"] = Field(alias="epsilonGreedy")
     mission: str
@@ -735,27 +671,24 @@ class RunSimulationV2Input(BaseModel):
 
 
 class SaveCampaignGoalInput(BaseModel):
-    """
+    """ """
 
-    """
     campaign: str
     goal: "CampaignGoalSpecInput"
     project: str
 
 
 class SaveCohortInput(BaseModel):
-    """
+    """ """
 
-    """
     campaign: str
     cohort: "CohortSpecInput"
     project: str
 
 
 class SaveConditionInput(BaseModel):
-    """
+    """ """
 
-    """
     campaign: str
     condition: "ConditionSpecInput"
     mission: str
@@ -763,9 +696,8 @@ class SaveConditionInput(BaseModel):
 
 
 class SaveInterventionInput(BaseModel):
-    """
+    """ """
 
-    """
     campaign: str
     intervention: "InterventionInput"
     mission: str
@@ -773,18 +705,16 @@ class SaveInterventionInput(BaseModel):
 
 
 class UpdateBucketAttributeInput(BaseModel):
-    """
+    """ """
 
-    """
     attribute: "BucketAttributeSpecInput"
     profile_schema: str = Field(alias="profileSchema")
     project: str
 
 
 class UpdateCampaignInput(BaseModel):
-    """
+    """ """
 
-    """
     description: Optional[str]
     name: str
     project: str
@@ -792,27 +722,24 @@ class UpdateCampaignInput(BaseModel):
 
 
 class UpdateCampaignLifecycleStateInput(BaseModel):
-    """
+    """ """
 
-    """
     campaign: str
     new_state: CampaignLifecycleState = Field(alias="newState")
     project: str
 
 
 class UpdateCustomAttributeInput(BaseModel):
-    """
+    """ """
 
-    """
     attribute: "CustomAttributeSpecInput"
     profile_schema: str = Field(alias="profileSchema")
     project: str
 
 
 class UpdateMissionInput(BaseModel):
-    """
+    """ """
 
-    """
     campaign: str
     conditions: Optional[List["ConditionSpecInput"]]
     description: Optional[str]
@@ -828,9 +755,8 @@ class UpdateMissionInput(BaseModel):
 
 
 class UpdateMissionLifecycleStateInput(BaseModel):
-    """
+    """ """
 
-    """
     campaign: str
     mission: str
     new_state: MissionLifecycleState = Field(alias="newState")
@@ -838,9 +764,8 @@ class UpdateMissionLifecycleStateInput(BaseModel):
 
 
 class UpdatePlanReviewInput(BaseModel):
-    """
+    """ """
 
-    """
     group_filter: str = Field(alias="groupFilter")
     project: str
     review_id: str = Field(alias="reviewId")
@@ -849,9 +774,8 @@ class UpdatePlanReviewInput(BaseModel):
 
 
 class UpdateProjectInput(BaseModel):
-    """
+    """ """
 
-    """
     description: Optional[str]
     name: str
     title: Optional[str]

@@ -22,6 +22,7 @@ from .base_model import BaseModel
 
 # pylint: disable=missing-class-docstring
 
+
 class DeleteBucketAttribute(BaseModel):
     delete_bucket_attribute: "DeleteBucketAttributeDeleteBucketAttribute" = Field(
         alias="deleteBucketAttribute"

@@ -23,6 +23,7 @@ class DeleteProfileSchema(BaseModel):
     This class is used to validate the data sent to the
     API when a user wants to delete their profile
     """  # pylint: disable=line-too-long
+
     delete_profile_schema: bool = Field(alias="deleteProfileSchema")
 
 

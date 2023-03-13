@@ -18,6 +18,7 @@ from typing import Any, Dict, List, Optional
 
 # pylint: disable=missing-class-docstring
 
+
 class GraphQLClientError(Exception):
     """Base exception."""
 
@@ -117,4 +118,6 @@ class GraphQLClientGraphQLMultiError(GraphQLClientError):
             errors=[GraphQLClientGraphQLError.from_dict(e) for e in errors_dicts],
             data=data,
         )
+
+
 # pylint: enable=missing-class-docstring

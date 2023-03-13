@@ -23,6 +23,7 @@ from .enums import MeasureFrequency
 
 # pylint: disable=missing-class-docstring
 
+
 class ProfileSchemaSummary(BaseModel):
     profile_schema_by_name: "ProfileSchemaSummaryProfileSchemaByName" = Field(
         alias="profileSchemaByName"

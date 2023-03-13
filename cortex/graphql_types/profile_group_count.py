@@ -22,6 +22,7 @@ from .base_model import BaseModel
 
 # pylint: disable=missing-class-docstring
 
+
 class ProfileGroupCount(BaseModel):
     profile_group_count: List["ProfileGroupCountProfileGroupCount"] = Field(
         alias="profileGroupCount"

@@ -23,8 +23,10 @@ from .base_model import BaseModel
 # pylint: disable=missing-class-docstring
 # pylint: disable=empty-docstring
 
+
 class UpdateCustomAttribute(BaseModel):
     """This class is used to update a custom attribute"""
+
     update_custom_attribute: "UpdateCustomAttributeUpdateCustomAttribute" = Field(
         alias="updateCustomAttribute"
     )
@@ -32,6 +34,7 @@ class UpdateCustomAttribute(BaseModel):
 
 class UpdateCustomAttributeUpdateCustomAttribute(BaseModel):
     """A class that is used to update the custom attribute of a user."""
+
     name: str
     custom_attributes: List[
         "UpdateCustomAttributeUpdateCustomAttributeCustomAttributes"
@@ -39,9 +42,8 @@ class UpdateCustomAttributeUpdateCustomAttribute(BaseModel):
 
 
 class UpdateCustomAttributeUpdateCustomAttributeCustomAttributes(BaseModel):
-    """
+    """ """
 
-    """
     name: str
     expression: str
 

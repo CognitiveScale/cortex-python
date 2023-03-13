@@ -23,6 +23,7 @@ from .enums import MeasureFrequency
 
 class ProfileSchemaByName(BaseModel):
     """This class is used to get the profile schema by name"""
+
     profile_schema_by_name: "ProfileSchemaByNameProfileSchemaByName" = Field(
         alias="profileSchemaByName"
     )
@@ -30,6 +31,7 @@ class ProfileSchemaByName(BaseModel):
 
 class ProfileSchemaByNameProfileSchemaByName(BaseModel):
     """A class that inherits from BaseModel."""
+
     primary_source: "ProfileSchemaByNameProfileSchemaByNamePrimarySource" = Field(
         alias="primarySource"
     )
@@ -44,6 +46,7 @@ class ProfileSchemaByNameProfileSchemaByName(BaseModel):
 
 class ProfileSchemaByNameProfileSchemaByNamePrimarySource(BaseModel):
     """A class that inherits from the BaseModel class."""
+
     name: str
     attributes: Optional[List[str]]
     name: str
@@ -52,6 +55,7 @@ class ProfileSchemaByNameProfileSchemaByNamePrimarySource(BaseModel):
 
 class ProfileSchemaByNameProfileSchemaByNameJoins(BaseModel):
     """A class that inherits from the BaseModel class."""
+
     name: str
     attributes: Optional[List[str]]
     profile_group: Optional[str] = Field(alias="profileGroup")
@@ -59,6 +63,7 @@ class ProfileSchemaByNameProfileSchemaByNameJoins(BaseModel):
 
 class ProfileSchemaByNameProfileSchemaByNameCustomAttributes(BaseModel):
     """A class that inherits from BaseModel."""
+
     name: str
     expression: str
     window: Optional[MeasureFrequency]
@@ -66,12 +71,14 @@ class ProfileSchemaByNameProfileSchemaByNameCustomAttributes(BaseModel):
 
 class ProfileSchemaByNameProfileSchemaByNameBucketAttributes(BaseModel):
     """A class that inherits from the BaseModel class."""
+
     name: str
     buckets: List["ProfileSchemaByNameProfileSchemaByNameBucketAttributesBuckets"]
 
 
 class ProfileSchemaByNameProfileSchemaByNameBucketAttributesBuckets(BaseModel):
     """A class that is used to create a model for the data that is returned from the API."""
+
     name: str
     filter: str
 

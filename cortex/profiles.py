@@ -58,7 +58,7 @@ class ProfileClient(BaseClient):
     """
 
     def create_profile_schema(
-            self, profile_schema: ProfileSchemaInput
+        self, profile_schema: ProfileSchemaInput
     ) -> CreateProfileSchema:
         """
         It creates a profile schema
@@ -82,7 +82,7 @@ class ProfileClient(BaseClient):
         return CreateProfileSchema.parse_obj(data)
 
     def update_profile_schema(
-            self, profile_schema: ProfileSchemaInput
+        self, profile_schema: ProfileSchemaInput
     ) -> UpdateProfileSchema:
         """
         It takes a `ProfileSchemaInput` object and returns a `UpdateProfileSchema` object
@@ -179,7 +179,7 @@ class ProfileClient(BaseClient):
         return BuildProfile.parse_obj(data)
 
     def profile_schema_change_log(
-            self, project: str, profile_schema: str, limit: Optional[int]
+        self, project: str, profile_schema: str, limit: Optional[int]
     ) -> ProfileSchemaChangeLog:
         """
         `profile_schema_change_log` returns a `ProfileSchemaChangeLog` object
@@ -217,7 +217,7 @@ class ProfileClient(BaseClient):
         return ProfileSchemaChangeLog.parse_obj(data)
 
     def delete_profile_schema(
-            self, profile_schema: DeleteProfileSchemaInput
+        self, profile_schema: DeleteProfileSchemaInput
     ) -> DeleteProfileSchema:
         """
         It deletes a profile schema.
@@ -239,7 +239,7 @@ class ProfileClient(BaseClient):
         return DeleteProfileSchema.parse_obj(data)
 
     def profile_features(
-            self, project: str, profile_schema: str, campaign: Optional[str]
+        self, project: str, profile_schema: str, campaign: Optional[str]
     ) -> ProfileFeatures:
         """
         This function returns a list of profile features for a given project, profile schema, and campaign
@@ -287,12 +287,12 @@ class ProfileClient(BaseClient):
         return ProfileFeatures.parse_obj(data)
 
     def profile_group_count(
-            self,
-            project: str,
-            schema: str,
-            filter_arg: Optional[str],
-            group_by: List[str],
-            limit: Optional[int],
+        self,
+        project: str,
+        schema: str,
+        filter_arg: Optional[str],
+        group_by: List[str],
+        limit: Optional[int],
     ) -> ProfileGroupCount:
         """
         `profile_group_count` returns a list of `ProfileGroupCount` objects, each of which contains a `key` and `count`
@@ -363,12 +363,12 @@ class ProfileClient(BaseClient):
         return ProfileJobList.parse_obj(data)
 
     def profile_list(
-            self,
-            attributes: Optional[List[str]],
-            filter_arg: Optional[str],
-            limit: Optional[int],
-            profile_schema: str,
-            project: str,
+        self,
+        attributes: Optional[List[str]],
+        filter_arg: Optional[str],
+        limit: Optional[int],
+        profile_schema: str,
+        project: str,
     ) -> ProfileList:
         """
         `profile_list` returns a list of profiles that match the given filter
@@ -418,13 +418,13 @@ class ProfileClient(BaseClient):
         return ProfileList.parse_obj(data)
 
     def profiles_for_plan(
-            self,
-            project: str,
-            simulation_id: str,
-            profile_schema: str,
-            plan_id: str,
-            filter_arg: Optional[str],
-            limit: Optional[int],
+        self,
+        project: str,
+        simulation_id: str,
+        profile_schema: str,
+        plan_id: str,
+        filter_arg: Optional[str],
+        limit: Optional[int],
     ) -> ProfilesForPlan:
         """
         `profiles_for_plan` returns a list of profiles for a given plan

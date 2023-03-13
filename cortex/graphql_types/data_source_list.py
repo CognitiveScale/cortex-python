@@ -22,6 +22,7 @@ from .base_model import BaseModel
 
 class DataSourceList(BaseModel):
     """This class is a list of DataSource objects"""
+
     profile_sources: List["DataSourceListProfileSources"] = Field(
         alias="profileSources"
     )
@@ -29,6 +30,7 @@ class DataSourceList(BaseModel):
 
 class DataSourceListProfileSources(BaseModel):
     """A class that is used to create a list of data sources."""
+
     description: Optional[str]
     name: str
     title: Optional[str]

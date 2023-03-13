@@ -22,11 +22,13 @@ class BuildProfile(BaseModel):
     """
     This class is a model for a build profile
     """
+
     build_profile: "BuildProfileBuildProfile" = Field(alias="buildProfile")
 
 
 class BuildProfileBuildProfile(BaseModel):
     """It creates a class called BuildProfileBuildProfile that inherits from BaseModel."""
+
     job_id: str = Field(alias="jobId")
 
 

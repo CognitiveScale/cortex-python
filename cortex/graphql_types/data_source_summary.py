@@ -23,6 +23,7 @@ from .enums import SourceKind
 
 class DataSourceSummary(BaseModel):
     """A class that represents a data source summary."""
+
     data_source_by_name: "DataSourceSummaryDataSourceByName" = Field(
         alias="dataSourceByName"
     )
@@ -30,6 +31,7 @@ class DataSourceSummary(BaseModel):
 
 class DataSourceSummaryDataSourceByName(BaseModel):
     """This class is used to create a DataSourceSummaryDataSourceByName with a name property"""
+
     attributes: Optional[List[str]]
     connection: Optional["DataSourceSummaryDataSourceByNameConnection"]
     description: Optional[str]
@@ -41,6 +43,7 @@ class DataSourceSummaryDataSourceByName(BaseModel):
 
 class DataSourceSummaryDataSourceByNameConnection(BaseModel):
     """A class that is used to create a connection to the database."""
+
     name: str
 
 
