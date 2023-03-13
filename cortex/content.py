@@ -24,7 +24,6 @@ from urllib3.response import HTTPResponse
 
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 from requests.exceptions import HTTPError
-import tenacity
 
 from .serviceconnector import _Client
 from .utils import (
@@ -72,21 +71,22 @@ class ManagedContentClient(_Client):
         .. NOTE: This method uses a multi-part form request; to upload very large files, use `uploadStreaming` instead.
         .. seealso: uploadStreaming()
         """  # pylint: disable=line-too-long
-        res = tenacity.Retrying(
-            stop=tenacity.stop_after_attempt(retries + 1),
-            retry=tenacity.retry_if_exception(
-                ManagedContentClient._http_request_retry_predicate,
-            ),
-        )
-        return res.wraps(self._upload)(key, stream_name, stream, content_type)
+        return self._upload(key, stream_name, stream, content_type, retries)
 
-    def _upload(self, key: str, stream_name: str, stream: object, content_type: str):
+    def _upload(
+        self,
+        key: str,
+        stream_name: str,
+        stream: object,
+        content_type: str,
+        retries: int = 1,
+    ):
         uri = self.URIs["content"].format(projectId=self._project())
         fields = {"key": key, "content": (stream_name, stream, content_type)}
         data = MultipartEncoder(fields=fields)
         headers = {"Content-Type": data.content_type}
-        res = self._serviceconnector.request(
-            "POST", uri=uri, body=data, headers=headers
+        res = self._serviceconnector.request_with_retry(
+            "POST", uri=uri, body=data, headers=headers, retries=retries
         )
         raise_for_status_with_detail(res)
         return res.json()
@@ -147,19 +147,15 @@ class ManagedContentClient(_Client):
         :return: A dict with the response to request upload.
         :rtype: dict
         """  # pylint: disable=line-too-long
-        res = tenacity.Retrying(
-            stop=tenacity.stop_after_attempt(retries + 1),
-            retry=tenacity.retry_if_exception(
-                ManagedContentClient._http_request_retry_predicate
-            ),
-        )
-        return res.wraps(self._upload_streaming)(key, stream, content_type)
+        return self._upload_streaming(key, stream, content_type, retries)
 
-    def _upload_streaming(self, key: str, stream: object, content_type: str):
+    def _upload_streaming(
+        self, key: str, stream: object, content_type: str, retries: int = 1
+    ):
         uri = self._make_content_uri(key)
         headers = {"Content-Type": content_type}
-        res = self._serviceconnector.request(
-            "POST", uri=uri, body=stream, headers=headers
+        res = self._serviceconnector.request_with_retry(
+            "POST", uri=uri, body=stream, headers=headers, retries=retries
         )
         raise_for_status_with_detail(res)
         return res.json()
@@ -174,17 +170,13 @@ class ManagedContentClient(_Client):
         :return: A HTTPResponse object
         :rtype: :py:class:`urllib3.response.HTTPResponse`
         """
-        res = tenacity.Retrying(
-            stop=tenacity.stop_after_attempt(retries + 1),
-            retry=tenacity.retry_if_exception(
-                ManagedContentClient._http_request_retry_predicate
-            ),
-        )
-        return res.wraps(self._download)(key)
+        return self._download(key, retries)
 
-    def _download(self, key: str):
+    def _download(self, key: str, retries: int = 1):
         uri = self._make_content_uri(key)
-        res = self._serviceconnector.request("GET", uri=uri, stream=True)
+        res = self._serviceconnector.request_with_retry(
+            "GET", uri=uri, stream=True, retries=retries
+        )
         raise_for_status_with_detail(res)
         return res.raw
 
@@ -209,7 +201,7 @@ class ManagedContentClient(_Client):
         :rtype: dict
         """
         uri = self._make_content_uri(key)
-        res = self._serviceconnector.request("DELETE", uri=uri)
+        res = self._serviceconnector.request_with_retry("DELETE", uri=uri, retries=1)
         raise_for_status_with_detail(res)
         return res.json()
 
@@ -233,7 +225,9 @@ class ManagedContentClient(_Client):
             query["limit"] = limit
         if skip > 0:
             query["skip"] = skip
-        res = self._serviceconnector.request("GET", uri=uri, params=query)
+        res = self._serviceconnector.request_with_retry(
+            "GET", uri=uri, params=query, retries=1
+        )
         raise_for_status_with_detail(res)
         return res.json()
 

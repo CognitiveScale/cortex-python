@@ -50,7 +50,6 @@ setup(
         "python-jwt>=3.3.0,<4.0",
         "pyyaml>=5.3.1,<6",
         "cuid>=0.3,<1",
-        "tenacity>=8.0,<9.0",
         "dill>=0.2.8.2",
     ],
     extras_require={
