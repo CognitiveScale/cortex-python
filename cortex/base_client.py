@@ -36,7 +36,7 @@ class BaseClient(_Client):
     :return: An instance of a BaseClient
     """
 
-    URIs = {"graphql": "/"}
+    URIs = {"graphql": "graphql"}
 
     def __enter__(self: Self) -> Self:
         return self

@@ -1,4 +1,0 @@
-[ariadne-codegen]
-schema_path = "schema.graphql"
-queries_path = "queries/"
-async_client = false
