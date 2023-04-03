@@ -50,7 +50,6 @@ setup(
         "pyyaml>=5.3.1",
         "python-dateutil>=2.8.0,<3",
         "python-jwt>=3.3.5,<4.0",
-        "python-jwt>=3.3.5,<4.0",
         "cuid>=0.3,<1",
         "dill>=0.2.8.2",
     ],
