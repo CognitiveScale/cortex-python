@@ -10,3 +10,6 @@ pytest-html>=3.2.0,<4
 pytest-cov>=4.0.0,<5.0.0
 cuid
 black>=22.6.0,<24
+arrow~=0.15.0
+pydash~=4.7.6
+pandas~=1.5.3
