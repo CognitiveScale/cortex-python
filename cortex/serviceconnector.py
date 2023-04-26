@@ -88,7 +88,7 @@ class ServiceConnector:
         )
 
     def request_with_retry(
-        self, method, uri, body=None, headers=None, debug=False, **kwargs
+        self, method, uri, body=None, headers=None, debug=False, retries=2, **kwargs
     ):
         """
         Sends a request to the specified URI. Auto retry with backoff on 50x errors
@@ -98,6 +98,7 @@ class ServiceConnector:
         :param body: Data to send as the post body to the service.
         :param headers: HTTP headers for this post.
         :param debug: Enable debug True|False (default: False)
+        :param retries: defaults to 2
         :param kwargs: Additional key-value pairs to pass to the request method.
         :return: :class:`Response <Response>` object
         """
@@ -105,7 +106,7 @@ class ServiceConnector:
         url = self._construct_url(uri)
         if debug:
             log.debug("START {} {}".format("GET", uri))
-        res = ServiceConnector.requests_retry_session().request(
+        res = ServiceConnector.requests_retry_session(retries=retries).request(
             method,
             url,
             data=body,
@@ -120,13 +121,13 @@ class ServiceConnector:
 
     def request(
         self,
-        method,
-        uri,
-        body=None,
-        headers=None,
-        debug=False,
-        is_internal_url=False,
-        **kwargs,
+        method: str,
+        uri: str,
+        body: object = None,
+        headers: object = None,
+        debug: bool = False,
+        is_internal_url: bool = False,
+        **kwargs: dict,
     ):
         """
         Sends a request to the specified URI.

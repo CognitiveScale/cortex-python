@@ -62,7 +62,7 @@ docs.dev:
 
 # To be removed we don't really support older versions ATM anyway..
 docs.multi:
-	MULTI_VERSION="true" sphinx-multiversion -v docs docs/_build/
+	MULTI_VERSION="false" sphinx-multiversion -v docs docs/_build/
 	cp docs/index.html docs/_build/
 
 docs.package:

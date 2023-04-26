@@ -25,18 +25,16 @@ from cortex.connection import ConnectionClient
 from cortex.content import ManagedContentClient
 from cortex import Cortex
 
-from .fixtures import john_doe_token
+from .fixtures import john_doe_token, mock_api_endpoint, mock_project
 
+projectId = mock_project()
+url = mock_api_endpoint()
 TOKEN = john_doe_token()
-projectId = "cogscale"
-url = "http://127.0.0.1:123"
-
-# params similar to those passed from
-params = {"token": TOKEN, "projectId": projectId, "apiEndpoint": url}
 
 
 class TestConnectionClient(unittest.TestCase):
     def setUp(self):
+        params = {"token": TOKEN, "projectId": projectId, "apiEndpoint": url}
         self.cc = ConnectionClient(url, token=TOKEN, project=projectId)
         self.mc = ManagedContentClient(url, token=TOKEN, project=projectId)
         self.client = Cortex.from_message(params)
