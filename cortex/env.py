@@ -1,5 +1,5 @@
 """
-Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2023 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,24 +19,43 @@ import json
 from .utils import get_cortex_profile
 from .exceptions import BadTokenException
 
+
+BAD_TOKEN_MSG = (
+    "Your Cortex credentials cannot be retrieved.",
+    "Check your profile settings with `cortex configure`.",
+)
+
+
 class CortexEnv:
     """
     Sets environment variables for Cortex.
     """
 
-    def __init__(self, api_endpoint=None, token=None, config=None, project=None):
-        profile = CortexEnv.get_cortex_profile()
+    def __init__(
+        self,
+        api_endpoint: str = None,
+        token: str = None,
+        config: dict = None,
+        project: str = None,
+        profile: str = None,
+    ):
+        profile_inst = CortexEnv.get_cortex_profile(profile)
 
-        cortexToken = token or os.getenv('CORTEX_TOKEN')
-        cortexConfig = config or json.loads(os.getenv('CORTEX_PERSONAL_ACCESS_CONFIG', json.dumps(profile)))
-        if not cortexToken and not cortexConfig:
-            raise BadTokenException(
-                'Your Cortex credentials cannot be retrieved. Check your profile settings with `cortex configure`.')
+        cortex_token = token or os.getenv("CORTEX_TOKEN")
+        cortex_config = config or json.loads(
+            os.getenv("CORTEX_PERSONAL_ACCESS_CONFIG", json.dumps(profile_inst))
+        )
+        if not cortex_token and not cortex_config:
+            raise BadTokenException(BAD_TOKEN_MSG)
 
-        self.api_endpoint = api_endpoint or cortexConfig.get('url')
-        self.token = cortexToken
-        self.config = cortexConfig
-        self.project = project or os.getenv('CORTEX_PROJECT', cortexConfig.get('project', None))
+        self.api_endpoint = api_endpoint or os.getenv(
+            "CORTEX_URL", cortex_config.get("url", None)
+        )
+        self.token = cortex_token
+        self.config = cortex_config
+        self.project = project or os.getenv(
+            "CORTEX_PROJECT", cortex_config.get("project", None)
+        )
 
     @staticmethod
     def get_token():
@@ -44,19 +63,21 @@ class CortexEnv:
         gets the token from either the cortex_token env variable or the profile's token.
         if cortex_token and both cortex_profile are falsey, then cortexToken will be None
         """
-        cortexToken = CortexEnv.get_cortex_token() or CortexEnv.get_cortex_profile().get('token')
-        return cortexToken
+        cortex_token = (
+            CortexEnv.get_cortex_token() or CortexEnv.get_cortex_profile().get("token")
+        )
+        return cortex_token
 
     @staticmethod
-    def get_cortex_profile():
+    def get_cortex_profile(profile: str = None):
         """
         gets the configured cortex profile from the local machine
         """
-        return get_cortex_profile()
+        return get_cortex_profile(profile)
 
     @staticmethod
-    def get_cortex_token():
+    def get_cortex_token() -> str:
         """
         gets the cortex token from the local machine
         """
-        return os.getenv('CORTEX_TOKEN')
+        return os.getenv("CORTEX_TOKEN")

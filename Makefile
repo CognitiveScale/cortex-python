@@ -1,12 +1,14 @@
 DISTRIBUTION_NAME = $(shell python setup.py --name)
 DISTRIBUTION_VERSION = $(shell python setup.py --version)
 
-.PHONY: clean dev.install build build.alpha build.release dev.test test stage docs dev.push
+.PHONY: clean dev.install build build.alpha build.release dev.test test stage dev.push docs.dev docs.multi docs.package
 
 clean:
 	rm -rf ./build
+	rm -rf ./docs/_build
 	rm -rf ./dist
 	rm -rf ./cortex_python.egg-info
+	rm -rf ./cortex-python.docs.tgz
 
 dev.install:
 	pip install -r requirements-dev.txt
@@ -39,10 +41,11 @@ build.release: clean
 	python setup.py sdist bdist_wheel
 
 dev.test:
-	pytest --cache-clear test/unit
+	pylint --recursive=y cortex
+	pytest --cache-clear  --html=coverage/test-report.html --self-contained-html --cov=cortex/ --cov-report=html:coverage --cov-report=term test/unit
 
 test:
-	tox -r
+	tox -r # tox runs make dev.test internally
 
 stage:
 	git fetch --all
@@ -57,8 +60,9 @@ stage:
 docs.dev:
 	sphinx-build -b html -v docs docs/_build/
 
+# To be removed we don't really support older versions ATM anyway..
 docs.multi:
-	MULTI_VERSION="true" sphinx-multiversion -v docs docs/_build/
+	MULTI_VERSION="false" sphinx-multiversion -v docs docs/_build/
 	cp docs/index.html docs/_build/
 
 docs.package:

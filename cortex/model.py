@@ -1,5 +1,5 @@
 """
-Copyright 2019 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2023 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,64 +15,82 @@ limitations under the License.
 """
 
 import json
-import urllib.parse
+from typing import Dict
 
 from .camel import CamelResource
-from typing import Dict
 from .serviceconnector import _Client
-from .utils import raise_for_status_with_detail
+from .utils import raise_for_status_with_detail, parse_string
 
 
 class ModelClient(_Client):
 
     """
-    A client for the Cortex model management API.
-    """
+    A client for the Cortex model management API. While the :mod:`cortex.experiment` module deals with the initial lifecycle aspects of model ideation, and design, the :class:`cortex.model.ModelClient` exists to save metadata about a known well-working model configuration produced after multiple iterations of Experiment runs and training configurations.
+
+    Models can have a lifecycle, are able to store metadata about their types, and more. Refer to the `official API reference <https://cognitivescale.github.io/cortex-fabric/swagger/index.html#operation/PostModel>`_ to understand all the model metadata that can be saved when models are created or updated.
+    """  # pylint: disable=line-too-long
 
     URIs = {
-        'models': 'projects/{projectId}/models',
-        'model': 'projects/{projectId}/models/{modelName}'
-
+        "models": "projects/{projectId}/models",
+        "model": "projects/{projectId}/models/{modelName}",
     }
 
-    def __init__(self, project, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._serviceconnector.version = 4
-        self._project = project
-
     def list_models(self):
-        r = self._serviceconnector.request(method='GET', uri=self.URIs['models'].format(projectId=self._project))
-        raise_for_status_with_detail(r)
-        rs = r.json()
+        """
+        List Models
+        :return: list of models
+        """
+        res = self._serviceconnector.request(
+            method="GET", uri=self.URIs["models"].format(projectId=self._project())
+        )
+        raise_for_status_with_detail(res)
+        res = res.json()
 
-        return rs.get('models', [])
+        return res.get("models", [])
 
     def save_model(self, model_obj):
+        """
+        Save or update model object
+        :param model_obj: Model object to be saved or updated
+        :return: status
+        """
         body = json.dumps(model_obj)
-        headers = {'Content-Type': 'application/json'}
-        uri = self.URIs['models'].format(projectId=self._project)
-        r = self._serviceconnector.request(method='POST', uri=uri, body=body, headers=headers)
-        raise_for_status_with_detail(r)
-        return r.json()
+        headers = {"Content-Type": "application/json"}
+        uri = self.URIs["models"].format(projectId=self._project())
+        res = self._serviceconnector.request(
+            method="POST", uri=uri, body=body, headers=headers
+        )
+        raise_for_status_with_detail(res)
+        return res.json()
 
     def get_model(self, model_name):
-        uri = self.URIs['model'].format(projectId=self._project, modelName=self.parse_string(model_name))
-        r = self._serviceconnector.request(method='GET', uri=uri)
-        raise_for_status_with_detail(r)
+        """
+        Get model by model name
+        :param model_name: Model name
+        :return: model json
+        """
+        uri = self.URIs["model"].format(
+            projectId=self._project(), modelName=parse_string(model_name)
+        )
+        res = self._serviceconnector.request(method="GET", uri=uri)
+        raise_for_status_with_detail(res)
 
-        return r.json()
+        return res.json()
 
     def delete_model(self, model_name):
-        uri = self.URIs['model'].format(projectId=self._project, modelName=self.parse_string(model_name))
-        r = self._serviceconnector.request(method='DELETE', uri=uri)
-        raise_for_status_with_detail(r)
-        rs = r.json()
+        """
+        Delete model by name
+        :param model_name: Model name
+        :return: status
+        """
+        uri = self.URIs["model"].format(
+            projectId=self._project(), modelName=parse_string(model_name)
+        )
+        res = self._serviceconnector.request(method="DELETE", uri=uri)
+        raise_for_status_with_detail(res)
+        res_json = res.json()
 
-        return rs.get('success', False)
-
-    def parse_string(self, string):
-        # Replaces special characters like / with %2F
-        return urllib.parse.quote(string, safe='')
+        return res_json.get("success", False)
 
 
 class Model(CamelResource):
@@ -80,19 +98,27 @@ class Model(CamelResource):
     Tracks associated parameters of models.
     """
 
-    def __init__(self, document: Dict, project: str, client: ModelClient):
+    def __init__(self, document: Dict, client: ModelClient):
         super().__init__(document, False)
-        self._project = project
         self._client = client
+        self._project = client._project
 
-    def to_camel(self, camel='1.0.0'):
+    def to_camel(self, camel="1.0.0") -> dict:
+        # pylint: disable=duplicate-code
+        """Converts this instance of Model to a CAMEL JSON representation
+
+        :param camel: Version of the CAMEL spec to convert to, defaults to "1.0.0"
+        :type camel: str, optional
+        :return: A python dict representing a JSON CAMEL specification of the model
+        :rtype: dict
+        """
         return {
-            'camel': camel,
-            'name': self.name,
-            'title': self.title,
-            'description': self.description,
-            'status': self.status,
-            'type': self.type,
-            'tags': self.tags or [],
-            'properties': self.properties or [],
+            "camel": camel,
+            "name": self.name,
+            "title": self.title,
+            "description": self.description,
+            "status": self.status,
+            "type": self.type,
+            "tags": self.tags or [],
+            "properties": self.properties or [],
         }

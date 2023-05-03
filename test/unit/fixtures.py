@@ -1,58 +1,119 @@
-'''
+"""
 functions for mocking connection to cortex for testing 
-'''
+"""
 
 import json
+
+from mocket import mocketize
+
 from cortex.utils import generate_token
+from datetime import datetime
+import calendar
 from mocket.mockhttp import Entry
 
+
+@mocketize
 def john_doe_token():
+    register_mock_fabric_info()
     return generate_token(mock_pat_config())
 
+
+def register_mock_fabric_info(base_url=None):
+    """_summary_
+
+    :param url: _description_, defaults to None
+    :type url: _type_, optional
+    """
+    url = None
+    if base_url is None:
+        url = build_mock_url("info")
+    else:
+        url = f"{base_url}/fabric/v4/info"
+    Entry.single_register("GET", url, status=200, body=json.dumps(fabric_info_resp()))
+
+
+def fabric_info_resp() -> dict:
+    """Mock Fabric info response
+
+    :return: dict with fabric info response
+    :rtype: dict
+    """
+    return {
+        "version": "6.4.0-1462-dev",
+        "healths": [
+            {
+                "health": {
+                    "redis": {"ok": True, "message": "Connected to redis on db# 0"}
+                },
+                "version": "6.15.26-g46c7d25-ubi8",
+                "name": "accounts",
+                "healthy": True,
+            },
+        ],
+        "endpoints": '{ "registry": { "url": "https://private-registry.dci-dev.dev-eks.insights.ai", "description": "Cortex Configured Registry" }, "chartDocs": { "url": "https://cognitivescale.github.io/cortex-charts", "description": "Helm Chart Docs" }, "fabricDocs": { "url": "https://cognitivescale.github.io/cortex-fabric", "description": "Fabric Usage" } }',  # pylint: disable=line-too-long
+        # this mess is so we can get a timestamp in utc..
+        # because the generate_token method works with utc
+        "serverTs": calendar.timegm(datetime.utcnow().utctimetuple())
+        * 1000,  # pylint: disable=line-too-long
+        "deployType": "ENTERPRISE",
+    }
+
+
 def john_doe_subject():
-    '''
+    """
     The subject part of the jwt token
-    '''
-    return '71a8faac-9dfb-428d-a90c-0b53481b8665'
+    """
+    return "71a8faac-9dfb-428d-a90c-0b53481b8665"
 
 
 def build_mock_url(uri, version=4):
-    '''
+    """
     build a mock url for testing
-    '''
-    return "{api_endpoint}/fabric/v{version}/{uri}".format(api_endpoint=mock_api_endpoint(), version=version, uri=uri)
+    """
+    return "{api_endpoint}/fabric/v{version}/{uri}".format(
+        api_endpoint=mock_api_endpoint(), version=version, uri=uri
+    )
 
 
 def mock_api_endpoint():
-    '''
-    the url endppoint for mocking
-    '''
-    return 'http://1.2.3.4:8000'
+    """
+    the url endpoint for mocking
+    """
+    return "http://127.0.0.1:8000"
 
 
-def register_entry(verb, url, body:dict):
-    print('Registering mock for', verb, url)
+def mock_project():
+    """
+    the project for mocking
+    """
+    return "cogscale"
+
+
+def register_entry(verb, url, body: dict):
+    print("Registering mock for", verb, url)
     Entry.single_register(verb, url, status=200, body=json.dumps(body))
 
 
-def register_entry_from_path(verb, url, path:str):
+def register_entry_from_path(verb, url, path: str):
     with open(path) as fh:
         register_entry(verb, url, json.load(fh))
 
+
 def mock_pat_config():
-    '''
-    Return a PAt config to allow test t ocreate new JWTs
+    """
+    Return a PAt config to allow test and create new JWTs
     :return: PAT config
-    '''
+    """
     return {
-        "jwk":{
-            "crv":"Ed25519",
-            "x":"fPxYvREALYwHVpZtCmYxtc2EW6asDTpqyhqgfco6kWQ",
-            "d":"B9vmiGHtwG9GuFZNso3JDm5_O9bcUbtQyGgp6VrAfL4",
-            "kty":"OKP","kid":"HpW-ya7FSU7yV-alzyewPPDwPeFgrki0VQPKbh4J4Pw"
+        "jwk": {
+            "crv": "Ed25519",
+            "x": "fPxYvREALYwHVpZtCmYxtc2EW6asDTpqyhqgfco6kWQ",
+            "d": "B9vmiGHtwG9GuFZNso3JDm5_O9bcUbtQyGgp6VrAfL4",
+            "kty": "OKP",
+            "kid": "HpW-ya7FSU7yV-alzyewPPDwPeFgrki0VQPKbh4J4Pw",
         },
-        "issuer":"cognitivescale.com",
-        "audience":"cortex",
-        "username":"71a8faac-9dfb-428d-a90c-0b53481b8665",
-        "url":"https://192.168.39.27:31326"
+        "issuer": "cognitivescale.com",
+        "audience": "cortex",
+        "username": "71a8faac-9dfb-428d-a90c-0b53481b8665",
+        "url": mock_api_endpoint()
     }

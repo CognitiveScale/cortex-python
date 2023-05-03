@@ -1,5 +1,5 @@
 """
-Copyright 2021 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2023 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -21,25 +21,25 @@ class Document:
     """
     Defines document (read-only) attributes.
     """
+
     def __init__(self, document: Dict, read_only=True):
-        super().__setattr__('_document', document or {})
-        super().__setattr__('_read_only', read_only)
+        super().__setattr__("_document", document or {})
+        super().__setattr__("_read_only", read_only)
 
     def __getattr__(self, name):
-        if name.startswith('_'):
+        if name.startswith("_"):
             return super().__getattribute__(name)
 
-        doc = super().__getattribute__('_document')
+        doc = super().__getattribute__("_document")
         return doc.get(name)
 
     def __setattr__(self, name: str, value):
-        if name.startswith('_'):
+        if name.startswith("_"):
             super().__setattr__(name, value)
-        elif super().__getattribute__('_read_only'):
-            raise AttributeError(
-                'Attempt to modify a read-only attribute: %s' % name)
+        elif super().__getattribute__("_read_only"):
+            raise AttributeError("Attempt to modify a read-only attribute: %s" % name)
         else:
-            doc = super().__getattribute__('_document')
+            doc = super().__getattribute__("_document")
             doc[name] = value
 
 
@@ -47,26 +47,24 @@ class CamelResource(Document):
     """
     Contains CAMEL attributes for a Cortex object.
     """
-    def __init__(self, document: Dict, read_only=True):
-        super().__init__(document, read_only)
 
     @property
     def name(self):
         """
         The CAMEL resource name attribute.
         """
-        return self._document.get('name')
+        return self._document.get("name")
 
     @property
     def version(self):
         """
         The CAMEL resource version (spelled _version) attribute.
         """
-        return self._document.get('_version')
+        return self._document.get("_version")
 
     @property
     def title(self):
         """
         The CAMEL resource title attribute.
         """
-        return self._document.get('title')
+        return self._document.get("title")

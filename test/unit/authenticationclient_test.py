@@ -1,5 +1,5 @@
 """
-Copyright 2018 Cognitive Scale, Inc. All Rights Reserved.
+Copyright 2023 Cognitive Scale, Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -13,22 +13,27 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-import json
 import unittest
+
+from mocket import mocketize
 
 from cortex.auth import AuthenticationClient
 from cortex.utils import decode_JWT, verify_JWT
-from .fixtures import mock_pat_config, build_mock_url, mock_api_endpoint
-class TestAuthenticationClient(unittest.TestCase):
+from .fixtures import mock_pat_config, mock_api_endpoint, register_mock_fabric_info
 
+
+class TestAuthenticationClient(unittest.TestCase):
     def setUp(self):
+        register_mock_fabric_info()
         self.ac = AuthenticationClient()
 
+    @mocketize
     def test_contructor_with_args(self):
         # This client doesn't need parameters, but allow them for backward compat
         ac = AuthenticationClient(mock_api_endpoint(), 4)
         jwt = ac.fetch_auth_token(mock_pat_config())
 
+    @mocketize
     def test_fetch_auth_token(self):
         # setup
         # uri = self.ac.URIs['authenticate'].format(projectId='cogscale')
@@ -42,9 +47,10 @@ class TestAuthenticationClient(unittest.TestCase):
         # todo mock this call?..
         token = self.ac.fetch_auth_token(body)
         # test
-        decodedBody = decode_JWT(token)
-        self.assertEqual(body["issuer"], decodedBody[1]["iss"])
+        decodedbody = decode_JWT(token)
+        self.assertEqual(body["issuer"], decodedbody[1]["iss"])
 
+    @mocketize
     def test_expired_token(self):
         # Shouldn't fail to validate expired token WITHIN the python lib, this is responsibiltiy of auth proxy...
         exp_token = "eyJhbGciOiJFZERTQSIsImtpZCI6IkhwVy15YTdGU1U3eVYtYWx6eWV3UFBEd1BlRmdya2kwVlFQS2JoNEo0UHciLCJ0eXAiOiJKV1QifQ.eyJhdWQiOiJjb3J0ZXgiLCJleHAiOjE2MzAzNDgxOTYsImlhdCI6MTYzMDM0ODE2NiwiaXNzIjoiY29nbml0aXZlc2NhbGUuY29tIiwianRpIjoiU0dkRjVidG1fUXlYcjZhMVRrOU9oZyIsIm5iZiI6MTYzMDM0ODE2Niwic3ViIjoiNzFhOGZhYWMtOWRmYi00MjhkLWE5MGMtMGI1MzQ4MWI4NjY1In0.pB7hvEcIMV1Qt6GTGPGcKbS1zhidPMJ-luV-KBOaHrwgCh2jDOQdve2Sv5RqmNa6Jkk-Bxh-1g4XG8CxGGSqAQ"

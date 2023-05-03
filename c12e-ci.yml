@@ -1,11 +1,11 @@
 builder:
-  image: python:3.7-buster
+  image: python:3.10-bullseye
   command: bash -cx 'apt-get update
     && apt-get install -y jq
     && make dev.install
     && make test
     && make build
-    && make docs.multi
+    && make docs.dev
     && make docs.package'
   environment:
-    - ALPHA_BUILD
+    - ALPHA_BUILD="true"
