@@ -15,9 +15,9 @@ limitations under the License.
 """
 
 import json
-from mocket.mockhttp import Entry
-from mocket import mocketize
 import requests
+import requests_mock
+
 from cortex import __version__
 from cortex.serviceconnector import ServiceConnector
 
@@ -25,9 +25,9 @@ from .fixtures import mock_api_endpoint, john_doe_token
 
 URL = mock_api_endpoint()
 VERSION = 4
-TOKEN = john_doe_token()
-
-
+TOKEN=''
+with requests_mock.Mocker() as m:
+    TOKEN = john_doe_token(m)
 def test__init__():
     s = ServiceConnector(URL, VERSION, token=TOKEN)
 
@@ -42,14 +42,14 @@ def test__construct_url():
     assert r == expect
 
 
-@mocketize
-def test_request():
+@requests_mock.Mocker(kw='mock')
+def test_request(**kwargs):
     sc = ServiceConnector(URL, VERSION, token=TOKEN)
     path = "models/events"
     url = sc._construct_url(path)
     body = {"handle": 123}
     useragentfragment = f"cortex-python/{__version__}"
-    Entry.single_register(Entry.POST, url, status=200, body=json.dumps(body))
+    kwargs['mock'].post(url, status_code=200, json=body)
     r = sc.request("POST", path, body)
 
     assert isinstance(r, requests.Response)

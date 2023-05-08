@@ -14,11 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import json
 import unittest
 import uuid
-from mocket.mockhttp import Entry
-from mocket import mocketize
+
+import requests_mock
 
 from cortex.session import SessionClient
 from cortex import Cortex
@@ -27,43 +26,42 @@ from .fixtures import john_doe_token, mock_api_endpoint, mock_project
 
 projectId = mock_project()
 url = mock_api_endpoint()
-TOKEN = john_doe_token()
+TOKEN=''
+with requests_mock.Mocker() as m:
+    TOKEN = john_doe_token(m)
 
 
+@requests_mock.Mocker()
 class TestSessionClient(unittest.TestCase):
     def setUp(self):
         params = {"token": TOKEN, "projectId": projectId, "apiEndpoint": url}
         self.client = SessionClient(Cortex.from_message(params))
         self.session_id = str(uuid.uuid4())
 
-    def register_entry(self, verb, uri, body):
+    def register_entry(self, m, verb, uri, body):
         url = self.client._serviceconnector._construct_url(uri)
-        Entry.single_register(verb, url, status=200, body=json.dumps(body))
-
+        m.register_uri(verb, url, status_code=200, json=body)
     # Sessions #
 
-    @mocketize
-    def test_start_sessions(self):
+    def test_start_sessions(self, m):
         uri = self.client.URIs["start"].format(projectId=projectId)
         returns = {"sessionId": self.session_id}
-        self.register_entry(Entry.POST, uri, returns)
+        self.register_entry(m, 'POST', uri, returns)
 
         r = self.client.start_session(100, "test")
         self.assertEqual(r, self.session_id)
 
-    @mocketize
-    def test_get_all(self):
+    def test_get_all(self, m):
         uri = self.client.URIs["get"].format(
             sessionId=self.session_id, projectId=projectId
         )
         returns = {"state": {"key1": "value1"}}
-        self.register_entry(Entry.GET, uri, returns)
+        self.register_entry(m, 'GET', uri, returns)
 
         r = self.client.get_session_data(self.session_id, None)
         self.assertEqual(r, returns["state"])
 
-    @mocketize
-    def test_get_by_key(self):
+    def test_get_by_key(self, m):
         uri = (
             self.client.URIs["get"].format(
                 sessionId=self.session_id, projectId=projectId
@@ -71,29 +69,27 @@ class TestSessionClient(unittest.TestCase):
             + "?key=key1"
         )
         returns = {"state": {"key1": "value1"}}
-        self.register_entry(Entry.GET, uri, returns)
+        self.register_entry(m, 'GET', uri, returns)
 
         r = self.client.get_session_data(self.session_id, "key1")
         self.assertEqual(r, returns["state"])
 
-    @mocketize
-    def test_put(self):
+    def test_put(self, m):
         uri = self.client.URIs["put"].format(
             sessionId=self.session_id, projectId=projectId
         )
         returns = {}
-        self.register_entry(Entry.POST, uri, returns)
+        self.register_entry(m, 'POST', uri, returns)
 
         r = self.client.put_session_data(self.session_id, {})
         self.assertEqual(r, returns)
 
-    @mocketize
-    def test_delete(self):
+    def test_delete(self, m):
         uri = self.client.URIs["delete"].format(
             sessionId=self.session_id, projectId=projectId
         )
         returns = {}
-        self.register_entry(Entry.DELETE, uri, returns)
+        self.register_entry(m, 'DELETE', uri, returns)
 
         r = self.client.delete_session(self.session_id)
         self.assertEqual(r, returns)

@@ -15,11 +15,9 @@ limitations under the License.
 """
 
 import unittest
-import json
 
 import dill
-from mocket.mockhttp import Entry
-from mocket import mocketize
+import requests_mock
 
 from pytest import raises
 from requests.exceptions import HTTPError
@@ -29,10 +27,14 @@ from cortex.experiment import ExperimentClient, RemoteRun, Experiment
 from .fixtures import build_mock_url, mock_api_endpoint, mock_project, john_doe_token
 
 PROJECT = mock_project()
-TOKEN = john_doe_token()
+TOKEN='';
+with requests_mock.Mocker() as m:
+    TOKEN = john_doe_token(m)
+
 url = mock_api_endpoint()
 
 
+@requests_mock.Mocker()
 class TestRun(unittest.TestCase):
     """
     Test experiment checks experiment functionality
@@ -41,19 +43,13 @@ class TestRun(unittest.TestCase):
     RUN_EXP_NAME = "unittest-exp"
     RUN_ID = "000001"
 
-    def setUp(self):
-        params = {"token": TOKEN, "projectId": PROJECT, "apiEndpoint": url}
-        self.local = Cortex.local()
-        self.cortex = Cortex.from_message(params)
-
+    def registerMocks(self, m):
         # register mock for getting an experiment from the client
         uri = ExperimentClient.URIs["experiment"].format(
             experimentName=self.RUN_EXP_NAME, projectId=PROJECT
         )
         returns = {"name": self.RUN_EXP_NAME}
-        Entry.single_register(
-            Entry.GET, build_mock_url(uri), status=200, body=json.dumps(returns)
-        )
+        m.get(build_mock_url(uri), status_code=200, json=returns)
 
         # register mock for creating a run
         uri = ExperimentClient.URIs["runs"].format(
@@ -61,12 +57,16 @@ class TestRun(unittest.TestCase):
         )
 
         returns = {"runId": self.RUN_ID}
-        Entry.single_register(
-            Entry.POST, build_mock_url(uri), status=200, body=json.dumps(returns)
-        )
+        m.post(build_mock_url(uri), status_code=200, json=returns)
 
-    @mocketize
-    def test_make_remote_run(self):
+    def setUp(self):
+        params = {"token": TOKEN, "projectId": PROJECT, "apiEndpoint": url}
+        self.local = Cortex.local()
+        self.cortex = Cortex.from_message(params)
+
+
+    def test_make_remote_run(self, m):
+        self.registerMocks(m);
         exp = Experiment(
             document=self.cortex.experiments.get_experiment(self.RUN_EXP_NAME),
             client=self.cortex.experiments,
@@ -75,8 +75,8 @@ class TestRun(unittest.TestCase):
 
         self.assertIsInstance(r, RemoteRun)
 
-    @mocketize
-    def test_get_run(self):
+    def test_get_run(self, m):
+        self.registerMocks(m);
         exp = Experiment(
             document=self.cortex.experiments.get_experiment(self.RUN_EXP_NAME),
             client=self.cortex.experiments,
@@ -104,15 +104,12 @@ class TestRun(unittest.TestCase):
             },
         }
 
-        Entry.single_register(
-            Entry.GET, build_mock_url(uri), status=200, body=json.dumps(returns)
-        )
-
+        m.get(build_mock_url(uri), status_code=200, json=returns)
         ret = self.cortex.experiments.get_run(self.RUN_EXP_NAME, self.RUN_ID)
         self.assertEqual(returns, ret)
 
-    @mocketize
-    def test_get_run_failed(self):
+    def test_get_run_failed(self, m):
+        self.registerMocks(m);
         exp = Experiment(
             document=self.cortex.experiments.get_experiment(self.RUN_EXP_NAME),
             client=self.cortex.experiments,
@@ -123,14 +120,13 @@ class TestRun(unittest.TestCase):
         )
         returns = "error"
 
-        Entry.single_register(
-            Entry.GET, build_mock_url(uri), status=404, body=json.dumps(returns)
-        )
+        m.get(build_mock_url(uri), status_code=404, json=returns)
+
         with raises(HTTPError) as ex:
             ret = self.cortex.experiments.get_run(self.RUN_EXP_NAME, self.RUN_ID)
 
-    @mocketize
-    def test_run_get_artifact(self):
+    def test_run_get_artifact(self, m):
+        self.registerMocks(m);
         exp = Experiment(
             document=self.cortex.experiments.get_experiment(self.RUN_EXP_NAME),
             client=self.cortex.experiments,
@@ -147,15 +143,12 @@ class TestRun(unittest.TestCase):
             artifactId="artifact",
             projectId=PROJECT,
         )
-        Entry.single_register(
-            Entry.GET, build_mock_url(uri), status=200, body=dill.dumps(test_artifact)
-        )
+        m.get(build_mock_url(uri), status_code=200, content=dill.dumps(test_artifact))
         result = r.get_artifact("artifact")
 
         self.assertEqual(test_artifact, result)
 
-    @mocketize
-    def test_list_runs(self):
+    def test_list_runs(self, m):
         uri = self.cortex.experiments.URIs["runs"].format(
             experimentName=self.RUN_EXP_NAME, projectId=PROJECT
         )
@@ -181,71 +174,60 @@ class TestRun(unittest.TestCase):
             }
         }
 
-        Entry.single_register(
-            Entry.GET, local_url, status=200, body=json.dumps(returns)
-        )
-
+        m.get(build_mock_url(uri), status_code=200, json=returns)
         runs = self.cortex.experiments.list_runs(experiment_name=self.RUN_EXP_NAME)
 
         self.assertNotEqual(runs, None)
 
-    @mocketize
-    def test_update_run(self):
+    def test_update_run(self, m):
         uri = self.cortex.experiments.URIs["run"].format(
             experimentName=self.RUN_EXP_NAME, projectId=PROJECT, runId=self.RUN_ID
         )
         local_url = self.cortex.experiments._serviceconnector._construct_url(uri)
 
         body = {"success": True}
-        Entry.single_register(Entry.PUT, local_url, status=200, body=json.dumps(body))
+        m.put(build_mock_url(uri), status_code=200, json=body)
 
         ret = self.cortex.experiments.update_run(
             experiment_name=self.RUN_EXP_NAME, run_id=self.RUN_ID, meta={"blah": 1}
         )
         self.assertEqual(ret, True)
 
-    @mocketize
-    def test_update_run_failed(self):
+    def test_update_run_failed(self, m):
         uri = self.cortex.experiments.URIs["run"].format(
             experimentName=self.RUN_EXP_NAME, projectId=PROJECT, runId=self.RUN_ID
         )
         local_url = self.cortex.experiments._serviceconnector._construct_url(uri)
 
         body = {"success": False}
-        Entry.single_register(Entry.PUT, local_url, status=200, body=json.dumps(body))
+        m.put(local_url, status_code=200, json=body)
         with raises(Exception) as ex:
             ret = self.cortex.experiments.update_run(
                 experiment_name=self.RUN_EXP_NAME, run_id=self.RUN_ID, meta={"blah": 1}
             )
 
-    @mocketize
-    def test_delete_run(self):
+    def test_delete_run(self, m):
         uri = self.cortex.experiments.URIs["run"].format(
             experimentName=self.RUN_EXP_NAME, projectId=PROJECT, runId=self.RUN_ID
         )
         local_url = self.cortex.experiments._serviceconnector._construct_url(uri)
 
         body = {"success": True}
-        Entry.single_register(
-            Entry.DELETE, local_url, status=200, body=json.dumps(body)
-        )
+        m.delete(local_url, status_code=200, json=body)
 
         ret = self.cortex.experiments.delete_run(
             experiment_name=self.RUN_EXP_NAME, run_id=self.RUN_ID
         )
         self.assertTrue(ret)
 
-    @mocketize
-    def test_delete_run_failed(self):
+    def test_delete_run_failed(self, m):
         uri = self.cortex.experiments.URIs["run"].format(
             experimentName=self.RUN_EXP_NAME, projectId=PROJECT, runId=self.RUN_ID
         )
         local_url = self.cortex.experiments._serviceconnector._construct_url(uri)
 
-        body = {"success": False}
-        Entry.single_register(
-            Entry.DELETE, local_url, status=200, body=json.dumps(body)
-        )
+        body = {"success": False} # TODO validate should this be a 200 ?
+        m.delete(local_url, status_code=200, json=body)
         with raises(Exception) as ex:
             self.cortex.experiments.delete_run(
                 experiment_name=self.RUN_EXP_NAME, run_id=self.RUN_ID
