@@ -7,5 +7,3 @@ builder:
     && make build
     && make docs.dev
     && make docs.package'
-  environment:
-    - ALPHA_BUILD="true"
