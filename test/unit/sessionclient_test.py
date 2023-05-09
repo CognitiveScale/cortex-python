@@ -16,7 +16,6 @@ limitations under the License.
 
 import unittest
 import uuid
-
 import requests_mock
 
 from cortex.session import SessionClient
@@ -26,6 +25,7 @@ from .fixtures import john_doe_token, mock_api_endpoint, mock_project
 
 projectId = mock_project()
 url = mock_api_endpoint()
+
 TOKEN=''
 with requests_mock.Mocker() as m:
     TOKEN = john_doe_token(m)

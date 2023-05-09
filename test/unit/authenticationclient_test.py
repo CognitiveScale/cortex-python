@@ -16,6 +16,8 @@ limitations under the License.
 import unittest
 import requests_mock
 
+from mocket import mocketize
+
 from cortex.auth import AuthenticationClient
 from cortex.utils import decode_JWT, verify_JWT
 from .fixtures import mock_pat_config, mock_api_endpoint, register_mock_fabric_info
@@ -25,6 +27,7 @@ from .fixtures import mock_pat_config, mock_api_endpoint, register_mock_fabric_i
 class TestAuthenticationClient(unittest.TestCase):
 
     def setUp(self):
+        register_mock_fabric_info()
         self.ac = AuthenticationClient()
 
     def test_contructor_with_args(self, m):

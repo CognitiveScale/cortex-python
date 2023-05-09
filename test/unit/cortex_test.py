@@ -37,7 +37,6 @@ from .fixtures import john_doe_subject, john_doe_token, mock_api_endpoint
 token =''
 with requests_mock.Mocker() as m:
     token = john_doe_token(m)
-
 api_endpoint = mock_api_endpoint()
 api_version = 4
 

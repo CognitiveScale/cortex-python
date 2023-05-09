@@ -41,7 +41,6 @@ def test__construct_url():
     expect = "http://127.0.0.1:8000/fabric/v4/{}".format("abc")
     assert r == expect
 
-
 @requests_mock.Mocker(kw='mock')
 def test_request(**kwargs):
     sc = ServiceConnector(URL, VERSION, token=TOKEN)
