@@ -57,7 +57,7 @@ setup(
         "viz": ["matplotlib>=2.2.2,<3", "seaborn>=0.9.0,<0.10", "pandas"],
         "jupyter": ["ipython>=6.4.0,<7", "maya>=0.5.0", "jinja2"],
     },
-    tests_require=["mocket>=3.9.0,<4.0", "pytest>=7.2.1,<8"],
+    tests_require=["requests-mock>=1.10.0", "pytest>=7.2.1,<8"],
     classifiers=[
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: POSIX",

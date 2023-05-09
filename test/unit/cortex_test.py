@@ -17,8 +17,8 @@ limitations under the License.
 import unittest
 
 from unittest.mock import Mock
-from mocket.mockhttp import Entry
-from mocket import mocketize
+
+import requests_mock
 
 from cortex import Cortex
 from cortex.message import Message
@@ -34,7 +34,9 @@ from cortex.skill import SkillClient, Skill
 
 from .fixtures import john_doe_subject, john_doe_token, mock_api_endpoint
 
-token = john_doe_token()
+token =''
+with requests_mock.Mocker() as m:
+    token = john_doe_token(m)
 api_endpoint = mock_api_endpoint()
 api_version = 4
 

@@ -4,21 +4,17 @@ functions for mocking connection to cortex for testing
 
 import json
 
-from mocket import mocketize
-
 from cortex.utils import generate_token
 from datetime import datetime
 import calendar
-from mocket.mockhttp import Entry
 
 
-@mocketize
-def john_doe_token():
-    register_mock_fabric_info()
+def john_doe_token(mock):
+    register_mock_fabric_info(mock)
     return generate_token(mock_pat_config())
 
 
-def register_mock_fabric_info(base_url=None):
+def register_mock_fabric_info(mock, base_url=None):
     """_summary_
 
     :param url: _description_, defaults to None
@@ -29,7 +25,7 @@ def register_mock_fabric_info(base_url=None):
         url = build_mock_url("info")
     else:
         url = f"{base_url}/fabric/v4/info"
-    Entry.single_register("GET", url, status=200, body=json.dumps(fabric_info_resp()))
+    mock.get(url, status_code=200, json=fabric_info_resp())
 
 
 def fabric_info_resp() -> dict:
@@ -87,16 +83,6 @@ def mock_project():
     the project for mocking
     """
     return "cogscale"
-
-
-def register_entry(verb, url, body: dict):
-    print("Registering mock for", verb, url)
-    Entry.single_register(verb, url, status=200, body=json.dumps(body))
-
-
-def register_entry_from_path(verb, url, path: str):
-    with open(path) as fh:
-        register_entry(verb, url, json.load(fh))
 
 
 def mock_pat_config():
