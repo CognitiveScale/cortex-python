@@ -2,7 +2,7 @@ setuptools
 tox>=3.0,<4.0
 twine>=3.0,<4.0
 wheel
-mocket>=3.9.0,<4.0
+requests-mock>=1.10.0
 pipdeptree
 pytest>=7.2.1,<8
 pylint>=2.16.1,<3
