@@ -61,6 +61,7 @@ class TestExperiment(unittest.TestCase):
 
         exp = self.cortex.experiments.get_experiment(self.EXP_NAME)
         self.assertNotEqual(exp, None)
+        self.assertIsInstance(exp, Experiment)
 
     def test_list_remote_experiments(self, m):
         uri = self.cortex.experiments.URIs["experiments"].format(projectId=projectId)

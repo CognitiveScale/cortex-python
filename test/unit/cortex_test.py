@@ -41,7 +41,6 @@ api_endpoint = mock_api_endpoint()
 api_version = 4
 
 
-
 class TestCortex(unittest.TestCase):
     def test_client(self):
         account = "unittest"

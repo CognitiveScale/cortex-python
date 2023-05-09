@@ -84,6 +84,7 @@ def mock_project():
     """
     return "cogscale"
 
+
 def mock_pat_config():
     """
     Return a PAt config to allow test and create new JWTs
