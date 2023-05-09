@@ -1,5 +1,5 @@
 builder:
-  image: python:3.10-bullseye
+  image: python:3.11-bullseye
   command: bash -cx 'apt-get update
     && apt-get install -y jq
     && make dev.install
@@ -7,5 +7,3 @@ builder:
     && make build
     && make docs.dev
     && make docs.package'
-  environment:
-    - ALPHA_BUILD="true"

@@ -18,22 +18,25 @@ import unittest
 import json
 import os
 
+import requests_mock
+
 from cortex import Cortex
 from cortex.experiment import ExperimentClient, Experiment
 
-from mocket.mockhttp import Entry
-from mocket import mocketize
 from .fixtures import mock_api_endpoint, mock_project
 from .fixtures import john_doe_token
 
 import dill
 
-TOKEN = john_doe_token()
+TOKEN=''
+with requests_mock.Mocker() as m:
+    TOKEN = john_doe_token(m)
 projectId = mock_project()
 url = mock_api_endpoint()
 params = {"token": TOKEN, "projectId": projectId, "apiEndpoint": url}
 
 
+@requests_mock.Mocker()
 class TestExperiment(unittest.TestCase):
     """
     Test experiment checks experiment functionality
@@ -48,41 +51,32 @@ class TestExperiment(unittest.TestCase):
         self.local = Cortex.local()
         self.local_tmp = Cortex.local("/tmp/cortex")
 
-    @mocketize
-    def test_get_remote_experiment(self):
+    def test_get_remote_experiment(self, m):
         uri = self.cortex.experiments.URIs["experiment"].format(
             experimentName=self.EXP_NAME, projectId=projectId
         )
         local_url = self.cortex.experiments._serviceconnector._construct_url(uri)
         returns = {"name": self.EXP_NAME}
-        Entry.single_register(
-            Entry.GET, local_url, status=200, body=json.dumps(returns)
-        )
+        m.get(local_url, status_code=200, json=returns)
 
         exp = self.cortex.experiments.get_experiment(self.EXP_NAME)
         self.assertNotEqual(exp, None)
 
-    @mocketize
-    def test_list_remote_experiments(self):
+    def test_list_remote_experiments(self, m):
         uri = self.cortex.experiments.URIs["experiments"].format(projectId=projectId)
         local_url = self.cortex.experiments._serviceconnector._construct_url(uri)
         returns = {"experiments": [{"name": self.EXP_NAME}]}
-        Entry.single_register(
-            Entry.GET, local_url, status=200, body=json.dumps(returns)
-        )
+        m.get(local_url, status_code=200, json=returns)
         exps = self.cortex.experiments.list_experiments()
 
         self.assertNotEqual(exps, None)
         self.assertIsInstance(exps, list)
 
-    @mocketize
-    def test_make_remote_experiment(self):
+    def test_make_remote_experiment(self, m):
         uri = self.cortex.experiments.URIs["experiments"].format(projectId=projectId)
         local_url = self.cortex.experiments._serviceconnector._construct_url(uri)
         returns = {"name": self.EXP_NAME}
-        Entry.single_register(
-            Entry.POST, local_url, status=200, body=json.dumps(returns)
-        )
+        m.post(local_url, status_code=200, json=returns)
         exp = Experiment(
             document=self.cortex.experiments.save_experiment(self.EXP_NAME),
             client=self.cortex.experiments,
@@ -90,30 +84,25 @@ class TestExperiment(unittest.TestCase):
         self.assertNotEqual(exp, None)
         self.assertIsInstance(exp, Experiment)
 
-    @mocketize
-    def test_make_local_experiment(self):
+    def test_make_local_experiment(self, m):
         uri = ExperimentClient.URIs["experiment"].format(
             experimentName=self.EXP_NAME, projectId=projectId
         )
         returns = {"name": self.EXP_NAME}
-        Entry.single_register(Entry.GET, uri, status=200, body=json.dumps(returns))
+        m.get(uri, status_code=200, json=returns)
         exp = self.local.experiment(self.EXP_NAME)
         self.assertNotEqual(exp, None)
 
-    @mocketize
-    def test_make_local_experiment_custom_basedir(self):
+    def test_make_local_experiment_custom_basedir(self, m):
         exp = self.local_tmp.experiment(self.EXP_NAME)
         self.assertNotEqual(exp, None)
         self.assertTrue(os.path.isdir(f"/tmp/cortex/local/experiments/{self.EXP_NAME}"))
 
-    @mocketize
-    def test_remote_load_artifact(self):
+    def test_remote_load_artifact(self, m):
         uri = self.cortex.experiments.URIs["experiments"].format(projectId=projectId)
         local_url = self.expc._serviceconnector._construct_url(uri)
         returns = {"name": self.EXP_NAME}
-        Entry.single_register(
-            Entry.POST, local_url, status=200, body=json.dumps(returns)
-        )
+        m.post(local_url, status_code=200, json=returns)
 
         exp = Experiment(
             document=self.cortex.experiments.save_experiment(
@@ -130,10 +119,7 @@ class TestExperiment(unittest.TestCase):
         local_url = self.expc._serviceconnector._construct_url(uri)
         run_id = "000001"
         returns = {"runId": run_id}
-        Entry.single_register(
-            Entry.POST, local_url, status=200, body=json.dumps(returns)
-        )
-
+        m.post(local_url, status_code=200, json=returns)
         run = exp.start_run()
         # make an artifact
         my_dictionary = {"a_thing": 1, "another_thing": 2}
@@ -147,15 +133,12 @@ class TestExperiment(unittest.TestCase):
             projectId=projectId,
         )
         local_url = self.expc._serviceconnector._construct_url(uri)
-
-        Entry.single_register(
-            Entry.GET, local_url, status=200, body=dill.dumps(my_dictionary)
-        )
+        m.get(local_url, status_code=200, content=dill.dumps(my_dictionary))
 
         result = exp.load_artifact(run, "my_dictionary")
         self.assertEqual(result, my_dictionary)
 
-    def test_save_multiple_local_experiments(self):
+    def test_save_multiple_local_experiments(self, m):
         exp = self.local.experiment(self.EXP_NAME)
         exp.reset()
         run_a = self.make_run(exp)
@@ -173,7 +156,7 @@ class TestExperiment(unittest.TestCase):
         exp = self.local.experiment(self.EXP_NAME)
         self.assertTrue(len(exp.runs()) == 0)
 
-    def test_reset_works_in_context(self):
+    def test_reset_works_in_context(self, m):
         exp = self.local.experiment(self.EXP_NAME)
         exp.reset()
         exp.set_meta("style", "supervised")

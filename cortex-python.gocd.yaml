@@ -14,6 +14,8 @@ pipelines:
         options:
           url: git@github.com:CognitiveScale/cortex-python.git
           defaultBranch: develop
+    environment_variables:
+      ALPHA_BUILD: "true"
     stages:
       - build:
           clean_workspace: true
@@ -32,6 +34,8 @@ pipelines:
       cortex-python:
         git: git@github.com:CognitiveScale/cortex-python.git
         branch: develop
+    environment_variables:
+      ALPHA_BUILD: "true"
     stages:
       - build:
           clean_workspace: true
@@ -76,6 +80,7 @@ pipelines:
   cortex-python-master:
     group: fabric6
     environment_variables:
+      ALPHA_BUILD: "false"
       PYPI_UPLOAD: "https://upload.pypi.org/legacy/"
       REPO_NAME: "cognitivescale_local"
       REPO_USER: "cortex5"
