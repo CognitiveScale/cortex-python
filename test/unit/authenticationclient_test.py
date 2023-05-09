@@ -16,7 +16,6 @@ limitations under the License.
 import unittest
 import requests_mock
 
-from mocket import mocketize
 
 from cortex.auth import AuthenticationClient
 from cortex.utils import decode_JWT, verify_JWT
@@ -27,8 +26,7 @@ from .fixtures import mock_pat_config, mock_api_endpoint, register_mock_fabric_i
 class TestAuthenticationClient(unittest.TestCase):
 
     def setUp(self):
-        register_mock_fabric_info()
-        self.ac = AuthenticationClient()
+        pass
 
     def test_contructor_with_args(self, m):
         # This client doesn't need parameters, but allow them for backward compat
@@ -38,6 +36,7 @@ class TestAuthenticationClient(unittest.TestCase):
 
     def test_fetch_auth_token(self, m):
         register_mock_fabric_info(m)
+        self.ac = AuthenticationClient()
         # setup
         # uri = self.ac.URIs['authenticate'].format(projectId='cogscale')
         # url = self.ac._serviceconnector._construct_url(uri)
