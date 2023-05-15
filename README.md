@@ -48,7 +48,11 @@ Run Developer test and linting tasks:
 Three types of checks are configured for this:
 1. [symilar](https://pylint.readthedocs.io/en/v2.16.2/symilar.html) - to test code duplication
 2. [pylint](https://pylint.readthedocs.io/en/v2.16.2/) - for linting
-3. [pytest](https://docs.pytest.org/en/7.2.x/) - for running the unit tests. These are orchestrated through [tox](https://tox.wiki/en/3.27.1/). The tox configuration is available at [`tox.ini`](/tox.ini)
+3. [pytest](https://docs.pytest.org/en/7.2.x/) - for running the unit tests. These are orchestrated through [tox](https://tox.wiki/en/3.27.1/). The tox configuration is available at [`tox.ini`](/tox.ini) 
+    Make sure you have pytest install,if not install by type in cmd: 
+    ```
+      >pip install pytest
+    ```
 
 There's a convenience `Makefile` that has commands to common tasks, such as build, test, etc. Use it!
 
