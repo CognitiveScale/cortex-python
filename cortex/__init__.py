@@ -13,12 +13,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+from pkgutil import extend_path
 
-from .client import Cortex
-from .message import Message
-
-from .__version__ import __title__, __description__, __url__, __version__
-from .__version__ import __author__, __author_email__, __license__
-from .__version__ import __copyright__
-
-__all__ = ["__version__", "Cortex", "Message"]
+__path__ = extend_path(__path__, __name__)

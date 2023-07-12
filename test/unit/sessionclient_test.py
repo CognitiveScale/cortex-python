@@ -19,7 +19,7 @@ import uuid
 import requests_mock
 
 from cortex.session import SessionClient
-from cortex import Cortex
+from cortex.client import Cortex
 
 from .fixtures import john_doe_token, mock_api_endpoint, mock_project
 

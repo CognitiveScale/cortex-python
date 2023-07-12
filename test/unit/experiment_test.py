@@ -20,7 +20,7 @@ import os
 
 import requests_mock
 
-from cortex import Cortex
+from cortex.client import Cortex
 from cortex.experiment import ExperimentClient, Experiment
 
 from .fixtures import mock_api_endpoint, mock_project
