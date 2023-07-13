@@ -50,7 +50,6 @@ class TestRun(unittest.TestCase):
         )
         returns = {"name": self.RUN_EXP_NAME}
         m.get(build_mock_url(uri), status_code=200, json=returns)
-
         # register mock for creating a run
         uri = ExperimentClient.URIs["runs"].format(
             experimentName=self.RUN_EXP_NAME, projectId=PROJECT

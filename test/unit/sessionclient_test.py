@@ -41,13 +41,12 @@ class TestSessionClient(unittest.TestCase):
     def register_entry(self, m, verb, uri, body):
         url = self.client._serviceconnector._construct_url(uri)
         m.register_uri(verb, url, status_code=200, json=body)
+    
     # Sessions #
-
     def test_start_sessions(self, m):
         uri = self.client.URIs["start"].format(projectId=projectId)
         returns = {"sessionId": self.session_id}
         self.register_entry(m, 'POST', uri, returns)
-
         r = self.client.start_session(100, "test")
         self.assertEqual(r, self.session_id)
 
