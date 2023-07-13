@@ -8,11 +8,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Support for creating Experiments using Model
 
 
-
 ## [6.4.0] - 2023-07-13
 ### Changed
 
 - The top level `cortex` package acts a namespace and no longer exports the `Cortex` or `Message` types.
-  - Change any instances of `from cortex import Cortex` to `from cortex.client import Cortex`
-  - Change any instances of `from cortex import Message` to `from cortex.message import Message`
-  - Change any instances of `from cortex import __version__` to `from cortex.__version__ import __version__`
+  - Update any instances of `from cortex import Cortex` to `from cortex.client import Cortex`
+  - Update any instances of `from cortex import Message` to `from cortex.message import Message`
+  - Update any instances of `from cortex import __version__` to `from cortex.__version__ import __version__`
