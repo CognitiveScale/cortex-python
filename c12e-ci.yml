@@ -1,4 +1,6 @@
 builder:
+  environment:
+    ALPHA_BUILD: "${ALPHA_BUILD}"
   image: python:3.11-bullseye
   command: bash -cx 'apt-get update
     && apt-get install -y jq
