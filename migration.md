@@ -61,7 +61,7 @@ Cortex magics can be used only when the optional `builders` dependency is instal
 1. The `InputMessage` and `OutputMessage` classes have been deprecated. Instead, use the `Message` class:
 
 ```
-> from cortex.client import Message
+> from cortex.message import Message
 ```
 
 2. `ModelClient`, `ModelProcess`, and `ModelRouter` have been deprecated. Instead, use the `experiment` API in the `Client`
