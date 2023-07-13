@@ -18,7 +18,7 @@ import json
 import requests
 import requests_mock
 
-from cortex import __version__
+from cortex.__version__ import __version__
 from cortex.serviceconnector import ServiceConnector
 
 from .fixtures import mock_api_endpoint, john_doe_token

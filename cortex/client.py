@@ -73,17 +73,17 @@ class Client:
 
     1. If the user has the Cortex CLI installed and configured to a Fabric environment, AND a default project is set, they can do the following:
 
-    >>> from cortex import Cortex; client = Cortex.client()
+    >>> from cortex.client import Cortex; client = Cortex.client()
 
     2. If the user has the Cortex CLI installed and configured, but a default project is not set:
 
-    >>> from cortex import Cortex; client = Cortex.client(project="some-project")
+    >>> from cortex.client import Cortex; client = Cortex.client(project="some-project")
 
     3. If the user does not have the Cortex CLI installed, or is using the cortex-python package from within a Skill (Daemon) running inside a Fabric cluster, they can simply extract the required parameters from the request object and create a Cortex client like below:
 
     .. code-block::
 
-        from cortex import Cortex
+        from cortex.client import Cortex
 
         @app.post('/invoke')
         def start(req: dict):
@@ -97,7 +97,7 @@ class Client:
     .. code-block:: python
 
         # contents of main.py for a Skill (job)
-        from cortex import Cortex
+        from cortex.client import Cortex
 
         def main(params):
             client = Cortex.from_message(params)
@@ -194,7 +194,7 @@ class Client:
         .. code-block::
 
             ## use default .experiments client helper
-            from cortex import Cortex
+            from cortex.client import Cortex
             client = Cortex.client()
             client.experiments.list_experiments()
             client.experiments.save_experiment()
@@ -232,7 +232,7 @@ class Client:
         .. code-block::
 
             ## use default .connections client helper
-            from cortex import Cortex
+            from cortex.client import Cortex
             client = Cortex.client()
             client.connections.save_connection
             client.connections.get_connection
@@ -268,7 +268,7 @@ class Client:
         .. code-block::
 
             ## use default .content client helper
-            from cortex import Cortex
+            from cortex.client import Cortex
             client = Cortex.client()
             client.content.list
             client.content.upload
@@ -306,7 +306,7 @@ class Client:
         .. code-block::
 
             ## use default .models client helper
-            from cortex import Cortex
+            from cortex.client import Cortex
             client = Cortex.client()
             client.models.list_models()
             client.models.get_model()
@@ -348,7 +348,7 @@ class Client:
         .. code-block::
 
             ## use default .secrets client helper
-            from cortex import Cortex
+            from cortex.client import Cortex
             client = Cortex.client()
             client.models.get_secret()
             client.models.post_secret()
@@ -385,7 +385,7 @@ class Client:
         .. code-block::
 
             ## use default .skills client helper
-            from cortex import Cortex
+            from cortex.client import Cortex
             client = Cortex.client()
             client.skills.get_skill()
             client.skills.save_skill()
@@ -426,7 +426,7 @@ class Client:
         .. code-block::
 
             ## use default .sessions client helper
-            from cortex import Cortex
+            from cortex.client import Cortex
             client = Cortex.client()
             client.sessions.start_session()
             client.sessions.get_session_data()
@@ -465,7 +465,7 @@ class Client:
         .. code-block::
 
             ## use default .types client helper
-            from cortex import Cortex
+            from cortex.client import Cortex
             client = Cortex.client()
             client.types.get_type()
             client.types.save_type()
@@ -545,7 +545,7 @@ class Cortex:
 
         **Example**
 
-        >>> from cortex import Cortex
+        >>> from cortex.client import Cortex
         >>> cortex = Cortex.client(project='example-project')
 
         :param api_endpoint: The Cortex URL.

@@ -20,7 +20,7 @@ from unittest.mock import Mock
 
 import requests_mock
 
-from cortex import Cortex
+from cortex.client import Cortex
 from cortex.message import Message
 import pytest
 from cortex.connection import ConnectionClient, Connection

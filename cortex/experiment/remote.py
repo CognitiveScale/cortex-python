@@ -41,7 +41,7 @@ class ExperimentClient(_Client):
     """
     A client for the `Cortex experiment and model management API <https://cognitivescale.github.io/cortex-fabric/docs/models/experiments>`_. You can find a pre-created instance of this class on every :class:`cortex.client.Client` instance via the :attr:`Client.experiments` attribute.
 
-    >>> from cortex import Cortex; client = Cortex.client();
+    >>> from cortex.client import Cortex; client = Cortex.client();
     >>> client.experiments.list_experiments() # list experiments from the default project configured for the user
     """  # pylint: disable=line-too-long
 
@@ -67,7 +67,7 @@ class ExperimentClient(_Client):
     def list_experiments(self) -> List[Dict]:
         """Returns a list of experiments available on the project configured for the experiment client.
 
-        >>> from cortex import Cortex; cc=Cortex.client()
+        >>> from cortex.client import Cortex; cc=Cortex.client()
         >>> cc.experiments.list_experiments()
         [{'_version': 2, 'name': 'op-gc_dtree_exp', 'title': 'Decision Tree model', 'description': 'Decision Tree model', 'meta': None, 'tags': [], 'modelId': 'op-german-credit', 'updatedAt': '2023-01-24T10:21:01.347Z', 'createdAt': '2023-01-24T10:11:16.445Z'}]
 
@@ -85,7 +85,7 @@ class ExperimentClient(_Client):
     def save_experiment(self, experiment_name: str, model_id=None, **kwargs) -> Dict:
         """Save an experiment with the provided `experiment_name`, and `modelId`. All the fields specified in the `API reference for Cortex Experiments <https://cognitivescale.github.io/cortex-fabric/swagger/index.html#operation/CreateExperiment>`_ (except name and modelId) can be passed in as keyword args to this method
 
-        >>> from cortex import Cortex; cc=Cortex.client()
+        >>> from cortex.client import Cortex; cc=Cortex.client()
         >>> cc.experiments.save_experiment('exp-name', 'juhf')
         {'_version': 1, 'name': 'exp-name', 'tags': [], '_projectId': 'exp-test', 'modelId': 'juhf'}
 
@@ -116,7 +116,7 @@ class ExperimentClient(_Client):
     def delete_experiment(self, experiment_name: str) -> bool:
         """Delete an experiment specified by `experiment_name`
 
-        >>> from cortex import Cortex; cc=Cortex.client(project='test')
+        >>> from cortex.client import Cortex; cc=Cortex.client(project='test')
         >>> cc.experiments.delete_experiment('another')
         True
 
@@ -137,7 +137,7 @@ class ExperimentClient(_Client):
     def get_experiment(self, experiment_name: str) -> Dict:
         """Retrieve all data for the experiment with name `experiment_name`
 
-        >>> from cortex import Cortex; cc=Cortex.client()
+        >>> from cortex.client import Cortex; cc=Cortex.client()
         >>> cc.experiments.get_experiment('ddgc_dtree_exp')
         {'_version': 1, 'name': 'ddgc_dtree_exp', 'title': 'Decision Tree model', 'description': 'Decision Tree model', 'tags': [], '_projectId': 'test', 'modelId': 'german-credit-model'}
 
@@ -157,7 +157,7 @@ class ExperimentClient(_Client):
     def list_runs(self, experiment_name: str) -> List[Dict]:
         """`List all the runs <https://cognitivescale.github.io/cortex-fabric/swagger/index.html#operation/ListRuns>`_ that belong to the specified `experiment_name`
 
-        >>> from cortex import Cortex; cc=Cortex.client()
+        >>> from cortex.client import Cortex; cc=Cortex.client()
         >>> cc.experiments.list_runs('op-gc_dtree_exp')
         [{'_id': '63cfb10ffe65fb07bf8a94b9', '_projectId': 'test', 'runId': 'run_01', 'experimentName': 'op-gc_dtree_exp', 'params': {'category': 'Decision Tree', 'version': 1, 'SourceData': 'Upstream Server Data'}, 'metrics': {'accuracy': 0.68}, 'meta': {'algo': 'DecisionTreeClassifier'}, '_createdAt': '2023-01-24T10:21:03.120Z', '_updatedAt': '2023-01-24T10:21:04.497Z', 'artifacts': {'model': 'experiments/op-gc_dtree_exp/run_01/artifacts/model'}}]
 
@@ -180,7 +180,7 @@ class ExperimentClient(_Client):
     ) -> List[Dict]:
         """Similar to :meth:`cortex.experiment.ExperimentClient.list_runs`, but also allows you to filter with a mongo-style query dictionary passed in through `filter_obj`, along with `sort` and `limit` options
 
-        >>> from cortex import Cortex; cc=Cortex.client()
+        >>> from cortex.client import Cortex; cc=Cortex.client()
         >>> cc.experiments.find_runs('op-gc_dtree_exp', filter_obj={"runId": "run_01"})
         [{'_id': '63cfb10ffe65fb07bf8a94b9', '_projectId': 'test', 'runId': 'run_01', 'experimentName': 'op-gc_dtree_exp', 'params': {'category': 'Decision Tree', 'version': 1, 'SourceData': 'Upstream Server Data'}, 'metrics': {'accuracy': 0.68}, 'meta': {'algo': 'DecisionTreeClassifier'}, '_createdAt': '2023-01-24T10:21:03.120Z', '_updatedAt': '2023-01-24T10:21:04.497Z', 'artifacts': {'model': 'experiments/op-gc_dtree_exp/run_01/artifacts/model'}}]
 
@@ -219,7 +219,7 @@ class ExperimentClient(_Client):
     ) -> str:
         """Delete runs belonging to the specified `experiment_name` that match the optional `filter_obj` conditions
 
-        >>> from cortex import Cortex; cc=Cortex.client(project='test')
+        >>> from cortex.client import Cortex; cc=Cortex.client(project='test')
         >>> cc.experiments.delete_runs('op-gc_dtree_exp')
         'Runs deleted'
 
@@ -250,7 +250,7 @@ class ExperimentClient(_Client):
     def create_run(self, experiment_name: str, **kwargs) -> Dict:
         """Creates a run for the specified `experiment_name`. Refer to the `official CreateRun docs <https://cognitivescale.github.io/cortex-fabric/swagger/index.html#operation/CreateRun>`_ for information on other possible `kwargs` this method can accept
 
-        >>> from cortex import Cortex; cc=Cortex.client(project='test')
+        >>> from cortex.client import Cortex; cc=Cortex.client(project='test')
         >>> cc.experiments.create_run('op-gc_dtree_exp')
         {'_projectId': 'test', 'runId': 'ox00gu0', 'experimentName': 'op-gc_dtree_exp', '_id': '63f0f9e809c5267ccb9110ca', '_createdAt': '2023-02-18T16:16:40.405Z', '_updatedAt': '2023-02-18T16:16:40.405Z'}
 
@@ -279,7 +279,7 @@ class ExperimentClient(_Client):
     def get_run(self, experiment_name: str, run_id: str) -> Dict:
         """Get all details available for a `run_id` belonging to an `experiment_name`
 
-        >>> from cortex import Cortex; cc=Cortex.client(project='test')
+        >>> from cortex.client import Cortex; cc=Cortex.client(project='test')
         >>> cc.experiments.get_run('op-gc_dtree_exp', 'ox00gu0')
         {'_id': '63f0f9e809c5267ccb9110ca', '_projectId': 'test', 'runId': 'ox00gu0', 'experimentName': 'op-gc_dtree_exp', '_createdAt': '2023-02-18T16:16:40.405Z', '_updatedAt': '2023-02-18T16:16:40.405Z'}
 
