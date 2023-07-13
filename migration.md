@@ -61,7 +61,7 @@ Cortex magics can be used only when the optional `builders` dependency is instal
 1. The `InputMessage` and `OutputMessage` classes have been deprecated. Instead, use the `Message` class:
 
 ```
-> from cortex import Message
+> from cortex.message import Message
 ```
 
 2. `ModelClient`, `ModelProcess`, and `ModelRouter` have been deprecated. Instead, use the `experiment` API in the `Client`
@@ -77,7 +77,7 @@ you can manage secrets through the Cortex Vault in the Cortex Console or via the
 Instead, use the `Client.message()` method:
 
 ```
-> from cortex import Cortex
+> from cortex.client import Cortex
 
 > cortex = Cortex.client()
 > message = cortex.message(payload={'value': 'hello world'})

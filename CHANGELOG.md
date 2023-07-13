@@ -6,3 +6,12 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Support for Model CRUD methods
 - Configurable artifact key for loading a Model from an Experiment
 - Support for creating Experiments using Model
+
+
+## [6.4.0] - 2023-07-13
+### Changed
+
+- The top level `cortex` package acts a namespace and no longer exports the `Cortex` or `Message` types.
+  - Update any instances of `from cortex import Cortex` to `from cortex.client import Cortex`
+  - Update any instances of `from cortex import Message` to `from cortex.message import Message`
+  - Update any instances of `from cortex import __version__` to `from cortex.__version__ import __version__`

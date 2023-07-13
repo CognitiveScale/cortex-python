@@ -22,7 +22,7 @@ import requests_mock
 from pytest import raises
 from requests.exceptions import HTTPError
 
-from cortex import Cortex
+from cortex.client import Cortex
 from cortex.experiment import ExperimentClient, RemoteRun, Experiment
 from .fixtures import build_mock_url, mock_api_endpoint, mock_project, john_doe_token
 

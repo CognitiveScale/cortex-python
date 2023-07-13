@@ -15,7 +15,7 @@ limitations under the License.
 """
 
 from mitmproxy import http
-from cortex import Cortex
+from cortex.client import Cortex
 import json
 import re
 import os
