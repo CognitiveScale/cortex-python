@@ -38,7 +38,7 @@ class ManagedContentClient(_Client):
     """
     A client used to access the `Cortex managed content service (blob store) <https://cognitivescale.github.io/cortex-fabric/docs/manage-data/managed-content>`_. You can find a pre-created instance of this class on every :py:class:`cortex.client.Client` instance via the :py:attr:`Client.content` attribute.
 
-    >>> from cortex import Cortex; client = Cortex.client();
+    >>> from cortex.client import Cortex; client = Cortex.client();
     >>> client.content.list() # list content from the default project configured for the user
 
     """  # pylint: disable=line-too-long
