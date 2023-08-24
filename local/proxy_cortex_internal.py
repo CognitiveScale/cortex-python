@@ -15,7 +15,7 @@ limitations under the License.
 """
 
 from mitmproxy import http
-from cortex.client import Cortex
+from sensa.client import Sensa
 import json
 import re
 import os
@@ -51,7 +51,7 @@ secrets = json.load(open(secrets_env_filepath))
 
 
 def request(flow: http.HTTPFlow) -> None:
-    if "cortex.svc.cluster.local" in flow.request.pretty_url:
+    if "sensa.svc.cluster.local" in flow.request.pretty_url:
         if "/internal" in flow.request.pretty_url:
             if "/connections" in flow.request.pretty_url:
                 try:
@@ -63,7 +63,7 @@ def request(flow: http.HTTPFlow) -> None:
                     cortex_project = re.search(
                         "/projects/(.*)/connections/", flow.request.pretty_url
                     ).group(1)
-                    client = Cortex.client(
+                    client = Sensa.client(
                         api_endpoint=cortex_endpoint,
                         project=cortex_project,
                         token=cortex_token,
@@ -127,5 +127,5 @@ def request(flow: http.HTTPFlow) -> None:
                     )
         else:
             flow.request.url = flow.request.pretty_url.replace(
-                "http://cortex-internal.cortex.svc.cluster.local", cortex_endpoint
+                "http://cortex-internal.sensa.svc.cluster.local", cortex_endpoint
             )

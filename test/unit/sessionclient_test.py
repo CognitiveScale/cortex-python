@@ -18,8 +18,8 @@ import unittest
 import uuid
 import requests_mock
 
-from cortex.session import SessionClient
-from cortex.client import Cortex
+from sensa.session import SessionClient
+from sensa.client import Sensa
 
 from .fixtures import john_doe_token, mock_api_endpoint, mock_project
 
@@ -35,7 +35,7 @@ with requests_mock.Mocker() as m:
 class TestSessionClient(unittest.TestCase):
     def setUp(self):
         params = {"token": TOKEN, "projectId": projectId, "apiEndpoint": url}
-        self.client = SessionClient(Cortex.from_message(params))
+        self.client = SessionClient(Sensa.from_message(params))
         self.session_id = str(uuid.uuid4())
 
     def register_entry(self, m, verb, uri, body):

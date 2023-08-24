@@ -28,7 +28,7 @@ class AuthenticationException(CortexException):
 
 
 class InvalidMessageTypeException(CortexException):
-    """This exception is thrown when the :class:`cortex.message.Message` instance is invalid
+    """This exception is thrown when the :class:`sensa.message.Message` instance is invalid
 
     :type Exception: Exception
     """
@@ -74,11 +74,11 @@ class VisualisationException(CortexException):
 
 
 class UpdateRunException(CortexException):
-    """Raised when the :meth:`cortex.experiment.ExperimentClient.update_run` method fails"""
+    """Raised when the :meth:`sensa.experiment.ExperimentClient.update_run` method fails"""
 
 
 class DeleteRunException(CortexException):
-    """Raised when the :meth:`cortex.experiment.ExperimentClient.delete_run` method fails"""
+    """Raised when the :meth:`sensa.experiment.ExperimentClient.delete_run` method fails"""
 
 
 class AuthenticationHeaderError(Exception):

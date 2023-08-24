@@ -7,8 +7,8 @@ clean:
 	rm -rf ./build
 	rm -rf ./docs/_build
 	rm -rf ./dist
-	rm -rf ./cortex_python.egg-info
-	rm -rf ./cortex-python.docs.tgz
+	rm -rf ./sensa_python.egg-info
+	rm -rf ./sensa-python.docs.tgz
 
 dev.install:
 	pip install -r requirements-dev.txt
@@ -21,7 +21,7 @@ else
 build: build.release
 endif
 docker:
-	docker build -t c12e/cortex-python .
+	docker build -t c12e/sensa-python .
 
 build.alpha: clean
 	python setup.py egg_info --tag-build a$(shell \
@@ -41,8 +41,8 @@ build.release: clean
 	python setup.py sdist bdist_wheel
 
 dev.test:
-	pylint --recursive=y cortex
-	pytest --cache-clear  --html=coverage/test-report.html --self-contained-html --cov=cortex/ --cov-report=html:coverage --cov-report=term test/unit
+	pylint --recursive=y sensa
+	pytest --cache-clear  --html=coverage/test-report.html --self-contained-html --cov=sensa/ --cov-report=html:coverage --cov-report=term test/unit
 
 test:
 	tox -r # tox runs make dev.test internally

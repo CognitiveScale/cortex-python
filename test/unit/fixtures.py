@@ -1,10 +1,10 @@
 """
-functions for mocking connection to cortex for testing 
+functions for mocking connection to sensa for testing
 """
 
 import json
 
-from cortex.utils import generate_token
+from sensa.utils import generate_token
 from datetime import datetime
 import calendar
 
@@ -46,7 +46,7 @@ def fabric_info_resp() -> dict:
                 "healthy": True,
             },
         ],
-        "endpoints": '{ "registry": { "url": "https://private-registry.dci-dev.dev-eks.insights.ai", "description": "Cortex Configured Registry" }, "chartDocs": { "url": "https://cognitivescale.github.io/cortex-charts", "description": "Helm Chart Docs" }, "fabricDocs": { "url": "https://cognitivescale.github.io/cortex-fabric", "description": "Fabric Usage" } }',  # pylint: disable=line-too-long
+        "endpoints": '{ "registry": { "url": "https://private-registry.dci-dev.dev-eks.insights.ai", "description": "Sensa Configured Registry" }, "chartDocs": { "url": "https://cognitivescale.github.io/cortex-charts", "description": "Helm Chart Docs" }, "fabricDocs": { "url": "https://cognitivescale.github.io/cortex-fabric", "description": "Fabric Usage" } }',  # pylint: disable=line-too-long
         # this mess is so we can get a timestamp in utc..
         # because the generate_token method works with utc
         "serverTs": calendar.timegm(datetime.utcnow().utctimetuple())
@@ -99,7 +99,7 @@ def mock_pat_config():
             "kid": "HpW-ya7FSU7yV-alzyewPPDwPeFgrki0VQPKbh4J4Pw",
         },
         "issuer": "cognitivescale.com",
-        "audience": "cortex",
+        "audience": "sensa",
         "username": "71a8faac-9dfb-428d-a90c-0b53481b8665",
         "url": mock_api_endpoint()
     }

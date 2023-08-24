@@ -18,24 +18,24 @@ import unittest
 
 from unittest.mock import Mock
 
-from cortex.env import CortexEnv
-from cortex.exceptions import BadTokenException
+from sensa.env import SensaEnv
+from sensa.exceptions import BadTokenException
 
 
-class TestCortexConfiguration(unittest.TestCase):
+class TestSensaConfiguration(unittest.TestCase):
     def setUp(self):
-        self.getCortexTokenOriginal = CortexEnv.get_cortex_token
-        self.getCortexProfileOriginal = CortexEnv.get_cortex_profile
+        self.getSensaTokenOriginal = SensaEnv.get_sensa_token
+        self.getSensaProfileOriginal = SensaEnv.get_sensa_profile
 
-    def test_get_cortex_token(self):
+    def test_get_sensa_token(self):
         token = "some_token"
-        CortexEnv.get_cortex_token = Mock(return_value=token)
-        self.assertEqual(CortexEnv.get_cortex_token(), token)
+        SensaEnv.get_sensa_token = Mock(return_value=token)
+        self.assertEqual(SensaEnv.get_sensa_token(), token)
 
-    def test_get_cortex_profile(self):
+    def test_get_sensa_profile(self):
         profile = {"A": 1, "B": 2}
-        CortexEnv.get_cortex_profile = Mock(return_value=profile)
-        self.assertEqual(CortexEnv.get_cortex_profile(), profile)
+        SensaEnv.get_sensa_profile = Mock(return_value=profile)
+        self.assertEqual(SensaEnv.get_sensa_profile(), profile)
 
     def test_get_token_with_token_and_profile(self):
         token = "some_token"
@@ -48,16 +48,16 @@ class TestCortexConfiguration(unittest.TestCase):
             "ekh5eEc2IiwiZXhwIjoxNTU4MzY3ODEyLCJhY2wiOnsiLioiOlsiUkVBRCIsIlJVTiIsIldSSVRFIiwiREVMRVRFIl19LCJp"
             "YXQiOjE1NTcxNTgyMTJ9.VQPxm6j2i2QzqFGQGw-dMSSU8TkxQwkx_e9WN1tdHcU",
         }
-        CortexEnv.get_cortex_token = Mock(return_value=token)
-        CortexEnv.get_cortex_profile = Mock(return_value=profile)
-        self.assertEqual(CortexEnv.get_token(), token)
+        SensaEnv.get_sensa_token = Mock(return_value=token)
+        SensaEnv.get_sensa_profile = Mock(return_value=profile)
+        self.assertEqual(SensaEnv.get_token(), token)
 
     def test_get_token_with_token_and_empty_profile(self):
         token = "some_token"
         profile = {}
-        CortexEnv.get_cortex_token = Mock(return_value=token)
-        CortexEnv.get_cortex_profile = Mock(return_value=profile)
-        self.assertEqual(CortexEnv.get_token(), token)
+        SensaEnv.get_sensa_token = Mock(return_value=token)
+        SensaEnv.get_sensa_profile = Mock(return_value=profile)
+        self.assertEqual(SensaEnv.get_token(), token)
 
     def test_get_token_with_no_token_and_profile(self):
         profile_token = (
@@ -72,18 +72,18 @@ class TestCortexConfiguration(unittest.TestCase):
             "account": "testtenant-666",
             "token": profile_token,
         }
-        CortexEnv.get_cortex_token = Mock(
+        SensaEnv.get_sensa_token = Mock(
             return_value=None
         )  # notice this is None (not the profile_token)
-        CortexEnv.get_cortex_profile = Mock(return_value=profile)
-        self.assertEqual(CortexEnv.get_token(), profile_token)
+        SensaEnv.get_sensa_profile = Mock(return_value=profile)
+        self.assertEqual(SensaEnv.get_token(), profile_token)
 
     def test_get_token_with_no_token_no_profile(self):
         profile_token = ""
         profile = {}
-        CortexEnv.get_cortex_token = Mock(return_value=profile_token)
-        CortexEnv.get_cortex_profile = Mock(return_value=profile)
-        self.assertEqual(CortexEnv.get_token(), None)
+        SensaEnv.get_sensa_token = Mock(return_value=profile_token)
+        SensaEnv.get_sensa_profile = Mock(return_value=profile)
+        self.assertEqual(SensaEnv.get_token(), None)
 
     def test_get_token_with_token_and_profile2(self):
         token = (
@@ -98,19 +98,19 @@ class TestCortexConfiguration(unittest.TestCase):
             "account": "testtenant-666",
             "token": "mumjobotoken",
         }
-        CortexEnv.get_cortex_token = Mock(return_value=token)  # notice this is None
-        CortexEnv.get_cortex_profile = Mock(return_value=profile)
-        self.assertEqual(CortexEnv.get_token(), token)
+        SensaEnv.get_sensa_token = Mock(return_value=token)  # notice this is None
+        SensaEnv.get_sensa_profile = Mock(return_value=profile)
+        self.assertEqual(SensaEnv.get_token(), token)
 
     def test_constructor_no_profile_and_no_token(self):
         token = ""
         profile = {}
-        CortexEnv.get_cortex_token = Mock(return_value=token)
-        CortexEnv.get_cortex_profile = Mock(return_value=profile)
-        self.assertRaises(BadTokenException, CortexEnv)
+        SensaEnv.get_sensa_token = Mock(return_value=token)
+        SensaEnv.get_sensa_profile = Mock(return_value=profile)
+        self.assertRaises(BadTokenException, SensaEnv)
 
-    # we don't want methods calls to CortexEnv to use the monkey patched methods,
+    # we don't want methods calls to SensaEnv to use the monkey patched methods,
     # so we revert to the original methods.
     def tearDown(self):
-        CortexEnv.get_cortex_token = self.getCortexTokenOriginal
-        CortexEnv.get_cortex_profile = self.getCortexProfileOriginal
+        SensaEnv.get_sensa_token = self.getSensaTokenOriginal
+        SensaEnv.get_sensa_profile = self.getSensaProfileOriginal

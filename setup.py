@@ -20,7 +20,7 @@ import os
 
 here = os.path.abspath(os.path.dirname(__file__))
 about = {}
-with open(os.path.join(here, "cortex", "__version__.py"), "r") as f:
+with open(os.path.join(here, "sensa", "__version__.py"), "r") as f:
     exec(f.read(), about)
 
 with open("README.md") as f:

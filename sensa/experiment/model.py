@@ -184,9 +184,9 @@ class Run:
         :param json: The json representation of the run.
         :type json: dict
         :param experiment: The experiment to associate with the run.
-        :type experiment: :class:`cortex.experiment.Experiment`
+        :type experiment: :class:`sensa.experiment.Experiment`
         :return: A run that has the values in the given json object with the given experiment.
-        :rtype: :class:`cortex.experiment.model.Run`
+        :rtype: :class:`sensa.experiment.model.Run`
         """
         run = Run(experiment)
         run._id = json["id"]

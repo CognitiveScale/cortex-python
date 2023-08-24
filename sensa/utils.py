@@ -189,7 +189,7 @@ def generate_token(config, validity=2):
         raise BadTokenException(gen_token_msg) from err
 
 
-def get_cortex_profile(profile_name=None):
+def get_sensa_profile(profile_name=None):
     """
     Gets the current cortex profile or the profile that matches the optional given name.
     """

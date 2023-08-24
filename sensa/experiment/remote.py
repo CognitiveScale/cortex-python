@@ -39,9 +39,9 @@ log = get_logger(__name__)
 
 class ExperimentClient(_Client):
     """
-    A client for the `Cortex experiment and model management API <https://cognitivescale.github.io/cortex-fabric/docs/models/experiments>`_. You can find a pre-created instance of this class on every :class:`cortex.client.Client` instance via the :attr:`Client.experiments` attribute.
+    A client for the `Cortex experiment and model management API <https://cognitivescale.github.io/cortex-fabric/docs/models/experiments>`_. You can find a pre-created instance of this class on every :class:`sensa.client.Client` instance via the :attr:`Client.experiments` attribute.
 
-    >>> from cortex.client import Cortex; client = Cortex.client();
+    >>> from sensa.client import Sensa; client = Cortex.client();
     >>> client.experiments.list_experiments() # list experiments from the default project configured for the user
     """  # pylint: disable=line-too-long
 
@@ -67,7 +67,7 @@ class ExperimentClient(_Client):
     def list_experiments(self) -> List[Dict]:
         """Returns a list of experiments available on the project configured for the experiment client.
 
-        >>> from cortex.client import Cortex; cc=Cortex.client()
+        >>> from sensa.client import Sensa; cc=Cortex.client()
         >>> cc.experiments.list_experiments()
         [{'_version': 2, 'name': 'op-gc_dtree_exp', 'title': 'Decision Tree model', 'description': 'Decision Tree model', 'meta': None, 'tags': [], 'modelId': 'op-german-credit', 'updatedAt': '2023-01-24T10:21:01.347Z', 'createdAt': '2023-01-24T10:11:16.445Z'}]
 
@@ -85,7 +85,7 @@ class ExperimentClient(_Client):
     def save_experiment(self, experiment_name: str, model_id=None, **kwargs) -> Dict:
         """Save an experiment with the provided `experiment_name`, and `modelId`. All the fields specified in the `API reference for Cortex Experiments <https://cognitivescale.github.io/cortex-fabric/swagger/index.html#operation/CreateExperiment>`_ (except name and modelId) can be passed in as keyword args to this method
 
-        >>> from cortex.client import Cortex; cc=Cortex.client()
+        >>> from sensa.client import Sensa; cc=Cortex.client()
         >>> cc.experiments.save_experiment('exp-name', 'juhf')
         {'_version': 1, 'name': 'exp-name', 'tags': [], '_projectId': 'exp-test', 'modelId': 'juhf'}
 
@@ -116,7 +116,7 @@ class ExperimentClient(_Client):
     def delete_experiment(self, experiment_name: str) -> bool:
         """Delete an experiment specified by `experiment_name`
 
-        >>> from cortex.client import Cortex; cc=Cortex.client(project='test')
+        >>> from sensa.client import Sensa; cc=Cortex.client(project='test')
         >>> cc.experiments.delete_experiment('another')
         True
 
@@ -137,7 +137,7 @@ class ExperimentClient(_Client):
     def get_experiment(self, experiment_name: str) -> Dict:
         """Retrieve all data for the experiment with name `experiment_name`
 
-        >>> from cortex.client import Cortex; cc=Cortex.client()
+        >>> from sensa.client import Sensa; cc=Cortex.client()
         >>> cc.experiments.get_experiment('ddgc_dtree_exp')
         {'_version': 1, 'name': 'ddgc_dtree_exp', 'title': 'Decision Tree model', 'description': 'Decision Tree model', 'tags': [], '_projectId': 'test', 'modelId': 'german-credit-model'}
 
@@ -157,7 +157,7 @@ class ExperimentClient(_Client):
     def list_runs(self, experiment_name: str) -> List[Dict]:
         """`List all the runs <https://cognitivescale.github.io/cortex-fabric/swagger/index.html#operation/ListRuns>`_ that belong to the specified `experiment_name`
 
-        >>> from cortex.client import Cortex; cc=Cortex.client()
+        >>> from sensa.client import Sensa; cc=Cortex.client()
         >>> cc.experiments.list_runs('op-gc_dtree_exp')
         [{'_id': '63cfb10ffe65fb07bf8a94b9', '_projectId': 'test', 'runId': 'run_01', 'experimentName': 'op-gc_dtree_exp', 'params': {'category': 'Decision Tree', 'version': 1, 'SourceData': 'Upstream Server Data'}, 'metrics': {'accuracy': 0.68}, 'meta': {'algo': 'DecisionTreeClassifier'}, '_createdAt': '2023-01-24T10:21:03.120Z', '_updatedAt': '2023-01-24T10:21:04.497Z', 'artifacts': {'model': 'experiments/op-gc_dtree_exp/run_01/artifacts/model'}}]
 
@@ -178,9 +178,9 @@ class ExperimentClient(_Client):
     def find_runs(
         self, experiment_name: str, filter_obj: Dict, sort: dict = None, limit=25
     ) -> List[Dict]:
-        """Similar to :meth:`cortex.experiment.ExperimentClient.list_runs`, but also allows you to filter with a mongo-style query dictionary passed in through `filter_obj`, along with `sort` and `limit` options
+        """Similar to :meth:`sensa.experiment.ExperimentClient.list_runs`, but also allows you to filter with a mongo-style query dictionary passed in through `filter_obj`, along with `sort` and `limit` options
 
-        >>> from cortex.client import Cortex; cc=Cortex.client()
+        >>> from sensa.client import Sensa; cc=Cortex.client()
         >>> cc.experiments.find_runs('op-gc_dtree_exp', filter_obj={"runId": "run_01"})
         [{'_id': '63cfb10ffe65fb07bf8a94b9', '_projectId': 'test', 'runId': 'run_01', 'experimentName': 'op-gc_dtree_exp', 'params': {'category': 'Decision Tree', 'version': 1, 'SourceData': 'Upstream Server Data'}, 'metrics': {'accuracy': 0.68}, 'meta': {'algo': 'DecisionTreeClassifier'}, '_createdAt': '2023-01-24T10:21:03.120Z', '_updatedAt': '2023-01-24T10:21:04.497Z', 'artifacts': {'model': 'experiments/op-gc_dtree_exp/run_01/artifacts/model'}}]
 
@@ -219,7 +219,7 @@ class ExperimentClient(_Client):
     ) -> str:
         """Delete runs belonging to the specified `experiment_name` that match the optional `filter_obj` conditions
 
-        >>> from cortex.client import Cortex; cc=Cortex.client(project='test')
+        >>> from sensa.client import Sensa; cc=Cortex.client(project='test')
         >>> cc.experiments.delete_runs('op-gc_dtree_exp')
         'Runs deleted'
 
@@ -250,7 +250,7 @@ class ExperimentClient(_Client):
     def create_run(self, experiment_name: str, **kwargs) -> Dict:
         """Creates a run for the specified `experiment_name`. Refer to the `official CreateRun docs <https://cognitivescale.github.io/cortex-fabric/swagger/index.html#operation/CreateRun>`_ for information on other possible `kwargs` this method can accept
 
-        >>> from cortex.client import Cortex; cc=Cortex.client(project='test')
+        >>> from sensa.client import Sensa; cc=Cortex.client(project='test')
         >>> cc.experiments.create_run('op-gc_dtree_exp')
         {'_projectId': 'test', 'runId': 'ox00gu0', 'experimentName': 'op-gc_dtree_exp', '_id': '63f0f9e809c5267ccb9110ca', '_createdAt': '2023-02-18T16:16:40.405Z', '_updatedAt': '2023-02-18T16:16:40.405Z'}
 
@@ -279,7 +279,7 @@ class ExperimentClient(_Client):
     def get_run(self, experiment_name: str, run_id: str) -> Dict:
         """Get all details available for a `run_id` belonging to an `experiment_name`
 
-        >>> from cortex.client import Cortex; cc=Cortex.client(project='test')
+        >>> from sensa.client import Sensa; cc=Cortex.client(project='test')
         >>> cc.experiments.get_run('op-gc_dtree_exp', 'ox00gu0')
         {'_id': '63f0f9e809c5267ccb9110ca', '_projectId': 'test', 'runId': 'ox00gu0', 'experimentName': 'op-gc_dtree_exp', '_createdAt': '2023-02-18T16:16:40.405Z', '_updatedAt': '2023-02-18T16:16:40.405Z'}
 
@@ -308,7 +308,7 @@ class ExperimentClient(_Client):
         :type experiment_name: str
         :param run_id: ID of the run to be updated
         :type run_id: str
-        :raises: :exc:`cortex.exceptions.UpdateRunException`
+        :raises: :exc:`sensa.exceptions.UpdateRunException`
         :return: Boolean indicating the status of the operation
         :rtype: bool
         """
@@ -344,7 +344,7 @@ class ExperimentClient(_Client):
         :type experiment_name: str
         :param run_id: Identifier of the run to be deleted
         :type run_id: str
-        :raises: :exc:`cortex.exceptions.DeleteRunException`
+        :raises: :exc:`sensa.exceptions.DeleteRunException`
         :return: A boolean indicating the status of the delete operation
         :rtype: bool
         """
@@ -377,7 +377,7 @@ class ExperimentClient(_Client):
         :type meta: str
         :param val: Value to be updated for the provided `meta` attribute
         :type val: any
-        :raises: :exc:`cortex.exceptions.UpdateRunException`
+        :raises: :exc:`sensa.exceptions.UpdateRunException`
         :return: A boolean indicating the status of the update operation
         :rtype: bool
         """
@@ -416,7 +416,7 @@ class ExperimentClient(_Client):
         :type param: str
         :param val: Value to be updated for the provided `param` attribute
         :type val: any
-        :raises: :exc:`cortex.exceptions.UpdateRunException`
+        :raises: :exc:`sensa.exceptions.UpdateRunException`
         :return: A boolean indicating the status of the update operation
         :rtype: bool
         """
@@ -453,7 +453,7 @@ class ExperimentClient(_Client):
         :type metric: str
         :param val: Value to be updated for the provided `metric` attribute
         :type val: any
-        :raises: :exc:`cortex.exceptions.UpdateRunException`
+        :raises: :exc:`sensa.exceptions.UpdateRunException`
         :return: A boolean indicating the status of the update operation
         :rtype: bool
         """
@@ -491,7 +491,7 @@ class ExperimentClient(_Client):
         :type artifact: str
         :param stream: A Python I/O stream which will be written to managed content with filename provided in the `artifact` param
         :type stream: Python I/O stream
-        :raises: :exc:`cortex.exceptions.UpdateRunException`
+        :raises: :exc:`sensa.exceptions.UpdateRunException`
         :return: A boolean indicating the status of the update operation
         :rtype: bool
         """
@@ -552,15 +552,15 @@ class Experiment(CamelResource):
     def start_run(self) -> Run:
         """Starts a run for the experiment
 
-        :return: A :class:`cortex.experiment.Run` instance
+        :return: A :class:`sensa.experiment.Run` instance
         :rtype: Run
         """
         return RemoteRun.create(self, self._client)
 
     def save_run(self, run: Run) -> None:
-        """Alias to :class:`cortex.experiment.ExperimentClient.update_run`
+        """Alias to :class:`sensa.experiment.ExperimentClient.update_run`
 
-        :param run: An instance of :class:`cortex.experiment.Run`
+        :param run: An instance of :class:`sensa.experiment.Run`
         :type run: Run
         """
         self._client.update_run(
@@ -591,7 +591,7 @@ class Experiment(CamelResource):
         self._client.save_experiment(self.name, **self.to_camel())
 
     def runs(self) -> List[Run]:
-        """Alias to :meth:`cortex.experiment.ExperimentClient.list_runs`
+        """Alias to :meth:`sensa.experiment.ExperimentClient.list_runs`
 
         :return: A list of RemoteRun instances that belong this experiment
         :rtype: List[Run]
@@ -600,11 +600,11 @@ class Experiment(CamelResource):
         return [RemoteRun.from_json(r, self) for r in runs]
 
     def get_run(self, run_id: str) -> Run:
-        """Alias to :meth:`cortex.experiment.ExperimentClient.get_run`
+        """Alias to :meth:`sensa.experiment.ExperimentClient.get_run`
 
         :param run_id: The identifier for the run.
         :type run_id: str
-        :return: An instance of :class:`cortex.experiment.Run`
+        :return: An instance of :class:`sensa.experiment.Run`
         :rtype: Run
         """
         run = self._client.get_run(self.name, run_id)
@@ -613,7 +613,7 @@ class Experiment(CamelResource):
     def last_run(self) -> Run:
         """Returns the most recent Run available on this Experiment. Recency is computed using the `endTime` attribute of a Run
 
-        :raises: :exc:`cortex.exceptions.APIException`
+        :raises: :exc:`sensa.exceptions.APIException`
         :return: _description_
         :rtype: Run
         """
@@ -627,7 +627,7 @@ class Experiment(CamelResource):
     def find_runs(
         self, filter_obj: dict = None, sort: dict = None, limit: int = None
     ) -> List[Run]:
-        """Alias to :meth:`cortex.experiment.ExperimentClient.find_runs`
+        """Alias to :meth:`sensa.experiment.ExperimentClient.find_runs`
 
         :param filter_obj: A mongo style query object. For example. `{"runId": "run_01"}`. Allowed fields which can be set as keys in this dictionary include [runId, _createdAt, startTime, endTime, took, experimentName]
         :type filter_obj: Dict
@@ -635,7 +635,7 @@ class Experiment(CamelResource):
         :type sort: Dict, optional
         :param limit: Limit the number of results to this number, defaults to 25
         :type limit: int, optional
-        :return: A list of :class:`cortex.experiment.Run` instances that match the provided filter, sort and limit criteria
+        :return: A list of :class:`sensa.experiment.Run` instances that match the provided filter, sort and limit criteria
         :rtype: List[Run]
         """
         runs = self._client.find_runs(
@@ -644,7 +644,7 @@ class Experiment(CamelResource):
         return [RemoteRun.from_json(r, self) for r in runs]
 
     def load_artifact(self, run: Run, name: str) -> any:
-        """Downloads the given artifact with name `name` for the Run `run` using :meth:`cortex.experiment.ExperimentClient.get_artifact` loads it using :func:`dill.loads`
+        """Downloads the given artifact with name `name` for the Run `run` using :meth:`sensa.experiment.ExperimentClient.get_artifact` loads it using :func:`dill.loads`
 
         :param run: The run for which artifact is to be loaded from
         :type run: Run
@@ -661,7 +661,7 @@ class Experiment(CamelResource):
 
         :param camel: Version of the CAMEL specification to use, defaults to "1.0.0"
         :type camel: str, optional
-        :return: A python dictionary containing the valid CAMEL specification of this :class:`cortex.experiment.Experiment` instance
+        :return: A python dictionary containing the valid CAMEL specification of this :class:`sensa.experiment.Experiment` instance
         :rtype: Dict
         """
         return {
@@ -708,7 +708,7 @@ class RemoteRun(Run):
         :param experiment_client: The client for the run.
         :type experiment_client: ExperimentClient
         :return: A run.
-        :rtype: :class:`cortex.experiment.RemoteRun`
+        :rtype: :class:`sensa.experiment.RemoteRun`
         """
         run_json = experiment_client.create_run(experiment.name)
         run = RemoteRun(experiment, experiment_client)
@@ -730,7 +730,7 @@ class RemoteRun(Run):
         :param experiment_client: The client for the run.
         :type experiment_client: ExperimentClient
         :return: A RemoteRun instance.
-        :rtype: :class:`cortex.experiment.RemoteRun`
+        :rtype: :class:`sensa.experiment.RemoteRun`
         """
         run_json = experiment_client.get_run(experiment.name, run_id)
         return RemoteRun.from_json(run_json, experiment)
@@ -743,9 +743,9 @@ class RemoteRun(Run):
         :param run_json: json that specifies the run; acceptable values are runId, startTime, endTime, took, a list of params, metrics, metadata, and artifacts
         :type run_json: Dict
         :param experiment: the parent experiment of the run
-        :type experiment: :class:`cortex.experiment.Experiment`
+        :type experiment: :class:`sensa.experiment.Experiment`
         :return: a run
-        :rtype: :class:`cortex.experiment.RemoteRun`
+        :rtype: :class:`sensa.experiment.RemoteRun`
         """
         run = RemoteRun(experiment, experiment._client)
         run._id = json["runId"]
