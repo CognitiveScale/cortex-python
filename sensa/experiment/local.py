@@ -237,5 +237,5 @@ class LocalExperiment:
         except ImportError as exc:
             raise ConfigurationException(
                 "The ipython package is required, please install it"
-                "using pip install cortex-python[viz]"
+                "using pip install sensa-python[viz]"
             ) from exc

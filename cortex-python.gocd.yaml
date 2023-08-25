@@ -4,15 +4,15 @@ common:
     coverage: testoutput/coverage/index.html
     test-report: testoutput/coverage/test-report.html
 pipelines:
-  cortex-python-pr:
+  sensa-python-pr:
     group: pull-requests
     materials:
-      cortex-python:
+      sensa-python:
         plugin_configuration:
           id: github.pr
           version: 1
         options:
-          url: git@github.com:CognitiveScale/cortex-python.git
+          url: git@github.com:CognitiveScale/sensa-python.git
           defaultBranch: develop
     environment_variables:
       ALPHA_BUILD: "true"
@@ -28,11 +28,11 @@ pipelines:
               elastic_profile_id: gocd-test-agent-dind
               tasks:
                 - script: c12e-ci -l
-  cortex-python-develop:
+  sensa-python-develop:
     group: fabric6
     materials:
-      cortex-python:
-        git: git@github.com:CognitiveScale/cortex-python.git
+      sensa-python:
+        git: git@github.com:CognitiveScale/sensa-python.git
         branch: develop
     environment_variables:
       ALPHA_BUILD: "true"
@@ -51,7 +51,7 @@ pipelines:
                     set -eux
                     git clone git@github.com:CognitiveScale/gocd-pipeline-scripts.git
                     ./gocd-pipeline-scripts/common/c12e-common.sh dev
-  cortex-python-staging:
+  sensa-python-staging:
     group: fabric6
     environment_variables:
       ALPHA_BUILD: "true"
@@ -62,8 +62,8 @@ pipelines:
       # LastPass: Shared-devops/Pypi
       REPO_PASSWORD: "AES:VK48nn/zr+mFTMixYa8Psg==:P+AZlJmgChiMcFRyNRmjuwYqBQwkc1hRP8zHck5L5SU="
     materials:
-      cortex-python:
-        git: git@github.com:CognitiveScale/cortex-python.git
+      sensa-python:
+        git: git@github.com:CognitiveScale/sensa-python.git
         branch: staging
     stages:
       - build:
@@ -77,7 +77,7 @@ pipelines:
                     git clone git@github.com:CognitiveScale/gocd-pipeline-scripts.git
                     ./gocd-pipeline-scripts/common/c12e-common.sh staging
                     ./gocd-pipeline-scripts/cortex5/python/publish-distribution.sh -i -e
-  cortex-python-master:
+  sensa-python-master:
     group: fabric6
     environment_variables:
       ALPHA_BUILD: "false"
@@ -88,8 +88,8 @@ pipelines:
       # LastPass: Shared-devops/Pypi
       REPO_PASSWORD: "AES:VK48nn/zr+mFTMixYa8Psg==:P+AZlJmgChiMcFRyNRmjuwYqBQwkc1hRP8zHck5L5SU="
     materials:
-      cortex-python-master:
-        git: git@github.com:CognitiveScale/cortex-python.git
+      sensa-python-master:
+        git: git@github.com:CognitiveScale/sensa-python.git
         branch: main
     stages:
       - build:
@@ -100,7 +100,7 @@ pipelines:
               elastic_profile_id: gocd-test-agent-dind
               artifacts:
                 - build:
-                    source: cortex-python.docs.tgz
+                    source: sensa-python.docs.tgz
                 - test:
                     source: coverage
               tasks:
@@ -118,11 +118,11 @@ pipelines:
               elastic_profile_id: gocd-test-agent-dind
               tasks:
                 - fetch:
-                    pipeline: cortex-python-master
+                    pipeline: sensa-python-master
                     stage: build
                     job: build
-                    source: cortex-python.docs.tgz
+                    source: sensa-python.docs.tgz
                     is_file: yes
                 - script: |
                     git clone git@github.com:CognitiveScale/gocd-pipeline-scripts.git
-                    ./gocd-pipeline-scripts/common/publish-gh-pages.sh -d cortex-python.docs.tgz -r git@github.com:CognitiveScale/cortex-python.git -b ${GH_PAGES_BRANCH} -k .nojekyll
+                    ./gocd-pipeline-scripts/common/publish-gh-pages.sh -d sensa-python.docs.tgz -r git@github.com:CognitiveScale/sensa-python.git -b ${GH_PAGES_BRANCH} -k .nojekyll

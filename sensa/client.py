@@ -79,7 +79,7 @@ class Client:
 
     >>> from sensa.client import Sensa; client = Sensa.client(project="some-project")
 
-    3. If the user does not have the Sensa CLI installed, or is using the cortex-python package from within a Skill (Daemon) running inside a Fabric cluster, they can simply extract the required parameters from the request object and create a Sensa client like below:
+    3. If the user does not have the Sensa CLI installed, or is using the sensa-python package from within a Skill (Daemon) running inside a Fabric cluster, they can simply extract the required parameters from the request object and create a Sensa client like below:
 
     .. code-block::
 
@@ -92,7 +92,7 @@ class Client:
             client.experiments.list_experiments()
             ....
 
-    4. If the user does not have the Sensa CLI installed, or is using the cortex-python package from within a **Skill(Job)** running inside a Fabric cluster, they can simply pass the `params` object passed into the Job script and create a Sensa client:
+    4. If the user does not have the Sensa CLI installed, or is using the sensa-python package from within a **Skill(Job)** running inside a Fabric cluster, they can simply pass the `params` object passed into the Job script and create a Sensa client:
 
     .. code-block:: python
 

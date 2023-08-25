@@ -38,8 +38,8 @@ setup(
     license=about["__license__"],
     package_data={"": ["LICENSE", "CHANGELOG.md"]},
     project_urls={
-        "Documentation": "https://cognitivescale.github.io/cortex-python/master/",
-        "Source": "https://github.com/CognitiveScale/cortex-python",
+        "Documentation": "https://cognitivescale.github.io/sensa-python/master/",
+        "Source": "https://github.com/CognitiveScale/sensa-python",
     },
     platforms=["any"],
     packages=find_packages(),

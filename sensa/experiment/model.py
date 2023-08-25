@@ -276,7 +276,7 @@ def _to_html(exp):
     except (ImportError, NameError) as exc:
         raise ConfigurationException(
             "The jupyter extras are required to use this,"
-            'please install using "pip install cortex-python[viz]"'
+            'please install using "pip install sensa-python[viz]"'
         ) from exc
 
     runs = exp.runs()

@@ -70,7 +70,7 @@ class ProjectException(CortexException):
 
 
 class VisualisationException(CortexException):
-    """Indicates missing dependent packages when using the cortex-python package inside a jupyter notebook"""  # pylint: disable=line-too-long
+    """Indicates missing dependent packages when using the sensa-python package inside a jupyter notebook"""  # pylint: disable=line-too-long
 
 
 class UpdateRunException(CortexException):

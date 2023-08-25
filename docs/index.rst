@@ -120,14 +120,14 @@ See the `Cortex Fabric documentation. <https://cognitivescale.github.io/cortex-f
 Cortex Python Builders
 ------------------------
 
-The cortex-python-builders library is an add-on library for use with the base cortex-python library that helps with building actions and skills.
+The sensa-python-builders library is an add-on library for use with the base sensa-python library that helps with building actions and skills.
 
-See the `Cortex Python Builders Reference documentation. <https://cognitivescale.github.io/cortex-python-builders>`_
+See the `Cortex Python Builders Reference documentation. <https://cognitivescale.github.io/sensa-python-builders>`_
 
 Cortex Python Profiles
 -------------------------
 
-The cortex-python-profiles library is an add-on for use with the base cortex-python library that helps with building and managing Profile-of-One profiles and schemas.
+The sensa-python-profiles library is an add-on for use with the base sensa-python library that helps with building and managing Profile-of-One profiles and schemas.
 
-See the `Cortex Python Profiles Reference documentation. <https://cognitivescale.github.io/cortex-python-profiles>`_
+See the `Cortex Python Profiles Reference documentation. <https://cognitivescale.github.io/sensa-python-profiles>`_
 
