@@ -16,7 +16,7 @@ limitations under the License.
 
 import os
 import json
-from .utils import get_cortex_profile
+from .utils import get_sensa_profile
 from .exceptions import BadTokenException
 
 
@@ -26,7 +26,7 @@ BAD_TOKEN_MSG = (
 )
 
 
-class CortexEnv:
+class SensaEnv:
     """
     Sets environment variables for Cortex.
     """
@@ -39,45 +39,45 @@ class CortexEnv:
         project: str = None,
         profile: str = None,
     ):
-        profile_inst = CortexEnv.get_cortex_profile(profile)
+        profile_inst = SensaEnv.get_sensa_profile(profile)
 
-        cortex_token = token or os.getenv("CORTEX_TOKEN")
-        cortex_config = config or json.loads(
+        sensa_token = token or os.getenv("CORTEX_TOKEN")
+        sensa_config = config or json.loads(
             os.getenv("CORTEX_PERSONAL_ACCESS_CONFIG", json.dumps(profile_inst))
         )
-        if not cortex_token and not cortex_config:
+        if not sensa_token and not sensa_config:
             raise BadTokenException(BAD_TOKEN_MSG)
 
         self.api_endpoint = api_endpoint or os.getenv(
-            "CORTEX_URL", cortex_config.get("url", None)
+            "CORTEX_URL", sensa_config.get("url", None)
         )
-        self.token = cortex_token
-        self.config = cortex_config
+        self.token = sensa_token
+        self.config = sensa_config
         self.project = project or os.getenv(
-            "CORTEX_PROJECT", cortex_config.get("project", None)
+            "CORTEX_PROJECT", sensa_config.get("project", None)
         )
 
     @staticmethod
     def get_token():
         """
-        gets the token from either the cortex_token env variable or the profile's token.
-        if cortex_token and both cortex_profile are falsey, then cortexToken will be None
+        gets the token from either the sensa_token env variable or the profile's token.
+        if sensa_token and both sensa_profile are falsey, then sensaToken will be None
         """
-        cortex_token = (
-            CortexEnv.get_cortex_token() or CortexEnv.get_cortex_profile().get("token")
+        sensa_token = (
+                SensaEnv.get_sensa_token() or SensaEnv.get_sensa_profile().get("token")
         )
-        return cortex_token
+        return sensa_token
 
     @staticmethod
-    def get_cortex_profile(profile: str = None):
+    def get_sensa_profile(profile: str = None):
         """
-        gets the configured cortex profile from the local machine
+        gets the configured sensa profile from the local machine
         """
-        return get_cortex_profile(profile)
+        return get_sensa_profile(profile)
 
     @staticmethod
-    def get_cortex_token() -> str:
+    def get_sensa_token() -> str:
         """
-        gets the cortex token from the local machine
+        gets the sensa token from the local machine
         """
         return os.getenv("CORTEX_TOKEN")

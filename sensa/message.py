@@ -18,7 +18,7 @@ from typing import Dict
 
 from .utils import get_logger
 from .camel import Document
-from .env import CortexEnv
+from .env import SensaEnv
 
 log = get_logger(__name__)
 
@@ -69,12 +69,12 @@ class Message(Document):
 
     @staticmethod
     def from_env(**kwargs):
-        """Creates an instance of :class:`cortex.message.Message` by reading from existing environment and cortex profile
+        """Creates an instance of :class:`sensa.message.Message` by reading from existing environment and cortex profile
 
-        :return: :class:`cortex.message.Message` pre-populated with params loaded from pre-existing Cortex environment variables or Cortex profile
-        :rtype: :class:`cortex.message.Message`
+        :return: :class:`sensa.message.Message` pre-populated with params loaded from pre-existing Cortex environment variables or Cortex profile
+        :rtype: :class:`sensa.message.Message`
         """
-        env = CortexEnv(**kwargs)
+        env = SensaEnv(**kwargs)
 
         params = {}
         if env.api_endpoint:

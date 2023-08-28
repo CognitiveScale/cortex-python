@@ -28,7 +28,7 @@ class AuthenticationException(CortexException):
 
 
 class InvalidMessageTypeException(CortexException):
-    """This exception is thrown when the :class:`cortex.message.Message` instance is invalid
+    """This exception is thrown when the :class:`sensa.message.Message` instance is invalid
 
     :type Exception: Exception
     """
@@ -70,15 +70,15 @@ class ProjectException(CortexException):
 
 
 class VisualisationException(CortexException):
-    """Indicates missing dependent packages when using the cortex-python package inside a jupyter notebook"""  # pylint: disable=line-too-long
+    """Indicates missing dependent packages when using the sensa-python package inside a jupyter notebook"""  # pylint: disable=line-too-long
 
 
 class UpdateRunException(CortexException):
-    """Raised when the :meth:`cortex.experiment.ExperimentClient.update_run` method fails"""
+    """Raised when the :meth:`sensa.experiment.ExperimentClient.update_run` method fails"""
 
 
 class DeleteRunException(CortexException):
-    """Raised when the :meth:`cortex.experiment.ExperimentClient.delete_run` method fails"""
+    """Raised when the :meth:`sensa.experiment.ExperimentClient.delete_run` method fails"""
 
 
 class AuthenticationHeaderError(Exception):

@@ -5,6 +5,6 @@ sphinx-rtd-theme==1.0.0
 sphinxcontrib-restbuilder==0.3
 nbconvert==6.5.3
 
-## This is a dependency from cortex-python (pre-v6.1.0) that was removed, but it must be installed in the environment
+## This is a dependency from sensa-python (pre-v6.1.0) that was removed, but it must be installed in the environment
 ## to build docs for earlier versions of the library.
 ##pyjwt>=1.6.1,<2

@@ -27,7 +27,7 @@ from .skill import SkillClient
 from .types import TypeClient
 from .experiment import ExperimentClient
 from .serviceconnector import ServiceConnector
-from .env import CortexEnv
+from .env import SensaEnv
 from .exceptions import (
     ProjectException,
     InvalidMessageTypeException,
@@ -67,40 +67,40 @@ class _Token:
 
 class Client:
     """
-    API client used to access Connections, Managed Content, Experiments, Secrets, Models, Sessions, Skills and Types in a Fabric cluster. Experiments also have a `local client` (:class:`cortex.experiment.local.LocalExperiment`) for data scientists to work without access to a Fabric cluster.
+    API client used to access Connections, Managed Content, Experiments, Secrets, Models, Sessions, Skills and Types in a Fabric cluster. Experiments also have a `local client` (:class:`sensa.experiment.local.LocalExperiment`) for data scientists to work without access to a Fabric cluster.
 
-    Create an instance of the Cortex Fabric client. There are a few different ways in which you can instantiate a Client
+    Create an instance of the Sensa Fabric client. There are a few different ways in which you can instantiate a Client
 
-    1. If the user has the Cortex CLI installed and configured to a Fabric environment, AND a default project is set, they can do the following:
+    1. If the user has the Sensa CLI installed and configured to a Fabric environment, AND a default project is set, they can do the following:
 
-    >>> from cortex.client import Cortex; client = Cortex.client()
+    >>> from sensa.client import Sensa; client = Sensa.client()
 
-    2. If the user has the Cortex CLI installed and configured, but a default project is not set:
+    2. If the user has the Sensa CLI installed and configured, but a default project is not set:
 
-    >>> from cortex.client import Cortex; client = Cortex.client(project="some-project")
+    >>> from sensa.client import Sensa; client = Sensa.client(project="some-project")
 
-    3. If the user does not have the Cortex CLI installed, or is using the cortex-python package from within a Skill (Daemon) running inside a Fabric cluster, they can simply extract the required parameters from the request object and create a Cortex client like below:
+    3. If the user does not have the Sensa CLI installed, or is using the sensa-python package from within a Skill (Daemon) running inside a Fabric cluster, they can simply extract the required parameters from the request object and create a Sensa client like below:
 
     .. code-block::
 
-        from cortex.client import Cortex
+        from sensa.client import Sensa
 
         @app.post('/invoke')
         def start(req: dict):
             payload = req['payload']
-            client = Cortex.client(api_endpoint=req["apiEndpoint"], project=req["projectId"], token=req["token"])
+            client = Sensa.client(api_endpoint=req["apiEndpoint"], project=req["projectId"], token=req["token"])
             client.experiments.list_experiments()
             ....
 
-    4. If the user does not have the Cortex CLI installed, or is using the cortex-python package from within a **Skill(Job)** running inside a Fabric cluster, they can simply pass the `params` object passed into the Job script and create a Cortex client:
+    4. If the user does not have the Sensa CLI installed, or is using the sensa-python package from within a **Skill(Job)** running inside a Fabric cluster, they can simply pass the `params` object passed into the Job script and create a Sensa client:
 
     .. code-block:: python
 
         # contents of main.py for a Skill (job)
-        from cortex.client import Cortex
+        from sensa.client import Sensa
 
         def main(params):
-            client = Cortex.from_message(params)
+            client = Sensa.from_message(params)
 
         if __name__ == "__main__":
             if len(sys.argv)<2:
@@ -110,7 +110,7 @@ class Client:
             main(json.loads(sys.argv[-1]))
 
 
-    :param url: Cortex fabric url
+    :param url: Sensa fabric url
     :param token: (optional) Use JWT token to authenticate requests, will default to settings in ~/.cortex/config if not provided to generate JWT tokens
     :param project: (optional) Project name, must specify project for each request
     :param version: (optional) Fabric API version (default: 4)
@@ -186,37 +186,37 @@ class Client:
 
     @property
     def experiments(self) -> ExperimentClient:
-        """Returns a pre-initialised ExperimentClient whose project has been set to the project configured for the Cortex.client.
+        """Returns a pre-initialised ExperimentClient whose project has been set to the project configured for the Sensa.client.
 
         If you want to access experiments for a project that is
-        different from the one configured with Cortex.client, please use :meth:`cortex.client.Client.experiments_client` instead
+        different from the one configured with Sensa.client, please use :meth:`sensa.client.Client.experiments_client` instead
 
         .. code-block::
 
             ## use default .experiments client helper
-            from cortex.client import Cortex
-            client = Cortex.client()
+            from sensa.client import Sensa
+            client = Sensa.client()
             client.experiments.list_experiments()
             client.experiments.save_experiment()
             client.experiments.list_runs()
             client.experiments.delete_runs()
 
-        Refer to the documentation of :class:`cortex.experiment.ExperimentClient` to learn more about the methods available on the ExperimentClient
+        Refer to the documentation of :class:`sensa.experiment.ExperimentClient` to learn more about the methods available on the ExperimentClient
 
         :returns: An instance of this helper class that enables access to the Fabric Experiments API.
-        :rtype: :class:`cortex.experiment.ExperimentClient`
+        :rtype: :class:`sensa.experiment.ExperimentClient`
         """  # pylint: disable=line-too-long
         return self._service_clients.get("experiments")
 
     def experiments_client(self, project: str = None) -> ExperimentClient:
-        """Helper method to create a new :class:`cortex.experiment.ExperimentClient` instance that is configured to talk to another `project` than the default :attr:`cortex.client.Client._project`
+        """Helper method to create a new :class:`sensa.experiment.ExperimentClient` instance that is configured to talk to another `project` than the default :attr:`sensa.client.Client._project`
 
         >>> expc = client.experiments_client(project="another-project")
 
-        :param project: Project for which an experiments client is to be created, defaults to (the project configured with cortex.client.Client)
+        :param project: Project for which an experiments client is to be created, defaults to (the project configured with sensa.client.Client)
         :type project: str, optional
         :return: An experiment client
-        :rtype: :class:`cortex.experiment.ExperimentClient`
+        :rtype: :class:`sensa.experiment.ExperimentClient`
         """  # pylint: disable=line-too-long
         if project is not None:
             return ExperimentClient(project=project)
@@ -224,35 +224,35 @@ class Client:
 
     @property
     def connections(self) -> ConnectionClient:
-        """Returns a pre-initialised ConnectionClient whose project has been set to the project configured for the Cortex.client.
+        """Returns a pre-initialised ConnectionClient whose project has been set to the project configured for the Sensa.client.
 
         If you want to access connections for a project that is
-        different from the one configured with Cortex.client, please use :meth:`cortex.client.Client.connections_client` instead
+        different from the one configured with Sensa.client, please use :meth:`sensa.client.Client.connections_client` instead
 
         .. code-block::
 
             ## use default .connections client helper
-            from cortex.client import Cortex
-            client = Cortex.client()
+            from sensa.client import Sensa
+            client = Sensa.client()
             client.connections.save_connection
             client.connections.get_connection
 
-        Refer to the documentation of :class:`cortex.connection.ConnectionClient` to learn more about the methods available on the ConnectionClient
+        Refer to the documentation of :class:`sensa.connection.ConnectionClient` to learn more about the methods available on the ConnectionClient
 
         :returns: An instance of this helper class that enables access to the Fabric Connections API.
-        :rtype: :class:`cortex.connection.ConnectionClient`
+        :rtype: :class:`sensa.connection.ConnectionClient`
         """  # pylint: disable=line-too-long
         return self._service_clients.get("connections")
 
     def connections_client(self, project: str = None) -> ConnectionClient:
-        """Helper method to create a new :class:`cortex.connection.ConnectionClient` instance that is configured to talk to another `project` than the default :attr:`cortex.client.Client._project`
+        """Helper method to create a new :class:`sensa.connection.ConnectionClient` instance that is configured to talk to another `project` than the default :attr:`sensa.client.Client._project`
 
         >>> connc = client.connections_client(project="another-project")
 
-        :param project: Project for which a connections client is to be created, defaults to (the project configured with cortex.client.Client)
+        :param project: Project for which a connections client is to be created, defaults to (the project configured with sensa.client.Client)
         :type project: str, optional
         :return: A connection client
-        :rtype: :class:`cortex.connection.ConnectionClient`
+        :rtype: :class:`sensa.connection.ConnectionClient`
         """  # pylint: disable=line-too-long
         if project is not None:
             return ConnectionClient(project=project)
@@ -260,37 +260,37 @@ class Client:
 
     @property
     def content(self) -> ManagedContentClient:
-        """Returns a pre-initialised ManagedContentClient whose project has been set to the project configured for the Cortex.client.
+        """Returns a pre-initialised ManagedContentClient whose project has been set to the project configured for the Sensa.client.
 
         If you want to access managed content for a project that is
-        different from the one configured with Cortex.client, please use :meth:`cortex.client.Client.content_client` instead
+        different from the one configured with Sensa.client, please use :meth:`sensa.client.Client.content_client` instead
 
         .. code-block::
 
             ## use default .content client helper
-            from cortex.client import Cortex
-            client = Cortex.client()
+            from sensa.client import Sensa
+            client = Sensa.client()
             client.content.list
             client.content.upload
             client.content.exists
             .....
 
-        Refer to the documentation of :class:`cortex.content.ManagedContentClient` to learn more about the methods available on the ManagedContentClient
+        Refer to the documentation of :class:`sensa.content.ManagedContentClient` to learn more about the methods available on the ManagedContentClient
 
         :returns: An instance of this helper class that enables access to the Fabric Managed Content API.
-        :rtype: :class:`cortex.content.ManagedContentClient`
+        :rtype: :class:`sensa.content.ManagedContentClient`
         """  # pylint: disable=line-too-long
         return self._service_clients.get("content")
 
     def content_client(self, project: str = None) -> ManagedContentClient:
-        """Helper method to create a new :class:`cortex.connection.ManagedContentClient` instance that is configured to talk to another `project` than the default :attr:`cortex.client.Client._project`
+        """Helper method to create a new :class:`sensa.connection.ManagedContentClient` instance that is configured to talk to another `project` than the default :attr:`sensa.client.Client._project`
 
         >>> contentc = client.content_client(project="another-project")
 
-        :param project: Project for which a managed content client is to be created, defaults to (the project configured with cortex.client.Client)
+        :param project: Project for which a managed content client is to be created, defaults to (the project configured with sensa.client.Client)
         :type project: str, optional
         :return: A managed content client
-        :rtype: :class:`cortex.connection.ManagedContentClient`
+        :rtype: :class:`sensa.connection.ManagedContentClient`
         """  # pylint: disable=line-too-long
         if project is not None:
             return ManagedContentClient(project=project)
@@ -298,37 +298,37 @@ class Client:
 
     @property
     def models(self) -> ModelClient:
-        """Returns a pre-initialised ModelClient whose project has been set to the project configured for the Cortex.client.
+        """Returns a pre-initialised ModelClient whose project has been set to the project configured for the Sensa.client.
 
         If you want to access models for a project that is
-        different from the one configured with Cortex.client, please use :meth:`cortex.client.Client.models_client` instead
+        different from the one configured with Sensa.client, please use :meth:`sensa.client.Client.models_client` instead
 
         .. code-block::
 
             ## use default .models client helper
-            from cortex.client import Cortex
-            client = Cortex.client()
+            from sensa.client import Sensa
+            client = Sensa.client()
             client.models.list_models()
             client.models.get_model()
             client.models.save_model()
             .....
 
-        Refer to the documentation of :class:`cortex.model.ModelClient` to learn more about the methods available on the ModelClient
+        Refer to the documentation of :class:`sensa.model.ModelClient` to learn more about the methods available on the ModelClient
 
         :returns: An instance of this helper class that enables access to the Fabric Models API.
-        :rtype: :class:`cortex.model.ModelClient`
+        :rtype: :class:`sensa.model.ModelClient`
         """  # pylint: disable=line-too-long
         return self._service_clients.get("models")
 
     def models_client(self, project: str = None) -> ModelClient:
-        """Helper method to create a new :class:`cortex.model.ModelClient` instance that is configured to talk to another `project` than the default :attr:`cortex.client.Client._project`
+        """Helper method to create a new :class:`sensa.model.ModelClient` instance that is configured to talk to another `project` than the default :attr:`sensa.client.Client._project`
 
         >>> modelc = client.models_client(project="another-project")
 
-        :param project: Project for which a models client is to be created, defaults to (the project configured with cortex.client.Client)
+        :param project: Project for which a models client is to be created, defaults to (the project configured with sensa.client.Client)
         :type project: str, optional
         :return: A models client
-        :rtype: :class:`cortex.model.ModelClient`
+        :rtype: :class:`sensa.model.ModelClient`
         """  # pylint: disable=line-too-long
         if project is not None:
             return ModelClient(project=project)
@@ -336,40 +336,40 @@ class Client:
 
     @property
     def secrets(self) -> SecretsClient:
-        """Returns a pre-initialised SecretsClient whose project has been set to the project configured for the Cortex.client.
+        """Returns a pre-initialised SecretsClient whose project has been set to the project configured for the Sensa.client.
 
         .. important::
 
-            Note that, as of Fabric 6.3.3 and Fabric 6.4.0., you can only call :meth:`cortex.secrets.SecretsClient.get_secret` from within a skill running inside the Fabric cluster (won't work locally)
+            Note that, as of Fabric 6.3.3 and Fabric 6.4.0., you can only call :meth:`sensa.secrets.SecretsClient.get_secret` from within a skill running inside the Fabric cluster (won't work locally)
 
         If you want to access secrets for a project that is
-        different from the one configured with Cortex.client, please use :meth:`cortex.client.Client.secrets_client` instead
+        different from the one configured with Sensa.client, please use :meth:`sensa.client.Client.secrets_client` instead
 
         .. code-block::
 
             ## use default .secrets client helper
-            from cortex.client import Cortex
-            client = Cortex.client()
+            from sensa.client import Sensa
+            client = Sensa.client()
             client.models.get_secret()
             client.models.post_secret()
             .....
 
-        Refer to the documentation of :class:`cortex.secrets.SecretsClient` to learn more about the methods available on the SecretsClient
+        Refer to the documentation of :class:`sensa.secrets.SecretsClient` to learn more about the methods available on the SecretsClient
 
         :returns: An instance of this helper class that enables access to the Fabric Secrets API.
-        :rtype: :class:`cortex.secrets.SecretsClient`
+        :rtype: :class:`sensa.secrets.SecretsClient`
         """  # pylint: disable=line-too-long
         return self._service_clients.get("secrets")
 
     def secrets_client(self, project: str = None) -> SecretsClient:
-        """Helper method to create a new :class:`cortex.secrets.SecretsClient` instance that is configured to talk to another `project` than the default :attr:`cortex.client.Client._project`
+        """Helper method to create a new :class:`sensa.secrets.SecretsClient` instance that is configured to talk to another `project` than the default :attr:`sensa.client.Client._project`
 
         >>> secretsc = client.secrets_client(project="another-project")
 
-        :param project: Project for which a secrets client is to be created, defaults to (the project configured with cortex.client.Client)
+        :param project: Project for which a secrets client is to be created, defaults to (the project configured with sensa.client.Client)
         :type project: str, optional
         :return: A secrets client
-        :rtype: :class:`cortex.secrets.SecretsClient`
+        :rtype: :class:`sensa.secrets.SecretsClient`
         """  # pylint: disable=line-too-long
         if project is not None:
             return SecretsClient(project=project)
@@ -377,16 +377,16 @@ class Client:
 
     @property
     def skills(self) -> SkillClient:
-        """Returns a pre-initialised SkillClient whose project has been set to the project configured for the Cortex.client.Client
+        """Returns a pre-initialised SkillClient whose project has been set to the project configured for the Sensa.client.Client
 
         If you want to access Skills for a project that is
-        different from the one configured with Cortex.client, please use :meth:`cortex.client.Client.skills_client` instead
+        different from the one configured with Sensa.client, please use :meth:`sensa.client.Client.skills_client` instead
 
         .. code-block::
 
             ## use default .skills client helper
-            from cortex.client import Cortex
-            client = Cortex.client()
+            from sensa.client import Sensa
+            client = Sensa.client()
             client.skills.get_skill()
             client.skills.save_skill()
             client.skills.delete_skill()
@@ -395,22 +395,22 @@ class Client:
             client.skills.undeploy()
             .....
 
-        Refer to the documentation of :class:`cortex.skill.SkillClient` to learn more about the methods available on the SkillClient
+        Refer to the documentation of :class:`sensa.skill.SkillClient` to learn more about the methods available on the SkillClient
 
         :returns: An instance of this helper class that enables access to the Fabric SKills API.
-        :rtype: :class:`cortex.skill.SkillClient`
+        :rtype: :class:`sensa.skill.SkillClient`
         """  # pylint: disable=line-too-long
         return self._service_clients.get("skills")
 
     def skills_client(self, project: str = None) -> SkillClient:
-        """Helper method to create a new :class:`cortex.skill.SkillClient` instance that is configured to talk to another `project` than the default :attr:`cortex.client.Client._project`
+        """Helper method to create a new :class:`sensa.skill.SkillClient` instance that is configured to talk to another `project` than the default :attr:`sensa.client.Client._project`
 
         >>> skillsc = client.skills_client(project="another-project")
 
-        :param project: Project for which a Skill client is to be created, defaults to (the project configured with cortex.client.Client)
+        :param project: Project for which a Skill client is to be created, defaults to (the project configured with sensa.client.Client)
         :type project: str, optional
         :return: A Skills client
-        :rtype: :class:`cortex.skill.SkillClient`
+        :rtype: :class:`sensa.skill.SkillClient`
         """  # pylint: disable=line-too-long
         if project is not None:
             return SkillClient(project=project)
@@ -418,38 +418,38 @@ class Client:
 
     @property
     def sessions(self) -> SessionClient:
-        """Returns a pre-initialised SessionClient whose project has been set to the project configured for the Cortex.client.Client
+        """Returns a pre-initialised SessionClient whose project has been set to the project configured for the Sensa.client.Client
 
         If you want to access Sessions for a project that is
-        different from the one configured with Cortex.client, please use :meth:`cortex.client.Client.sessions_client` instead
+        different from the one configured with Sensa.client, please use :meth:`sensa.client.Client.sessions_client` instead
 
         .. code-block::
 
             ## use default .sessions client helper
-            from cortex.client import Cortex
-            client = Cortex.client()
+            from sensa.client import Sensa
+            client = Sensa.client()
             client.sessions.start_session()
             client.sessions.get_session_data()
             client.sessions.put_session_data()
             client.sessions.delete_session()
             .....
 
-        Refer to the documentation of :class:`cortex.session.SessionClient` to learn more about the methods available on the SessionClient
+        Refer to the documentation of :class:`sensa.session.SessionClient` to learn more about the methods available on the SessionClient
 
         :returns: An instance of this helper class that enables access to the Fabric Sessions API.
-        :rtype: :class:`cortex.session.SessionClient`
+        :rtype: :class:`sensa.session.SessionClient`
         """  # pylint: disable=line-too-long
         return self._service_clients.get("sessions")
 
     def sessions_client(self, project: str = None) -> SessionClient:
-        """Helper method to create a new :class:`cortex.session.SessionClient` instance that is configured to talk to another `project` than the default :attr:`cortex.client.Client._project`
+        """Helper method to create a new :class:`sensa.session.SessionClient` instance that is configured to talk to another `project` than the default :attr:`sensa.client.Client._project`
 
         >>> sessionsc = client.sessions_client(project="another-project")
 
-        :param project: Project for which a Sessions client is to be created, defaults to (the project configured with cortex.client.Client)
+        :param project: Project for which a Sessions client is to be created, defaults to (the project configured with sensa.client.Client)
         :type project: str, optional
         :return: A Sessions client
-        :rtype: :class:`cortex.session.SessionClient`
+        :rtype: :class:`sensa.session.SessionClient`
         """  # pylint: disable=line-too-long
         if project is not None:
             return SessionClient(project=project)
@@ -457,36 +457,36 @@ class Client:
 
     @property
     def types(self) -> TypeClient:
-        """Returns a pre-initialised TypeClient whose project has been set to the project configured for the Cortex.client.Client
+        """Returns a pre-initialised TypeClient whose project has been set to the project configured for the Sensa.client.Client
 
         If you want to access Types for a project that is
-        different from the one configured with Cortex.client, please use :meth:`cortex.client.Client.types_client` instead
+        different from the one configured with Sensa.client, please use :meth:`sensa.client.Client.types_client` instead
 
         .. code-block::
 
             ## use default .types client helper
-            from cortex.client import Cortex
-            client = Cortex.client()
+            from sensa.client import Sensa
+            client = Sensa.client()
             client.types.get_type()
             client.types.save_type()
             .....
 
-        Refer to the documentation of :class:`cortex.types.TypeClient` to learn more about the methods available on the TypeClient
+        Refer to the documentation of :class:`sensa.types.TypeClient` to learn more about the methods available on the TypeClient
 
         :returns: An instance of this helper class that enables access to the Fabric Types API.
-        :rtype: :class:`cortex.types.TypeClient`
+        :rtype: :class:`sensa.types.TypeClient`
         """  # pylint: disable=line-too-long
         return self._service_clients.get("types")
 
     def types_client(self, project: str = None) -> TypeClient:
-        """Helper method to create a new :class:`cortex.types.TypeClient` instance that is configured to talk to another `project` than the default :attr:`cortex.client.Client._project`
+        """Helper method to create a new :class:`sensa.types.TypeClient` instance that is configured to talk to another `project` than the default :attr:`sensa.client.Client._project`
 
         >>> typesc = client.types_client(project="another-project")
 
-        :param project: Project for which a Types client is to be created, defaults to (the project configured with cortex.client.Client)
+        :param project: Project for which a Types client is to be created, defaults to (the project configured with sensa.client.Client)
         :type project: str, optional
         :return: A Types client
-        :rtype: :class:`cortex.types.TypeClient`
+        :rtype: :class:`sensa.types.TypeClient`
         """  # pylint: disable=line-too-long
         if project is not None:
             return TypeClient(project=project)
@@ -495,7 +495,7 @@ class Client:
 
 class Local:
     """
-    Provides local, on-disk implementations of Cortex APIs.
+    Provides local, on-disk implementations of Sensa APIs.
     """
 
     def __init__(self, basedir=None):
@@ -503,7 +503,7 @@ class Local:
 
     def experiment(self, name: str) -> LocalExperiment:
         """
-        Create an experiment without connecting to Cortex fabric
+        Create an experiment without connecting to Sensa fabric
         :param name: Experiment name
         :return: Experiment instance
         """
@@ -511,7 +511,7 @@ class Local:
 
     @property
     def basedir(self):
-        """Return the configured base directory of this :class:`cortex.client.Local` instance
+        """Return the configured base directory of this :class:`sensa.client.Local` instance
 
         :return: configured base directory
         :rtype: _type_
@@ -519,9 +519,9 @@ class Local:
         return self._basedir
 
 
-class Cortex:
+class Sensa:
     """
-    Entry point to the Cortex API.
+    Entry point to the Sensa API.
     """
 
     @staticmethod
@@ -535,30 +535,30 @@ class Cortex:
         profile: str = None,
     ) -> Client:
         """
-        Gets a client with the provided parameters. All parameters are optional and default to environment variable values if not specified. Client creation can fail if you don't have a default project set in your environment variables or the Cortex config file.
+        Gets a client with the provided parameters. All parameters are optional and default to environment variable values if not specified. Client creation can fail if you don't have a default project set in your environment variables or the Sensa config file.
 
         .. important::
 
-            You can also set a default project when configuring your Cortex CLI using `cortex configure --project <your-project>`.
+            You can also set a default project when configuring your Sensa CLI using `cortex configure --project <your-project>`.
 
-            This value will be updated into the `$HOME/.cortex/config` file. If your Cortex config file `$HOME/.cortex/config` does not contain a default `project` set for the profile being used as the default one, you will need to set the project key when instantiating a :class:`cortex.client.Client`.
+            This value will be updated into the `$HOME/.cortex/config` file. If your Sensa config file `$HOME/.cortex/config` does not contain a default `project` set for the profile being used as the default one, you will need to set the project key when instantiating a :class:`sensa.client.Client`.
 
         **Example**
 
-        >>> from cortex.client import Cortex
-        >>> cortex = Cortex.client(project='example-project')
+        >>> from sensa.client import Sensa
+        >>> sensa = Sensa.client(project='example-project')
 
-        :param api_endpoint: The Cortex URL.
+        :param api_endpoint: The Sensa URL.
         :param api_version: The version of the API to use with this client.
         :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE file or directory with certificates of trusted CAs (default: True)
-        :param project: Cortex Project that you want to use.
+        :param project: Sensa Project that you want to use.
         :param token: (optional) Use JWT token for authenticating requests, will default to settings in ~/.cortex/config if not provided
-        :param config: (optional) Use Cortex personal access token config file to generate JWT tokens.
+        :param config: (optional) Use Sensa personal access token config file to generate JWT tokens.
 
-        :returns: An instance of :class:`cortex.client.Client`
-        :rtype: :class:`cortex.client.Client`
+        :returns: An instance of :class:`sensa.client.Client`
+        :rtype: :class:`sensa.client.Client`
         """  # pylint: disable=line-too-long
-        env = CortexEnv(
+        env = SensaEnv(
             api_endpoint=api_endpoint,
             token=token,
             config=config,
@@ -580,7 +580,7 @@ class Cortex:
 
         if not project:
             raise ProjectException(
-                "Please Provide Project Name that you want to access Cortex Assets for"
+                "Please Provide Project Name that you want to access Sensa Assets for"
             )
 
         tkn = _Token(token)
@@ -596,17 +596,17 @@ class Cortex:
 
     @staticmethod
     def from_message(msg, verify_ssl_cert=None) -> Client:
-        """Creates a Cortex client from a skill's input message, expects
+        """Creates a Sensa client from a skill's input message, expects
 
         .. code-block::
 
             { api_endpoint:"..", token:"..", projectId:".."}
 
-        :param msg: A message for constructing a Cortex Client.
+        :param msg: A message for constructing a Sensa Client.
         :param verify_ssl_cert: A boolean to enable/disable SSL validation, or path to a CA_BUNDLE file or directory with certificates of trusted CAs (default: True)
 
-        :returns: A Cortex Client
-        :rtype: :class:`cortex.client.Client`
+        :returns: A Sensa Client
+        :rtype: :class:`sensa.client.Client`
         """  # pylint: disable=line-too-long
         if not isinstance(msg, dict):
             raise InvalidMessageTypeException(
@@ -617,7 +617,7 @@ class Cortex:
             raise IncompleteMessageKeysException(
                 f"Skill message must contain these keys: {keys}"
             )
-        return Cortex.client(
+        return Sensa.client(
             api_endpoint=msg.get("apiEndpoint"),
             token=msg.get("token"),
             project=msg.get("projectId"),
@@ -626,27 +626,27 @@ class Cortex:
 
     @staticmethod
     def local(basedir=None):
-        """Create a Local Cortex implementation (mock)
+        """Create a Local Sensa implementation (mock)
 
         :param basedir: Root filesystem location, defaults to None
         :type basedir: str, optional
-        :return: an instance of :class:`cortex.client.Local`
-        :rtype: :class:`cortex.client.Local`
+        :return: an instance of :class:`sensa.client.Local`
+        :rtype: :class:`sensa.client.Local`
         """
         return Local(basedir)
 
     @staticmethod
     def login():
         """
-        Login to Cortex6. The function prompts the caller for Cortex Personal Access Config.
+        Login to Sensa6. The function prompts the caller for Sensa Personal Access Config.
 
         **Example**
 
-        >>> Cortex.login()
-        Cortex Personal Access Config: Cortex Personal Access Config
-        Cortex Project: The project that you to start using you Cortex assets from. (Not required)
+        >>> Sensa.login()
+        Sensa Personal Access Config: Sensa Personal Access Config
+        Sensa Project: The project that you to start using you Sensa assets from. (Not required)
         """
-        config = input("Cortex Personal Access Config: ")
+        config = input("Sensa Personal Access Config: ")
         project = input("Project: ")
         os.environ["CORTEX_PERSONAL_ACCESS_CONFIG"] = config
         if project:

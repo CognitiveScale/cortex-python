@@ -25,7 +25,7 @@ from .utils import raise_for_status_with_detail, parse_string
 class ModelClient(_Client):
 
     """
-    A client for the Cortex model management API. While the :mod:`cortex.experiment` module deals with the initial lifecycle aspects of model ideation, and design, the :class:`cortex.model.ModelClient` exists to save metadata about a known well-working model configuration produced after multiple iterations of Experiment runs and training configurations.
+    A client for the Cortex model management API. While the :mod:`sensa.experiment` module deals with the initial lifecycle aspects of model ideation, and design, the :class:`sensa.model.ModelClient` exists to save metadata about a known well-working model configuration produced after multiple iterations of Experiment runs and training configurations.
 
     Models can have a lifecycle, are able to store metadata about their types, and more. Refer to the `official API reference <https://cognitivescale.github.io/cortex-fabric/swagger/index.html#operation/PostModel>`_ to understand all the model metadata that can be saved when models are created or updated.
     """  # pylint: disable=line-too-long

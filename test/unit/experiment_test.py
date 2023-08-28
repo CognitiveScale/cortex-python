@@ -20,8 +20,8 @@ import os
 
 import requests_mock
 
-from cortex.client import Cortex
-from cortex.experiment import ExperimentClient, Experiment
+from sensa.client import Sensa
+from sensa.experiment import ExperimentClient, Experiment
 
 from .fixtures import mock_api_endpoint, mock_project
 from .fixtures import john_doe_token
@@ -46,40 +46,40 @@ class TestExperiment(unittest.TestCase):
     EXP_NAME = "unittest-exp"
 
     def setUp(self):
-        self.cortex = Cortex.from_message(params)
-        self.expc = ExperimentClient(self.cortex)
-        self.local = Cortex.local()
-        self.local_tmp = Cortex.local("/tmp/cortex")
+        self.sensa = Sensa.from_message(params)
+        self.expc = ExperimentClient(self.sensa)
+        self.local = Sensa.local()
+        self.local_tmp = Sensa.local("/tmp/cortex")
 
     def test_get_remote_experiment(self, m):
-        uri = self.cortex.experiments.URIs["experiment"].format(
+        uri = self.sensa.experiments.URIs["experiment"].format(
             experimentName=self.EXP_NAME, projectId=projectId
         )
-        local_url = self.cortex.experiments._serviceconnector._construct_url(uri)
+        local_url = self.sensa.experiments._serviceconnector._construct_url(uri)
         returns = {"name": self.EXP_NAME}
         m.get(local_url, status_code=200, json=returns)
 
-        exp = self.cortex.experiments.get_experiment(self.EXP_NAME)
+        exp = self.sensa.experiments.get_experiment(self.EXP_NAME)
         self.assertNotEqual(exp, None)
 
     def test_list_remote_experiments(self, m):
-        uri = self.cortex.experiments.URIs["experiments"].format(projectId=projectId)
-        local_url = self.cortex.experiments._serviceconnector._construct_url(uri)
+        uri = self.sensa.experiments.URIs["experiments"].format(projectId=projectId)
+        local_url = self.sensa.experiments._serviceconnector._construct_url(uri)
         returns = {"experiments": [{"name": self.EXP_NAME}]}
         m.get(local_url, status_code=200, json=returns)
-        exps = self.cortex.experiments.list_experiments()
+        exps = self.sensa.experiments.list_experiments()
 
         self.assertNotEqual(exps, None)
         self.assertIsInstance(exps, list)
 
     def test_make_remote_experiment(self, m):
-        uri = self.cortex.experiments.URIs["experiments"].format(projectId=projectId)
-        local_url = self.cortex.experiments._serviceconnector._construct_url(uri)
+        uri = self.sensa.experiments.URIs["experiments"].format(projectId=projectId)
+        local_url = self.sensa.experiments._serviceconnector._construct_url(uri)
         returns = {"name": self.EXP_NAME}
         m.post(local_url, status_code=200, json=returns)
         exp = Experiment(
-            document=self.cortex.experiments.save_experiment(self.EXP_NAME),
-            client=self.cortex.experiments,
+            document=self.sensa.experiments.save_experiment(self.EXP_NAME),
+            client=self.sensa.experiments,
         )
         self.assertNotEqual(exp, None)
         self.assertIsInstance(exp, Experiment)
@@ -99,16 +99,16 @@ class TestExperiment(unittest.TestCase):
         self.assertTrue(os.path.isdir(f"/tmp/cortex/local/experiments/{self.EXP_NAME}"))
 
     def test_remote_load_artifact(self, m):
-        uri = self.cortex.experiments.URIs["experiments"].format(projectId=projectId)
+        uri = self.sensa.experiments.URIs["experiments"].format(projectId=projectId)
         local_url = self.expc._serviceconnector._construct_url(uri)
         returns = {"name": self.EXP_NAME}
         m.post(local_url, status_code=200, json=returns)
 
         exp = Experiment(
-            document=self.cortex.experiments.save_experiment(
+            document=self.sensa.experiments.save_experiment(
                 experiment_name=self.EXP_NAME
             ),
-            client=self.cortex.experiments,
+            client=self.sensa.experiments,
         )
         # add a run & artifact
 

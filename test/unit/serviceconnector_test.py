@@ -18,8 +18,8 @@ import json
 import requests
 import requests_mock
 
-from cortex.__version__ import __version__
-from cortex.serviceconnector import ServiceConnector
+from sensa.__version__ import __version__
+from sensa.serviceconnector import ServiceConnector
 
 from .fixtures import mock_api_endpoint, john_doe_token
 
@@ -47,7 +47,7 @@ def test_request(**kwargs):
     path = "models/events"
     url = sc._construct_url(path)
     body = {"handle": 123}
-    useragentfragment = f"cortex-python/{__version__}"
+    useragentfragment = f"sensa-python/{__version__}"
     kwargs['mock'].post(url, status_code=200, json=body)
     r = sc.request("POST", path, body)
 

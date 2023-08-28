@@ -25,7 +25,7 @@ from urllib3.util.retry import Retry
 from .constant import VERSION
 from .__version__ import __version__, __title__
 
-from .utils import get_logger, get_cortex_profile, verify_JWT, generate_token
+from .utils import get_logger, get_sensa_profile, verify_JWT, generate_token
 from .utils import raise_for_status_with_detail
 
 log = get_logger(__name__)
@@ -323,7 +323,7 @@ class _Client:
         :return: _description_
         :rtype: T
         """
-        cli_cfg = get_cortex_profile()
+        cli_cfg = get_sensa_profile()
         url, token = cli_cfg["url"], cli_cfg["token"]
         # type: ignore # ignore until mypy properyly supports attr ...
         return cls(url, version, token, **kwargs)

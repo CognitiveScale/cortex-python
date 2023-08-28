@@ -4,26 +4,26 @@ The Cortex Python module provides an API client library to easily integrate with
 Refer to the Cortex documentation for details on how to use the library: 
 
 - Developer guide: https://cognitivescale.github.io/cortex-fabric/
-- Cortex Python references: https://cognitivescale.github.io/cortex-python/master/
+- Cortex Python references: https://cognitivescale.github.io/sensa-python/master/
 
 ## Installation
 
 To install: 
 ```
-  > pip install cortex-python
+  > pip install sensa-python
 ```
 
 or from source code:
 ```
-  > git clone git@github.com:CognitiveScale/cortex-python.git
-  > cd cortex-python
+  > git clone git@github.com:CognitiveScale/sensa-python.git
+  > cd sensa-python
   > pip install -e .
 ```
 
 To install the optional components: 
 ```
-  > pip install cortex-python[viz]
-  > pip install cortex-python[jupyter]
+  > pip install sensa-python[viz]
+  > pip install sensa-python[jupyter]
 ```
 
 ## Development 
@@ -39,8 +39,8 @@ When developing, it's a best practice to work in a virtual environment. Create a
 Install developer dependencies:
 
 ```
-  > git clone git@github.com:CognitiveScale/cortex-python.git
-  > cd cortex-python
+  > git clone git@github.com:CognitiveScale/sensa-python.git
+  > cd sensa-python
   > make dev.install
 ```
 
@@ -70,7 +70,7 @@ To run an individual file or class method, use pytest. Example tests shown below
 Suppose you want to release new functionality so it can be installed without releasing a new official version. We need to use an alpha version in PyPi.
 
 - we need to create and publish an alpha release:
-- get credentials to the `cortex-python` pypi CognitiveScale account (via lastpass)
+- get credentials to the `sensa-python` pypi CognitiveScale account (via lastpass)
 - run `make dev.push`. The alpha pre-release number (the N in X.Y.ZaN) with be determined automatically.
 
 ### Contribution 
@@ -120,4 +120,4 @@ The documentation will be rendered in HTML format under the `docs/_build/${VERSI
 - [ ] Update all documentation with proper Sphinx formatting
   - [x] Most of the major modules have been fixed except skill.py, model.py
 - [x] use exceptions defined in `cortex/exceptions.py`
-- [ ] integrate the cortex-python-profiles package back into the python SDK
+- [ ] integrate the sensa-python-profiles package back into the python SDK

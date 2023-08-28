@@ -23,7 +23,7 @@ log = get_logger(__name__)
 class AuthenticationClient(_Client):
     """Client authentication.
 
-    :param _Client: :py:class:`cortex.serviceconnector._Client`
+    :param _Client: :py:class:`sensa.serviceconnector._Client`
     :type _Client: _type_
     :return: Instance of AuthenticationClient
     :rtype: AuthenticationClient

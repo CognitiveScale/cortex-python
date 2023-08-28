@@ -18,9 +18,9 @@ from io import BytesIO, StringIO
 import unittest
 import requests_mock
 
-from cortex.connection import ConnectionClient
-from cortex.content import ManagedContentClient
-from cortex.client import Cortex
+from sensa.connection import ConnectionClient
+from sensa.content import ManagedContentClient
+from sensa.client import Sensa
 
 from .fixtures import john_doe_token, mock_api_endpoint, mock_project
 
@@ -37,7 +37,7 @@ class TestConnectionClient(unittest.TestCase):
         params = {"token": TOKEN, "projectId": projectId, "apiEndpoint": url}
         self.cc = ConnectionClient(url, token=TOKEN, project=projectId)
         self.mc = ManagedContentClient(url, token=TOKEN, project=projectId)
-        self.client = Cortex.from_message(params)
+        self.client = Sensa.from_message(params)
         self.mcFromClient = ManagedContentClient(self.client)
 
     def test_save_connection(self, m):

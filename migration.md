@@ -1,10 +1,14 @@
+# Note
+
+Users of `cortex-python` should install `sensa-python` instead.
+
 # Migration steps from `cortex-client` to `cortex-python`
 
-The `cortex-python` library and its optional add-ons are replacing the cortex-client library. The new libraries are more lightweight and use-case focussed. `Cortex-python` may be used for development with or without the add-ons.
+The `cortex-python` library and its optional add-ons are replacing the cortex-client library. The new libraries are more lightweight and use-case focussed. `Sensa-python` may be used for development with or without the add-ons.
 
 ## Uninstall the previous library (`cortex-client`)
 
-To use the new Cortex libraries, `cortex-python` and `cortex-python-builders` you must uninstall the `cortex-client` library; `cortex-client` and `cortex-python`**cannot** be installed simultaneously in your python environment.
+To use the new Sensa libraries, `cortex-python` and `cortex-python-builders` you must uninstall the `cortex-client` library; `cortex-client` and `cortex-python`**cannot** be installed simultaneously in your python environment.
 
 ```
   > pip uninstall cortex-client
@@ -49,9 +53,9 @@ To import ManagedContentClient:
 ``` 
 ConnectionClient can be used to save and retrieve connections. 
 
-## Use Cortex magics
+## Use Sensa magics
 
-Cortex magics can be used only when the optional `builders` dependency is installed:
+Sensa magics can be used only when the optional `builders` dependency is installed:
 
 ```
 > %reload_ext cortex_builders
@@ -71,15 +75,15 @@ class to run experiments, save and retrieve your models.
 Also, you can use the `action` in the builder class inside client class to build your actions. (Can be used only when optional dependency of builders is installed)
 
 4. `SecretsClient` has been deprecated. There is no equivalent replacement functionality in the python library, but
-you can manage secrets through the Cortex Vault in the Cortex Console or via the CLI `cortex variables [command] [options]`.
+you can manage secrets through the Sensa Vault in the Sensa Console or via the CLI `cortex variables [command] [options]`.
 
 5. `Message.with_payload()` has been removed. This method was previously deprecated in `cortex-client` v5.5.4.
 Instead, use the `Client.message()` method:
 
 ```
-> from cortex.client import Cortex
+> from cortex.client import Sensa
 
-> cortex = Cortex.client()
+> cortex = Sensa.client()
 > message = cortex.message(payload={'value': 'hello world'})
 ```
 

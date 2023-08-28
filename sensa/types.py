@@ -15,8 +15,8 @@ limitations under the License.
 """
 
 import urllib.parse
-from cortex.serviceconnector import _Client
-from cortex.utils import get_logger
+from sensa.serviceconnector import _Client
+from sensa.utils import get_logger
 from .camel import CamelResource
 from .utils import raise_for_status_with_detail
 
@@ -44,8 +44,8 @@ class TypeClient(_Client):
 
         :param name: The name of the type to retrieve.
         :type name: str
-        :return: An instance of :class:`cortex.types.Type`
-        :rtype: :class:`cortex.types.Type`
+        :return: An instance of :class:`sensa.types.Type`
+        :rtype: :class:`sensa.types.Type`
         """
         uri = self.URIs["type"].format(
             projectId=self._project(), name=urllib.parse.quote(name, safe="")

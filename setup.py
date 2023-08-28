@@ -20,7 +20,7 @@ import os
 
 here = os.path.abspath(os.path.dirname(__file__))
 about = {}
-with open(os.path.join(here, "cortex", "__version__.py"), "r") as f:
+with open(os.path.join(here, "sensa", "__version__.py"), "r") as f:
     exec(f.read(), about)
 
 with open("README.md") as f:
@@ -38,8 +38,8 @@ setup(
     license=about["__license__"],
     package_data={"": ["LICENSE", "CHANGELOG.md"]},
     project_urls={
-        "Documentation": "https://cognitivescale.github.io/cortex-python/master/",
-        "Source": "https://github.com/CognitiveScale/cortex-python",
+        "Documentation": "https://cognitivescale.github.io/sensa-python/master/",
+        "Source": "https://github.com/CognitiveScale/sensa-python",
     },
     platforms=["any"],
     packages=find_packages(),

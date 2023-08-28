@@ -22,8 +22,8 @@ import requests_mock
 from pytest import raises
 from requests.exceptions import HTTPError
 
-from cortex.client import Cortex
-from cortex.experiment import ExperimentClient, RemoteRun, Experiment
+from sensa.client import Sensa
+from sensa.experiment import ExperimentClient, RemoteRun, Experiment
 from .fixtures import build_mock_url, mock_api_endpoint, mock_project, john_doe_token
 
 PROJECT = mock_project()
@@ -60,15 +60,15 @@ class TestRun(unittest.TestCase):
 
     def setUp(self):
         params = {"token": TOKEN, "projectId": PROJECT, "apiEndpoint": url}
-        self.local = Cortex.local()
-        self.cortex = Cortex.from_message(params)
+        self.local = Sensa.local()
+        self.sensa = Sensa.from_message(params)
 
 
     def test_make_remote_run(self, m):
         self.registerMocks(m);
         exp = Experiment(
-            document=self.cortex.experiments.get_experiment(self.RUN_EXP_NAME),
-            client=self.cortex.experiments,
+            document=self.sensa.experiments.get_experiment(self.RUN_EXP_NAME),
+            client=self.sensa.experiments,
         )
         r = exp.start_run()
 
@@ -77,11 +77,11 @@ class TestRun(unittest.TestCase):
     def test_get_run(self, m):
         self.registerMocks(m);
         exp = Experiment(
-            document=self.cortex.experiments.get_experiment(self.RUN_EXP_NAME),
-            client=self.cortex.experiments,
+            document=self.sensa.experiments.get_experiment(self.RUN_EXP_NAME),
+            client=self.sensa.experiments,
         )
 
-        uri = self.cortex.experiments.URIs["run"].format(
+        uri = self.sensa.experiments.URIs["run"].format(
             experimentName=self.RUN_EXP_NAME, projectId=PROJECT, runId=self.RUN_ID
         )
         returns = {
@@ -104,17 +104,17 @@ class TestRun(unittest.TestCase):
         }
 
         m.get(build_mock_url(uri), status_code=200, json=returns)
-        ret = self.cortex.experiments.get_run(self.RUN_EXP_NAME, self.RUN_ID)
+        ret = self.sensa.experiments.get_run(self.RUN_EXP_NAME, self.RUN_ID)
         self.assertEqual(returns, ret)
 
     def test_get_run_failed(self, m):
         self.registerMocks(m);
         exp = Experiment(
-            document=self.cortex.experiments.get_experiment(self.RUN_EXP_NAME),
-            client=self.cortex.experiments,
+            document=self.sensa.experiments.get_experiment(self.RUN_EXP_NAME),
+            client=self.sensa.experiments,
         )
 
-        uri = self.cortex.experiments.URIs["run"].format(
+        uri = self.sensa.experiments.URIs["run"].format(
             experimentName=self.RUN_EXP_NAME, projectId=PROJECT, runId=self.RUN_ID
         )
         returns = "error"
@@ -122,13 +122,13 @@ class TestRun(unittest.TestCase):
         m.get(build_mock_url(uri), status_code=404, json=returns)
 
         with raises(HTTPError) as ex:
-            ret = self.cortex.experiments.get_run(self.RUN_EXP_NAME, self.RUN_ID)
+            ret = self.sensa.experiments.get_run(self.RUN_EXP_NAME, self.RUN_ID)
 
     def test_run_get_artifact(self, m):
         self.registerMocks(m);
         exp = Experiment(
-            document=self.cortex.experiments.get_experiment(self.RUN_EXP_NAME),
-            client=self.cortex.experiments,
+            document=self.sensa.experiments.get_experiment(self.RUN_EXP_NAME),
+            client=self.sensa.experiments,
         )
         r = exp.start_run()
 
@@ -148,10 +148,10 @@ class TestRun(unittest.TestCase):
         self.assertEqual(test_artifact, result)
 
     def test_list_runs(self, m):
-        uri = self.cortex.experiments.URIs["runs"].format(
+        uri = self.sensa.experiments.URIs["runs"].format(
             experimentName=self.RUN_EXP_NAME, projectId=PROJECT
         )
-        local_url = self.cortex.experiments._serviceconnector._construct_url(uri)
+        local_url = self.sensa.experiments._serviceconnector._construct_url(uri)
         returns = {
             "runs": {
                 "_id": "63cfb10ffe65fb07bf8a94b9",
@@ -174,60 +174,60 @@ class TestRun(unittest.TestCase):
         }
 
         m.get(build_mock_url(uri), status_code=200, json=returns)
-        runs = self.cortex.experiments.list_runs(experiment_name=self.RUN_EXP_NAME)
+        runs = self.sensa.experiments.list_runs(experiment_name=self.RUN_EXP_NAME)
 
         self.assertNotEqual(runs, None)
 
     def test_update_run(self, m):
-        uri = self.cortex.experiments.URIs["run"].format(
+        uri = self.sensa.experiments.URIs["run"].format(
             experimentName=self.RUN_EXP_NAME, projectId=PROJECT, runId=self.RUN_ID
         )
-        local_url = self.cortex.experiments._serviceconnector._construct_url(uri)
+        local_url = self.sensa.experiments._serviceconnector._construct_url(uri)
 
         body = {"success": True}
         m.put(build_mock_url(uri), status_code=200, json=body)
 
-        ret = self.cortex.experiments.update_run(
+        ret = self.sensa.experiments.update_run(
             experiment_name=self.RUN_EXP_NAME, run_id=self.RUN_ID, meta={"blah": 1}
         )
         self.assertEqual(ret, True)
 
     def test_update_run_failed(self, m):
-        uri = self.cortex.experiments.URIs["run"].format(
+        uri = self.sensa.experiments.URIs["run"].format(
             experimentName=self.RUN_EXP_NAME, projectId=PROJECT, runId=self.RUN_ID
         )
-        local_url = self.cortex.experiments._serviceconnector._construct_url(uri)
+        local_url = self.sensa.experiments._serviceconnector._construct_url(uri)
 
         body = {"success": False}
         m.put(local_url, status_code=200, json=body)
         with raises(Exception) as ex:
-            ret = self.cortex.experiments.update_run(
+            ret = self.sensa.experiments.update_run(
                 experiment_name=self.RUN_EXP_NAME, run_id=self.RUN_ID, meta={"blah": 1}
             )
 
     def test_delete_run(self, m):
-        uri = self.cortex.experiments.URIs["run"].format(
+        uri = self.sensa.experiments.URIs["run"].format(
             experimentName=self.RUN_EXP_NAME, projectId=PROJECT, runId=self.RUN_ID
         )
-        local_url = self.cortex.experiments._serviceconnector._construct_url(uri)
+        local_url = self.sensa.experiments._serviceconnector._construct_url(uri)
 
         body = {"success": True}
         m.delete(local_url, status_code=200, json=body)
 
-        ret = self.cortex.experiments.delete_run(
+        ret = self.sensa.experiments.delete_run(
             experiment_name=self.RUN_EXP_NAME, run_id=self.RUN_ID
         )
         self.assertTrue(ret)
 
     def test_delete_run_failed(self, m):
-        uri = self.cortex.experiments.URIs["run"].format(
+        uri = self.sensa.experiments.URIs["run"].format(
             experimentName=self.RUN_EXP_NAME, projectId=PROJECT, runId=self.RUN_ID
         )
-        local_url = self.cortex.experiments._serviceconnector._construct_url(uri)
+        local_url = self.sensa.experiments._serviceconnector._construct_url(uri)
 
         body = {"success": False} # TODO validate should this be a 200 ?
         m.delete(local_url, status_code=200, json=body)
         with raises(Exception) as ex:
-            self.cortex.experiments.delete_run(
+            self.sensa.experiments.delete_run(
                 experiment_name=self.RUN_EXP_NAME, run_id=self.RUN_ID
             )

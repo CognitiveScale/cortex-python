@@ -1,6 +1,6 @@
 ### Setup proxy with script to intercept internal API calls
 
-Follow [this](https://docs.mitmproxy.org/stable/overview-installation/#installation-from-the-python-package-index-pypi) to install mitmproxy using pipx to be able to run scripts with cortex-python library
+Follow [this](https://docs.mitmproxy.org/stable/overview-installation/#installation-from-the-python-package-index-pypi) to install mitmproxy using pipx to be able to run scripts with sensa-python library
 
 Run mitmproxy with the proxy [python script](proxy_cortex_internal.py) 
 

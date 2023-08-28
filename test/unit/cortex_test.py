@@ -20,17 +20,17 @@ from unittest.mock import Mock
 
 import requests_mock
 
-from cortex.client import Cortex
-from cortex.message import Message
+from sensa.client import Sensa
+from sensa.message import Message
 import pytest
-from cortex.connection import ConnectionClient, Connection
-from cortex.content import ManagedContentClient
-from cortex.experiment import ExperimentClient, Experiment
-from cortex.model import ModelClient, Model
-from cortex.secrets import SecretsClient, Secret
-from cortex.session import SessionClient, Session
-from cortex.types import TypeClient, Type
-from cortex.skill import SkillClient, Skill
+from sensa.connection import ConnectionClient, Connection
+from sensa.content import ManagedContentClient
+from sensa.experiment import ExperimentClient, Experiment
+from sensa.model import ModelClient, Model
+from sensa.secrets import SecretsClient, Secret
+from sensa.session import SessionClient, Session
+from sensa.types import TypeClient, Type
+from sensa.skill import SkillClient, Skill
 
 from .fixtures import john_doe_subject, john_doe_token, mock_api_endpoint
 
@@ -41,30 +41,30 @@ api_endpoint = mock_api_endpoint()
 api_version = 4
 
 
-class TestCortex(unittest.TestCase):
+class TestSensa(unittest.TestCase):
     def test_client(self):
         account = "unittest"
-        cortex = Cortex.client(
+        sensa = Sensa.client(
             api_endpoint=api_endpoint,
             api_version=api_version,
             project=account,
             token=token,
         )
-        assert cortex._url == api_endpoint
-        assert cortex._token._token == token
-        assert cortex._token._jwt[1]["sub"] == john_doe_subject()
+        assert sensa._url == api_endpoint
+        assert sensa._token._token == token
+        assert sensa._token._jwt[1]["sub"] == john_doe_subject()
 
     def test_message_creation(self):
-        cortex = Cortex.client(
+        sensa = Sensa.client(
             api_endpoint=api_endpoint,
             api_version=api_version,
             project="unittest",
             token=token,
         )
-        message = cortex.message({"foo": "bar"})
+        message = sensa.message({"foo": "bar"})
         assert isinstance(message, Message)
-        assert message.apiEndpoint == cortex._url
-        assert message.token == cortex._token.token
+        assert message.apiEndpoint == sensa._url
+        assert message.token == sensa._token.token
         assert message.token == token
 
     # Basic test check that skill invoke message creates a client properly
@@ -79,7 +79,7 @@ class TestCortex(unittest.TestCase):
             "activationId": "activation",
             "properties": {"someprop": "propval"},
         }
-        client = Cortex.from_message(message)
+        client = Sensa.from_message(message)
         # Only these properties are required to create a client
         assert client._project == project
         assert client._url == api_endpoint
@@ -98,7 +98,7 @@ class TestCortex(unittest.TestCase):
         ]
         for message in messages:
             with pytest.raises(Exception, match="Skill message"):
-                Cortex.from_message(message)
+                Sensa.from_message(message)
 
     def test_proj_override(self):
         project = "clientProj"
@@ -107,7 +107,7 @@ class TestCortex(unittest.TestCase):
             "token": token,
             "projectId": project,
         }
-        client = Cortex.from_message(message)
+        client = Sensa.from_message(message)
         tests = [
             [ConnectionClient(client), project, "get_connection", ("foo")],
             [
@@ -229,7 +229,7 @@ class TestCortex(unittest.TestCase):
             "projectId": project,
         }
         test_name = "random_resource"
-        client = Cortex.from_message(message)
+        client = Sensa.from_message(message)
         tests = [
             [Connection(test_name, ConnectionClient(client)), project],
             [Connection(test_name, ConnectionClient(client, project="other")), "other"],

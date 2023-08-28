@@ -78,7 +78,7 @@ class LocalExperiment:
 
     def start_run(self) -> Run:
         """Creates a run for the experiment.
-        :rtype: :class:`cortex.experiment.model.Run`
+        :rtype: :class:`sensa.experiment.model.Run`
         """
         return Run(self)
 
@@ -86,7 +86,7 @@ class LocalExperiment:
         """Saves a run.
 
         :param run: The run you want to save.
-        :type run: :class:`cortex.experiment.model.Run`
+        :type run: :class:`sensa.experiment.model.Run`
 
         :rtype: None
         """
@@ -156,7 +156,7 @@ class LocalExperiment:
 
         :param run_id: Identifier of the run to be fetched
         :type run_id: str
-        :rtype: :class:`cortex.experiment.model.Run`
+        :rtype: :class:`sensa.experiment.model.Run`
         """
         for run in self.runs():
             if run.id == run_id:
@@ -237,5 +237,5 @@ class LocalExperiment:
         except ImportError as exc:
             raise ConfigurationException(
                 "The ipython package is required, please install it"
-                "using pip install cortex-python[viz]"
+                "using pip install sensa-python[viz]"
             ) from exc
