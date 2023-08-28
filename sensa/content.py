@@ -38,7 +38,7 @@ class ManagedContentClient(_Client):
     """
     A client used to access the `Cortex managed content service (blob store) <https://cognitivescale.github.io/cortex-fabric/docs/manage-data/managed-content>`_. You can find a pre-created instance of this class on every :py:class:`sensa.client.Client` instance via the :py:attr:`Client.content` attribute.
 
-    >>> from sensa.client import Sensa; client = Cortex.client();
+    >>> from sensa.client import Sensa; client = Sensa.client();
     >>> client.content.list() # list content from the default project configured for the user
 
     """  # pylint: disable=line-too-long
