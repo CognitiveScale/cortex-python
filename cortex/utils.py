@@ -22,13 +22,13 @@ import urllib.parse
 from collections import namedtuple
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from typing import Union
 
 import python_jwt as py_jwt
 import jwcrypto.jwk as jwkLib
 from requests.exceptions import HTTPError
 from requests import request
 from .exceptions import BadTokenException, AuthenticationHeaderError
-from typing import Union
 
 
 def md5sum(file_name, blocksize=65536):
