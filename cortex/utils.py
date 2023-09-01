@@ -28,6 +28,7 @@ import jwcrypto.jwk as jwkLib
 from requests.exceptions import HTTPError
 from requests import request
 from .exceptions import BadTokenException, AuthenticationHeaderError
+from typing import Union
 
 
 def md5sum(file_name, blocksize=65536):
@@ -141,17 +142,17 @@ def verify_JWT(token, config=None):
         return generate_token(config)
 
 
-def _get_fabric_info(config: dict, verify_ssl_cert: bool=True):
+def _get_fabric_info(config: dict, verify_ssl_cert: Union[bool, str]=True):
     uri = config.get("url") + "/fabric/v4/info"
     headers = {"Content-Type": "application/json"}
     return request("GET", uri, headers=headers, verify=verify_ssl_cert,).json()
 
 
-def _get_fabric_server_ts(config: dict, verify_ssl_cert: bool=True):
+def _get_fabric_server_ts(config: dict, verify_ssl_cert: Union[bool, str]=True):
     return _get_fabric_info(config, verify_ssl_cert).get("serverTs")
 
 
-def generate_token(config, verify_ssl_cert: bool=True, validity=2):
+def generate_token(config, verify_ssl_cert: Union[bool, str]=True, validity=2):
     """
     Use the Personal Access Token (JWK) obtained from Cortex's console
     to generate JWTs to access cortex services..
