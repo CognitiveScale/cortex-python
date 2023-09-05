@@ -156,6 +156,10 @@ def generate_token(config, verify_ssl_cert: Union[bool, str]=True, validity=2):
     """
     Use the Personal Access Token (JWK) obtained from Cortex's console
     to generate JWTs to access cortex services..
+    
+    :param verify_ssl_cert: (optional) Either a boolean, in which case it controls whether we verify
+            the server's TLS certificate, or a string, in which case it must be a path
+            to a CA bundle to use. Defaults to ``True``.
     """
     try:
         server_ts = int(
