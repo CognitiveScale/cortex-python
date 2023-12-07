@@ -51,6 +51,7 @@ pipelines:
                     set -eux
                     git clone git@github.com:CognitiveScale/gocd-pipeline-scripts.git
                     ./gocd-pipeline-scripts/common/c12e-common.sh dev
+                    ./gocd-pipeline-scripts/common/sonar-scan.sh scan
   cortex-python-staging:
     group: fabric6
     environment_variables:
@@ -76,7 +77,9 @@ pipelines:
                     set -eux
                     git clone git@github.com:CognitiveScale/gocd-pipeline-scripts.git
                     ./gocd-pipeline-scripts/common/c12e-common.sh staging
+                    ./gocd-pipeline-scripts/common/sonar-scan.sh scan
                     ./gocd-pipeline-scripts/cortex5/python/publish-distribution.sh -i -e
+                    
   cortex-python-master:
     group: fabric6
     environment_variables:
@@ -108,6 +111,7 @@ pipelines:
                     set -eux
                     git clone git@github.com:CognitiveScale/gocd-pipeline-scripts.git
                     ./gocd-pipeline-scripts/common/c12e-common.sh master
+                    ./gocd-pipeline-scripts/common/sonar-scan.sh scan
                     ./gocd-pipeline-scripts/cortex5/python/publish-distribution.sh -i -e
       - publish:
           approval:
