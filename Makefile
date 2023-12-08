@@ -42,7 +42,7 @@ build.release: clean
 
 dev.test:
 	pylint --recursive=y cortex
-	pytest --cache-clear  --html=coverage/test-report.html --self-contained-html --cov=cortex/ --cov-report=html:coverage --cov-report=term test/unit
+	pytest --cache-clear  --html=coverage/test-report.html --self-contained-html --cov=cortex/ --cov-report=html:coverage --cov-report=xml:coverage/coverage.xml --cov-report=term test/unit
 
 test:
 	tox -r # tox runs make dev.test internally
