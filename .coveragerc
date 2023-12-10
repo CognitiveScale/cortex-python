@@ -1,3 +1,2 @@
-include = 
-    cortex/*
-    local/*
+[coverage:run]
+relative_files = True
