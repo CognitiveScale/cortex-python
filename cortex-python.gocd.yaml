@@ -53,7 +53,6 @@ pipelines:
                     ./gocd-pipeline-scripts/common/c12e-common.sh dev
                     ./gocd-pipeline-scripts/common/sonar-scan.sh scan
                     tree
-                    pwd
   cortex-python-staging:
     group: fabric6
     environment_variables:
