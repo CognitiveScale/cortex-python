@@ -25,7 +25,7 @@ pipelines:
                 - test:
                     source: coverage
               tabs: *testReports
-              elastic_profile_id: gocd-test-agent-dind
+              elastic_profile_id: gocd-agent-dind-2023
               tasks:
                 - script: c12e-ci -l
   cortex-python-develop:
@@ -45,13 +45,12 @@ pipelines:
                 - test:
                     source: coverage
               tabs: *testReports
-              elastic_profile_id: gocd-test-agent-dind
+              elastic_profile_id: gocd-agent-dind-2023
               tasks:
                 - script: |
                     set -eux
-                    git clone git@github.com:CognitiveScale/gocd-pipeline-scripts.git
-                    ./gocd-pipeline-scripts/common/c12e-common.sh dev
-                    ./gocd-pipeline-scripts/common/sonar-scan.sh scan
+                    c12e-common.sh dev
+                    sonar-scan.sh scan
   cortex-python-staging:
     group: fabric6
     environment_variables:
@@ -71,14 +70,13 @@ pipelines:
           clean_workspace: true
           jobs:
             build:
-              elastic_profile_id: gocd-test-agent-dind
+              elastic_profile_id: gocd-agent-dind-2023
               tasks:
                 - script: |
                     set -eux
-                    git clone git@github.com:CognitiveScale/gocd-pipeline-scripts.git
-                    ./gocd-pipeline-scripts/common/c12e-common.sh staging
-                    ./gocd-pipeline-scripts/common/sonar-scan.sh scan
-                    ./gocd-pipeline-scripts/cortex5/python/publish-distribution.sh -i -e
+                    c12e-common.sh staging
+                    sonar-scan.sh scan
+                    publish-distribution.sh -i -e
                     
   cortex-python-master:
     group: fabric6
@@ -100,7 +98,7 @@ pipelines:
           jobs:
             build:
               tabs: *testReports
-              elastic_profile_id: gocd-test-agent-dind
+              elastic_profile_id: gocd-agent-dind-2023
               artifacts:
                 - build:
                     source: cortex-python.docs.tgz
@@ -109,17 +107,16 @@ pipelines:
               tasks:
                 - script: |
                     set -eux
-                    git clone git@github.com:CognitiveScale/gocd-pipeline-scripts.git
-                    ./gocd-pipeline-scripts/common/c12e-common.sh master
-                    ./gocd-pipeline-scripts/common/sonar-scan.sh scan
-                    ./gocd-pipeline-scripts/cortex5/python/publish-distribution.sh -i -e
+                    c12e-common.sh master
+                    sonar-scan.sh scan
+                    publish-distribution.sh -i -e
       - publish:
           approval:
             type: manual
           clean_workspace: true
           jobs:
             publishJob:
-              elastic_profile_id: gocd-test-agent-dind
+              elastic_profile_id: gocd-agent-dind-2023
               tasks:
                 - fetch:
                     pipeline: cortex-python-master
@@ -128,5 +125,4 @@ pipelines:
                     source: cortex-python.docs.tgz
                     is_file: yes
                 - script: |
-                    git clone git@github.com:CognitiveScale/gocd-pipeline-scripts.git
-                    ./gocd-pipeline-scripts/common/publish-gh-pages.sh -d cortex-python.docs.tgz -r git@github.com:CognitiveScale/cortex-python.git -b ${GH_PAGES_BRANCH} -k .nojekyll
+                    publish-gh-pages.sh -d cortex-python.docs.tgz -r git@github.com:CognitiveScale/cortex-python.git -b ${GH_PAGES_BRANCH} -k .nojekyll
