@@ -16,6 +16,7 @@ pipelines:
           defaultBranch: develop
     environment_variables:
       ALPHA_BUILD: "true"
+      SONAR_USER_HOME: "/tmp"
     stages:
       - build:
           clean_workspace: true
@@ -36,6 +37,7 @@ pipelines:
         branch: develop
     environment_variables:
       ALPHA_BUILD: "true"
+      SONAR_USER_HOME: "/tmp"
     stages:
       - build:
           clean_workspace: true
@@ -58,6 +60,7 @@ pipelines:
       PYPI_UPLOAD: "https://upload.pypi.org/legacy/"
       REPO_NAME: "cs_internal-local"
       REPO_USER: "cortex5"
+      SONAR_USER_HOME: "/tmp"
     secure_variables:
       # LastPass: Shared-devops/Pypi
       REPO_PASSWORD: "AES:VK48nn/zr+mFTMixYa8Psg==:P+AZlJmgChiMcFRyNRmjuwYqBQwkc1hRP8zHck5L5SU="
@@ -85,6 +88,7 @@ pipelines:
       PYPI_UPLOAD: "https://upload.pypi.org/legacy/"
       REPO_NAME: "cognitivescale_local"
       REPO_USER: "cortex5"
+      SONAR_USER_HOME: "/tmp"
     secure_variables:
       # LastPass: Shared-devops/Pypi
       REPO_PASSWORD: "AES:VK48nn/zr+mFTMixYa8Psg==:P+AZlJmgChiMcFRyNRmjuwYqBQwkc1hRP8zHck5L5SU="
