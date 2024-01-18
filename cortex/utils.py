@@ -22,6 +22,7 @@ import urllib.parse
 from collections import namedtuple
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from typing import Union
 
 import python_jwt as py_jwt
 import jwcrypto.jwk as jwkLib
@@ -141,24 +142,28 @@ def verify_JWT(token, config=None):
         return generate_token(config)
 
 
-def _get_fabric_info(config: dict):
+def _get_fabric_info(config: dict, verify_ssl_cert: Union[bool, str]=True):
     uri = config.get("url") + "/fabric/v4/info"
     headers = {"Content-Type": "application/json"}
-    return request("GET", uri, headers=headers).json()
+    return request("GET", uri, headers=headers, verify=verify_ssl_cert,).json()
 
 
-def _get_fabric_server_ts(config: dict):
-    return _get_fabric_info(config).get("serverTs")
+def _get_fabric_server_ts(config: dict, verify_ssl_cert: Union[bool, str]=True):
+    return _get_fabric_info(config, verify_ssl_cert).get("serverTs")
 
 
-def generate_token(config, validity=2):
+def generate_token(config, verify_ssl_cert: Union[bool, str]=True, validity=2):
     """
     Use the Personal Access Token (JWK) obtained from Cortex's console
     to generate JWTs to access cortex services..
+    
+    :param verify_ssl_cert: (optional) Either a boolean, in which case it controls whether we verify
+            the server's TLS certificate, or a string, in which case it must be a path
+            to a CA bundle to use. Defaults to ``True``.
     """
     try:
         server_ts = int(
-            _get_fabric_server_ts(config) / 1000
+            _get_fabric_server_ts(config, verify_ssl_cert) / 1000
         )  # fabric info returns serverTs in milliseconds
         key = jwkLib.JWK.from_json(json.dumps(config.get("jwk")))
         token_payload = {
