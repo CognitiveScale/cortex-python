@@ -59,7 +59,7 @@ pipelines:
       ALPHA_BUILD: "true"
       PYPI_UPLOAD: "https://upload.pypi.org/legacy/"
       REPO_NAME: "cs_internal-local"
-      REPO_USER: "cortex5"
+      REPO_USER: "__token__"
       SONAR_USER_HOME: "/tmp"
     secure_variables:
       # LastPass: Shared-devops/Pypi
