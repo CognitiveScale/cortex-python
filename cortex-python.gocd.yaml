@@ -61,9 +61,6 @@ pipelines:
       REPO_NAME: "cs_internal-local"
       REPO_USER: "__token__"
       SONAR_USER_HOME: "/tmp"
-    secure_variables:
-      # LastPass: Shared-devops/Pypi
-      REPO_PASSWORD: "AES:aP1kcSvzcr6hIWs++y6b6w==:Smb80ESqALObEO3W9xaKcl0LQZMp+fIxdBvkccUmCcoUVNf/2gOxwkFoSYn53o2uUwMRPusJK7X3INZXcHc9flhcU0AaE7a3ta9PsDXgGSHd1KcKSLTlQY01/8OtuzkgiN3IjJwjhWhYQ/F6h2qKKsIgWjgXBn+lB0wsvFVbLThagUjf1BvbhC0WJ3tdvzfNxTqL600v853d33OcMnG+19gPggt6KkXBcBU7Lgl+crskaEVIBoJj/H4gt7+XTb0f"
     materials:
       cortex-python:
         git: git@github.com:CognitiveScale/cortex-python.git
@@ -79,6 +76,8 @@ pipelines:
                     set -eux
                     c12e-common.sh staging
                     sonar-scan.sh scan
+                    # PYPI_TOKEN from GOCD environment
+                    export REPO_PASSWORD=${PYPI_TOKEN}
                     publish-distribution.sh -i -e
                     
   cortex-python-master:
@@ -89,9 +88,6 @@ pipelines:
       REPO_NAME: "cognitivescale_local"
       REPO_USER: "__token__"
       SONAR_USER_HOME: "/tmp"
-    secure_variables:
-      # LastPass: Shared-devops/Pypi
-      REPO_PASSWORD: "AES:aP1kcSvzcr6hIWs++y6b6w==:Smb80ESqALObEO3W9xaKcl0LQZMp+fIxdBvkccUmCcoUVNf/2gOxwkFoSYn53o2uUwMRPusJK7X3INZXcHc9flhcU0AaE7a3ta9PsDXgGSHd1KcKSLTlQY01/8OtuzkgiN3IjJwjhWhYQ/F6h2qKKsIgWjgXBn+lB0wsvFVbLThagUjf1BvbhC0WJ3tdvzfNxTqL600v853d33OcMnG+19gPggt6KkXBcBU7Lgl+crskaEVIBoJj/H4gt7+XTb0f"
     materials:
       cortex-python-master:
         git: git@github.com:CognitiveScale/cortex-python.git
@@ -112,6 +108,8 @@ pipelines:
                 - script: |
                     set -eux
                     c12e-common.sh master
+                    # PYPI_TOKEN from GOCD environment
+                    export REPO_PASSWORD=${PYPI_TOKEN}
                     publish-distribution.sh -i -e
       - publish:
           approval:
