@@ -107,7 +107,6 @@ pipelines:
                 - script: |
                     set -eux
                     c12e-common.sh master
-                    # PYPI_TOKEN from GOCD environment
                     export REPO_PASSWORD=${PYPI_TOKEN}
                     publish-distribution.sh -i -e
       - publish:
