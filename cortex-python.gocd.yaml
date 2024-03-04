@@ -76,7 +76,6 @@ pipelines:
                     set -eux
                     c12e-common.sh staging
                     sonar-scan.sh scan
-                    # PYPI_TOKEN from GOCD environment
                     export REPO_PASSWORD=${PYPI_TOKEN}
                     publish-distribution.sh -i -e
                     
