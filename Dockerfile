@@ -1,1 +1,14 @@
-Dockerfile.c12e-ci.cortex-python-lib
+FROM python:3.13.0a4-slim
+ENV ISTIO_QUIT_API=http://localhost:15020
+ENV ENVOY_ADMIN_API=http://localhost:15000
+COPY --from=c12e/scuttle:latest /scuttle /bin/scuttle
+COPY ./cortex /tmp/src/cortex
+COPY ./scripts/entrypoint.sh /entrypoint.sh
+COPY setup.py README.md /tmp/src/
+RUN cd /tmp/src\
+    && pip install . flask fastapi uvicorn typing\
+    && echo "default:x:1001:0:Default Application User:/app:/sbin/nologin" >> /etc/passwd\
+    && rm -r /tmp/src
+USER default
+WORKDIR /app
+ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
