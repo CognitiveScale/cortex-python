@@ -20,6 +20,7 @@ Module to interact with the Sensa model registry
 import os
 from typing import Optional, Dict, Any
 from cortex.serviceconnector import _Client
+
 try:
     import mlflow
 except ImportError:
@@ -27,14 +28,20 @@ except ImportError:
 
 
 def check_installed():
+    """
+    Checks if the model SDK extra is installed
+    :return:
+    """
     if mlflow is None:
         raise NotImplementedError(
             'Models SDK extra not installed, please run `pip install cortex-python[models_sdk]` to install')
+
 
 class ModelClient(_Client):
     """
     Client for model registry, this class requires the `models_sdk` extras to be installed
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Setup model registry by default
@@ -42,7 +49,7 @@ class ModelClient(_Client):
 
     def _setup_model_client(self):
         # Generate a JWT, this call stores the JWT in `_serviceconnector.jwt` ( meh )
-        self._serviceconnector._construct_headers({}) # pylint: disable=protected-access
+        self._serviceconnector._construct_headers({})  # pylint: disable=protected-access
 
         mlflow.set_tracking_uri(self._serviceconnector.url)
         os.environ['MLFLOW_TRACKING_URI'] = self._serviceconnector.url
