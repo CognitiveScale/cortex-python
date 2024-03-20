@@ -45,7 +45,8 @@ class ModelClient(_Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Setup model registry by default
-        self._setup_model_client()
+        if mlflow is not None:
+            self._setup_model_client()
 
     def _setup_model_client(self):
         # Generate a JWT, this call stores the JWT in `_serviceconnector.jwt` ( meh )
