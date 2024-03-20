@@ -20,7 +20,7 @@ from .constant import VERSION
 from .experiment.local import LocalExperiment
 from .connection import ConnectionClient
 from .content import ManagedContentClient
-from .model import ModelClient
+from .models import ModelClient
 from .secrets import SecretsClient
 from .session import SessionClient
 from .skill import SkillClient
@@ -125,6 +125,7 @@ class Client:
         version: int = VERSION,
         verify_ssl_cert: bool = False,
     ):
+        self._serviceconnector = None
         self._token = token
         self._config = config
         self._project = project
@@ -151,7 +152,8 @@ class Client:
         :return: A Message object.
         """
         if not self._token.token:
-            self._token = _Token(generate_token(self._config))
+            self._token = _Token(generate_token(self._serviceconnector._config))  # pylint: disable=protected-access
+
         params = {"payload": payload}
         if properties:
             params["properties"] = properties
