@@ -11,6 +11,7 @@ clean:
 	rm -rf ./cortex-python.docs.tgz
 
 dev.install:
+	pip install poetry
 	poetry install
 
 ifdef ALPHA_BUILD
