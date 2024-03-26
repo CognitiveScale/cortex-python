@@ -14,6 +14,7 @@ dist
 .python-version
 .pytest_cache
 coverage/
+coverage.xml
 .coverage
 test/report.html
 .idea

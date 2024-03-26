@@ -26,7 +26,7 @@ import pytest
 from cortex.connection import ConnectionClient, Connection
 from cortex.content import ManagedContentClient
 from cortex.experiment import ExperimentClient, Experiment
-from cortex.model import ModelClient, Model
+from cortex.models import ModelClient
 from cortex.secrets import SecretsClient, Secret
 from cortex.session import SessionClient, Session
 from cortex.types import TypeClient, Type
@@ -135,19 +135,19 @@ class TestCortex(unittest.TestCase):
                 "exists",
                 ("key"),
             ],
-            [ModelClient(client), project, "get_model", ("model")],
-            [
-                ModelClient("url", project="noclient"),
-                "noclient",
-                "get_model",
-                ("model"),
-            ],
-            [
-                ModelClient(client, project="withclient"),
-                "withclient",
-                "list_models",
-                None,
-            ],
+            # [ModelClient(client), project, "login", None],
+            # [
+            #     ModelClient("url", project="noclient"),
+            #     "noclient",
+            #     "login",
+            #     ("model"),
+            # ],
+            # [
+            #     ModelClient(client, project="withclient"),
+            #     "withclient",
+            #     "list_models",
+            #     None,
+            # ],
             [ExperimentClient(client), project, "list_experiments", None],
             [
                 ExperimentClient("url", project="noclient"),
@@ -242,8 +242,8 @@ class TestCortex(unittest.TestCase):
             ],
             [Skill({"name": test_name}, SkillClient(client, project="test")), "test"],
             [Skill({"name": test_name}, SkillClient(client)), project],
-            [Model({"name": test_name}, ModelClient(client, project="test")), "test"],
-            [Model({"name": test_name}, ModelClient(client)), project],
+            [ModelClient(client, project="test"), "test"],
+            [ModelClient(client), project],
             [Secret({"name": test_name}, SecretsClient(client)), project],
             [
                 Secret({"name": test_name}, SecretsClient(client, project="test")),

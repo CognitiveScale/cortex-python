@@ -11,9 +11,8 @@ clean:
 	rm -rf ./cortex-python.docs.tgz
 
 dev.install:
-	pip install -r requirements-dev.txt
-	pip install -r docs/requirements-docs.txt
-	pip install -e .
+	pip install poetry
+	poetry install
 
 ifdef ALPHA_BUILD
 build: build.alpha
@@ -41,11 +40,11 @@ build.release: clean
 	python setup.py sdist bdist_wheel
 
 dev.test:
-	pylint --recursive=y cortex
-	pytest --cache-clear  --html=coverage/test-report.html --self-contained-html --cov=cortex/ --cov-report=html:coverage --cov-report=xml:coverage.xml --cov-report=term test/unit
+	poetry run pylint --recursive=y cortex
+	poetry run pytest --cache-clear  --html=coverage/test-report.html --self-contained-html --cov=cortex/ --cov-report=html:coverage --cov-report=xml:coverage.xml --cov-report=term test/unit
 
 test:
-	tox -r # tox runs make dev.test internally
+	poetry run tox -r # tox runs make dev.test internally
 
 stage:
 	git fetch --all
@@ -58,7 +57,7 @@ stage:
 	git checkout develop
 
 docs.dev:
-	sphinx-build -b html -v docs docs/_build/
+	poetry run sphinx-build -b html -v docs docs/_build/
 
 # To be removed we don't really support older versions ATM anyway..
 docs.multi:
@@ -69,4 +68,4 @@ docs.package:
 	tar -cvzf ${DISTRIBUTION_NAME}.docs.tgz -C docs/_build .
 
 dev.push: build.alpha
-	twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
+	poetry run twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
